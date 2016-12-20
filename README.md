@@ -12,7 +12,7 @@ A network framework in combination with HTTP and data cache which based on [AFNe
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
 ## Requirements
-- iOS 8+
+- iOS 7+
 - Xcode 8+
 
 ## Installation

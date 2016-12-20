@@ -1,0 +1,34 @@
+//
+//  ARNetwork-Prefix.pch
+//  Pods
+//
+//  Created by Linzh on 12/13/16.
+//  Copyright © 2016 Daniel. All rights reserved.
+//
+
+#ifndef ARNetwork_Prefix_pch
+#define ARNetwork_Prefix_pch
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+
+#ifdef DEBUG
+#define ARNetworkDomain @"ARNetwork"
+
+#define ARLogLevel(level, frmt, ...) NSLog([NSString stringWithFormat:@"%@[%@]: %@", ARNetworkDomain, level, frmt], ##__VA_ARGS__)
+
+#define ARLogVerbose(frmt, ...)     ARLogLevel(@"VERBOSE", frmt, ##__VA_ARGS__)
+#define ARLogDebug(frmt, ...)       ARLogLevel(@"DEBUG", frmt, ##__VA_ARGS__)
+#define ARLogInfo(frmt, ...)        ARLogLevel(@"INFO", frmt, ##__VA_ARGS__)
+#define ARLogWarn(frmt, ...)        ARLogLevel(@"WARN", frmt, ##__VA_ARGS__)
+#define ARLogError(frmt, ...)       ARLogLevel(@"ERROR", frmt, ##__VA_ARGS__)
+
+#else
+#define ARLogVerbose(frmt, ...)
+#define ARLogDebug(frmt, ...)
+#define ARLogInfo(frmt, ...)
+#define ARLogWarn(frmt, ...)
+#define ARLogError(frmt, ...)
+#endif
+
+#endif /* ARNetwork_Prefix_pch */

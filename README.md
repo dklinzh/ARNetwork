@@ -5,11 +5,15 @@
 [![License](https://img.shields.io/cocoapods/l/ARNetwork.svg?style=flat)](http://cocoapods.org/pods/ARNetwork)
 [![Platform](https://img.shields.io/cocoapods/p/ARNetwork.svg?style=flat)](http://cocoapods.org/pods/ARNetwork)
 
+A network framework in combination with HTTP and data cache which based on [AFNetworking](https://github.com/AFNetworking/AFNetworking) and [Realm](https://github.com/realm/realm-cocoa).
+
 ## Example
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
 ## Requirements
+- iOS 8+
+- Xcode 8+
 
 ## Installation
 
@@ -17,7 +21,7 @@ ARNetwork is available through [CocoaPods](http://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod "ARNetwork"
+pod "ARNetwork", :git => 'https://github.com/dklinzh/ARNetwork.git'
 ```
 
 ## Author

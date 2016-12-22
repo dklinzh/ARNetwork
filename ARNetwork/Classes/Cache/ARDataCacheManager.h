@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 
 @interface ARDataCacheManager : NSObject
+@property (nonatomic, assign) NSTimeInterval expiredInterval;
+
++ (instancetype)sharedInstance;
 
 + (void)initDataCacheConfigurationWithSchemaVersion:(uint64_t)version;
 

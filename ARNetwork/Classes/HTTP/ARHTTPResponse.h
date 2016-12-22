@@ -10,6 +10,7 @@
 
 typedef void(^ARHTTPResponseSuccess)(id data, NSString *msg);
 typedef void(^ARHTTPResponseFailure)(NSInteger code, NSString *msg);
+typedef void(^ARHTTPResponseHead)(NSURLSessionDataTask *task);
 
 @protocol ARHTTPResponseDelegate <NSObject>
 

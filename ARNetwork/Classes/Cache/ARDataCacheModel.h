@@ -12,15 +12,9 @@
 @property NSString *arHost;
 @property NSString *arPath;
 @property NSString *arParams;
-@property NSDate *arTime;
-
-//+ (instancetype)initWithData:(NSDictionary *)data;
+@property NSDate *arExpiredTime;
 
 + (instancetype)dataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params;
-
-- (void)addDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params;
-
-- (void)updateDataCacheWithData:(NSDictionary *)data;
 @end
 
 // This protocol enables typed collections. i.e.:

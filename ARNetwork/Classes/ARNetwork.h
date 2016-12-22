@@ -14,8 +14,10 @@
 #import <ARNetwork/ARHTTPRequest.h>
 #import <ARNetwork/ARHTTPResponse.h>
 
+#import <ARNetwork/ARDataCache.h>
 #import <ARNetwork/ARDataCacheManager.h>
 #import <ARNetwork/ARHTTPManager+Cache.h>
 #import <ARNetwork/ARDataCacheModel.h>
+#import <ARNetwork/ARDataCacheModel+HTTP.h>
 
 #endif /* ARNetwork_h */

@@ -26,9 +26,27 @@ static const NSTimeInterval kARDefaultTimeoutInterval = 30;
     return self;
 }
 
+//+ (instancetype)allocWithZone:(struct _NSZone *)zone {
+//    static dispatch_once_t onceToken;
+//    dispatch_once(&onceToken,^{
+//        sharedInstance = [super allocWithZone:zone];
+//    });
+//    return sharedInstance;
+//}
+
 #pragma mark - HTTP
+static ARHTTPManager *sharedInstance = nil;
+
++ (instancetype)sharedInstance {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedInstance = [[self alloc] init];
+    });
+    return sharedInstance;
+}
+
 + (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
-    NSURLSessionDataTask *task = [[self manager] getURL:urlStr params:params success:success failure:failure];
+    NSURLSessionDataTask *task = [[self sharedInstance] getURL:urlStr params:params success:success failure:failure];
     return task;
 }
 
@@ -44,7 +62,7 @@ static const NSTimeInterval kARDefaultTimeoutInterval = 30;
 }
 
 + (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
-    NSURLSessionDataTask *task = [[self manager] postURL:urlStr params:params success:success failure:failure];
+    NSURLSessionDataTask *task = [[self sharedInstance] postURL:urlStr params:params success:success failure:failure];
     return task;
 }
 
@@ -60,7 +78,7 @@ static const NSTimeInterval kARDefaultTimeoutInterval = 30;
 }
 
 + (NSURLSessionDataTask *)putURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
-    NSURLSessionDataTask *task = [[self manager] putURL:urlStr params:params success:success failure:failure];
+    NSURLSessionDataTask *task = [[self sharedInstance] putURL:urlStr params:params success:success failure:failure];
     return task;
 }
 
@@ -76,7 +94,7 @@ static const NSTimeInterval kARDefaultTimeoutInterval = 30;
 }
 
 + (NSURLSessionDataTask *)patchURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
-    NSURLSessionDataTask *task = [[self manager] patchURL:urlStr params:params success:success failure:failure];
+    NSURLSessionDataTask *task = [[self sharedInstance] patchURL:urlStr params:params success:success failure:failure];
     return task;
 }
 
@@ -92,7 +110,7 @@ static const NSTimeInterval kARDefaultTimeoutInterval = 30;
 }
 
 + (NSURLSessionDataTask *)deleteURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
-    NSURLSessionDataTask *task = [[self manager] deleteURL:urlStr params:params success:success failure:failure];
+    NSURLSessionDataTask *task = [[self sharedInstance] deleteURL:urlStr params:params success:success failure:failure];
     return task;
 }
 
@@ -102,6 +120,20 @@ static const NSTimeInterval kARDefaultTimeoutInterval = 30;
     NSURLSessionDataTask *task = [self DELETE:urlStr parameters:params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        [self taskfailure:failure withError:error forKey:taskKey];
+    }];
+    return task;
+}
+
++ (NSURLSessionDataTask *)headURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseHead)success failure:(ARHTTPResponseFailure)failure {
+    NSURLSessionDataTask *task = [[self sharedInstance] headURL:urlStr params:params success:success failure:failure];
+    return task;
+}
+
+- (NSURLSessionDataTask *)headURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseHead)success failure:(ARHTTPResponseFailure)failure {
+    NSString *taskKey = [self taskKeyForUrl:urlStr];
+    
+    NSURLSessionDataTask *task = [self HEAD:urlStr parameters:params success:success failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         [self taskfailure:failure withError:error forKey:taskKey];
     }];
     return task;

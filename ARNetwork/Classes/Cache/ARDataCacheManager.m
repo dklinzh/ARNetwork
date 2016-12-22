@@ -10,6 +10,23 @@
 #import <Realm/Realm.h>
 
 @implementation ARDataCacheManager
+static ARDataCacheManager *sharedInstance = nil;
+
++ (instancetype)allocWithZone:(struct _NSZone *)zone {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken,^{
+        sharedInstance = [super allocWithZone:zone];
+    });
+    return sharedInstance;
+}
+
++ (instancetype)sharedInstance {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedInstance = [[self alloc] init];
+    });
+    return sharedInstance;
+}
 
 + (void)initDataCacheConfigurationWithSchemaVersion:(uint64_t)version {
     RLMRealmConfiguration *config = [RLMRealmConfiguration defaultConfiguration];

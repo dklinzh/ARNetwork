@@ -11,11 +11,6 @@
 @interface ARResponseCacheModel : ARDataCacheModel
 @property NSData *arResponseData;
 
-- (instancetype)initAndAddDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params responseObject:(id)responseObject;
-
-- (void)updateDataCacheWithResponseObject:(id)responseObject;
-
-- (id)responseObject;
 @end
 
 // This protocol enables typed collections. i.e.:

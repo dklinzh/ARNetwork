@@ -14,7 +14,6 @@
 @property NSString *arParams;
 @property NSDate *arExpiredTime;
 
-+ (instancetype)dataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params;
 @end
 
 // This protocol enables typed collections. i.e.:

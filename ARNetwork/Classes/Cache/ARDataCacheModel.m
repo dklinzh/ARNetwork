@@ -26,6 +26,10 @@
 
 #pragma mark -
 + (instancetype)dataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params {
+    if (!urlStr) {
+        return nil;
+    }
+    
     NSURL *url = [NSURL URLWithString:urlStr];
     NSPredicate *pred = [NSPredicate predicateWithFormat:@"arHost = %@ AND arPath = %@ AND arParams = %@", url.host, url.path, params.description];
     RLMResults<__kindof ARDataCacheModel *> *caches = [self.class objectsWithPredicate:pred];

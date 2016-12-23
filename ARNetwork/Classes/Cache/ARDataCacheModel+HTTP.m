@@ -10,6 +10,10 @@
 #import "ARHTTPManager.h"
 #import "ARDataCacheManager.h"
 
+@interface ARDataCacheModel ()
++ (instancetype)dataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params;
+@end
+
 @implementation ARDataCacheModel (HTTP)
 #pragma mark - HTTP
 + (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARDataCache)cache success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure {

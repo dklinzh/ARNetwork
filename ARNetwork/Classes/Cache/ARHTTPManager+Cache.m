@@ -9,6 +9,16 @@
 #import "ARHTTPManager+Cache.h"
 #import "ARResponseCacheModel.h"
 
+@interface ARResponseCacheModel ()
++ (instancetype)dataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params;
+
+- (instancetype)initAndAddDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params responseObject:(id)responseObject;
+
+- (void)updateDataCacheWithResponseObject:(id)responseObject;
+
+- (id)responseObject;
+@end
+
 @implementation ARHTTPManager (Cache)
 
 #pragma mark - HTTP
@@ -123,7 +133,7 @@
     if (*cache & (ARDataCacheOnlyLoad | ARDataCacheUpdateIfNeeded)) {
         oldData = [ARResponseCacheModel dataCacheWithUrl:urlStr params:params];
         if (oldData) {
-            ARLogDebug(@"Cache<%@>: %@", NSStringFromClass(self.class), oldData);
+            ARLogDebug(@"Cache<%@>: %@", NSStringFromClass(self.class), oldData.responseObject);
             
             if ((*cache & ARDataCacheOnlyLoad) && success) {
                 success(oldData.responseObject, nil, YES);

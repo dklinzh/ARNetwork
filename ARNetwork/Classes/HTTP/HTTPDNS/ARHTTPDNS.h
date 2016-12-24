@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <AlicloudHttpDNS/AlicloudHttpDNS.h> //* https://help.aliyun.com/document_detail/30141.html
+#import "AlicloudHttpDNS.h" //* https://help.aliyun.com/document_detail/30141.html
 
 @interface ARHTTPDNS : HttpDnsService
 - (void)seAccountId:(NSInteger)accountId;

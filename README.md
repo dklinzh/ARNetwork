@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/cocoapods/l/ARNetwork.svg?style=flat)](http://cocoapods.org/pods/ARNetwork)
 [![Platform](https://img.shields.io/cocoapods/p/ARNetwork.svg?style=flat)](http://cocoapods.org/pods/ARNetwork)
 
-A network framework in combination with HTTP and data cache which based on [AFNetworking](https://github.com/AFNetworking/AFNetworking) and [Realm](https://github.com/realm/realm-cocoa).
+An iOS network framework in combination with HTTP and data cache which based on [AFNetworking](https://github.com/AFNetworking/AFNetworking) and [Realm](https://github.com/realm/realm-cocoa).
 
 ## Example
 

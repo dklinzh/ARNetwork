@@ -15,6 +15,6 @@
 
 @implementation ARHTTPManager (HTTPDNS)
 - (NSString *)delegateUrlIfNeeded:(NSString *)urlStr {
-    return [ARHTTPDNS getIpByHostAsyncInURLFormat:urlStr];
+    return [ARHTTPDNS getIpURLByHostURLAsync:urlStr];
 }
 @end

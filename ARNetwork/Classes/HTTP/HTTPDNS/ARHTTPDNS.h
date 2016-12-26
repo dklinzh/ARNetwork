@@ -16,15 +16,7 @@
 
 - (void)setPreResolveHosts:(NSArray *)preResolveHosts ignoreddHosts:(NSArray *)ignoredHosts;
 
-+ (NSString *)getIpByHost:(NSString *)host;
++ (NSString *)getIpURLByHostURL:(NSString *)hostUrl;
 
-+ (NSArray *)getIpsByHost:(NSString *)host;
-
-+ (NSString *)getIpByHostInURLFormat:(NSString *)host;
-
-+ (NSString *)getIpByHostAsync:(NSString *)host;
-
-+ (NSArray *)getIpsByHostAsync:(NSString *)host;
-
-+ (NSString *)getIpByHostAsyncInURLFormat:(NSString *)host;
++ (NSString *)getIpURLByHostURLAsync:(NSString *)hostUrl;
 @end

@@ -14,6 +14,7 @@
 @property NSString *arParams;
 @property NSDate *arExpiredTime;
 
++ (NSArray *)equalCheckedProperties;
 @end
 
 // This protocol enables typed collections. i.e.:

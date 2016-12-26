@@ -18,23 +18,13 @@
 #pragma mark - Override
 - (instancetype)init {
     if (self = [super init]) {
-        self.httpDNSEnabled = YES;
-        [self setLogEnabled:YES];
+//        self.httpDNSEnabled = YES;
+        [self setLogEnabled:NO];
         [self setHTTPSRequestEnabled:NO];
         [self setExpiredIPEnabled:YES];
         [self setPreResolveAfterNetworkChanged:NO];
     }
     return self;
-}
-
-- (NSString *)getIpByHost:(NSString *)host {
-    if (!self.httpDNSEnabled) {
-        return host;
-    }
-    
-    NSString *ip = [super getIpByHost:host];
-    ARLogInfo(@"<HTTPDNS> %@ -> %@", host, ip);
-    return ip;
 }
 
 - (NSArray *)getIpsByHost:(NSString *)host {
@@ -47,26 +37,6 @@
     return ips;
 }
 
-- (NSString *)getIpByHostInURLFormat:(NSString *)host {
-    if (!self.httpDNSEnabled) {
-        return host;
-    }
-    
-    NSString *ip = [super getIpByHostInURLFormat:host];
-    ARLogInfo(@"<HTTPDNS> %@ -> %@", host, ip);
-    return ip;
-}
-
-- (NSString *)getIpByHostAsync:(NSString *)host {
-    if (!self.httpDNSEnabled) {
-        return host;
-    }
-    
-    NSString *ip = [super getIpByHostAsync:host];
-    ARLogInfo(@"<HTTPDNS> %@ -> %@", host, ip);
-    return ip;
-}
-
 - (NSArray *)getIpsByHostAsync:(NSString *)host {
     if (!self.httpDNSEnabled) {
         return host ? @[host] : nil;
@@ -77,43 +47,59 @@
     return ips;
 }
 
-- (NSString *)getIpByHostAsyncInURLFormat:(NSString *)host {
-    if (!self.httpDNSEnabled) {
-        return host;
+#pragma mark -
+
++ (NSString *)getIpURLByHostURL:(NSString *)hostUrl {
+    if (![[self sharedInstance] httpDNSEnabled]) {
+        return hostUrl;
     }
     
-    NSString *ip = [super getIpByHostAsyncInURLFormat:host];
-    ARLogInfo(@"<HTTPDNS> %@ -> %@", host, ip);
-    return ip;
+    NSURL *url = [NSURL URLWithString:hostUrl];
+    NSString *host = url.host;
+    if (!host) {
+        return hostUrl;
+    }
+    
+    NSString *ip = [[self sharedInstance] getIpByHostInURLFormat:host];
+    if (ip) {
+        NSRange hostFirstRange = [hostUrl rangeOfString: host];
+        if (hostFirstRange.location != NSNotFound) {
+            NSString* ipUrl = [hostUrl stringByReplacingCharactersInRange:hostFirstRange withString:ip];
+            return ipUrl;
+        }
+    }
+    return hostUrl;
 }
 
-#pragma mark -
-+ (NSString *)getIpByHost:(NSString *)host {
-    return [[self sharedInstance] getIpByHost:host];
-}
-
-+ (NSArray *)getIpsByHost:(NSString *)host {
-    return [[self sharedInstance] getIpsByHost:host];
-}
-
-+ (NSString *)getIpByHostInURLFormat:(NSString *)host {
-    return [[self sharedInstance] getIpByHostInURLFormat:host];
-}
-
-+ (NSString *)getIpByHostAsync:(NSString *)host {
-    return [[self sharedInstance] getIpByHostAsync:host];
-}
-
-+ (NSArray *)getIpsByHostAsync:(NSString *)host {
-    return [[self sharedInstance] getIpsByHostAsync:host];
-}
-
-+ (NSString *)getIpByHostAsyncInURLFormat:(NSString *)host {
-    return [[self sharedInstance] getIpByHostAsyncInURLFormat:host];
++ (NSString *)getIpURLByHostURLAsync:(NSString *)hostUrl {
+    if (![[self sharedInstance] httpDNSEnabled]) {
+        return hostUrl;
+    }
+    
+    NSURL *url = [NSURL URLWithString:hostUrl];
+    NSString *host = url.host;
+    if (!host) {
+        return hostUrl;
+    }
+    
+    NSString *ip = [[self sharedInstance] getIpByHostAsyncInURLFormat:host];
+    if (ip) {
+        NSRange hostFirstRange = [hostUrl rangeOfString: host];
+        if (hostFirstRange.location != NSNotFound) {
+            NSString* ipUrl = [hostUrl stringByReplacingCharactersInRange:hostFirstRange withString:ip];
+            return ipUrl;
+        }
+    }
+    return hostUrl;
 }
 
 - (void)seAccountId:(NSInteger)accountId {
     self.accountID = accountId;
+}
+
+- (void)setAccountID:(int)accountID {
+    [super setAccountID:accountID];
+    self.httpDNSEnabled = YES;
 }
 
 - (void)setHttpDNSEnabled:(BOOL)httpDNSEnabled {

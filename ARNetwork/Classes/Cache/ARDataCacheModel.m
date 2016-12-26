@@ -7,6 +7,7 @@
 //
 
 #import "ARDataCacheModel.h"
+#import "ARDataCacheManager.h"
 
 @implementation ARDataCacheModel
 
@@ -25,6 +26,10 @@
 //}
 
 #pragma mark -
++ (NSArray *)equalCheckedProperties {
+    return nil;
+}
+
 + (instancetype)dataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params {
     if (!urlStr) {
         return nil;
@@ -34,5 +39,34 @@
     NSPredicate *pred = [NSPredicate predicateWithFormat:@"arHost = %@ AND arPath = %@ AND arParams = %@", url.host, url.path, params.description];
     RLMResults<__kindof ARDataCacheModel *> *caches = [self.class objectsWithPredicate:pred];
     return caches.count > 0 ? caches.lastObject : nil;
+}
+
+- (void)addDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params {
+    if (!self.isInvalidated) {
+        if (urlStr) {
+            NSURL *url = [NSURL URLWithString:urlStr];
+            self.arHost = url.host;
+            self.arPath = url.path;
+        }
+        self.arParams = params.description;
+        self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[ARDataCacheManager sharedInstance].expiredInterval];
+        [[RLMRealm defaultRealm] transactionWithBlock:^{
+            [[RLMRealm defaultRealm] addObject:self];
+        }];
+    }
+}
+
+- (void)updateDataCacheWithData:(NSDictionary *)data {
+    if (!self.isInvalidated) {
+        [[RLMRealm defaultRealm] transactionWithBlock:^{
+            self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[ARDataCacheManager sharedInstance].expiredInterval];
+            for (NSString *key in data.allKeys) {
+                if ([self respondsToSelector:NSSelectorFromString(key)]) {
+                    
+                    [self setValue:data[key] forKey:key];
+                }
+            }
+        }];
+    }
 }
 @end

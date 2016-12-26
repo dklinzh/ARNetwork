@@ -51,9 +51,15 @@ static ARHTTPManager *sharedInstance = nil;
 }
 
 - (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
-    NSString *taskKey = [self taskKeyForUrl:urlStr];
     urlStr = [self delegateUrlIfNeeded:urlStr];
-    
+    if (!urlStr) {
+        ARLogError(@"HTTP URL IS NULL.");
+        if (failure) {
+            failure(0, @"HTTP URL IS NULL.");
+        }
+        return nil;
+    }
+    NSString *taskKey = [self taskKeyForUrl:urlStr];
     NSURLSessionDataTask *task = [self GET:urlStr parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
@@ -68,9 +74,15 @@ static ARHTTPManager *sharedInstance = nil;
 }
 
 - (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
-    NSString *taskKey = [self taskKeyForUrl:urlStr];
     urlStr = [self delegateUrlIfNeeded:urlStr];
-    
+    if (!urlStr) {
+        ARLogError(@"HTTP URL IS NULL.");
+        if (failure) {
+            failure(0, @"HTTP URL IS NULL.");
+        }
+        return nil;
+    }
+    NSString *taskKey = [self taskKeyForUrl:urlStr];
     NSURLSessionDataTask *task = [self POST:urlStr parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
@@ -85,9 +97,15 @@ static ARHTTPManager *sharedInstance = nil;
 }
 
 - (NSURLSessionDataTask *)putURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
-    NSString *taskKey = [self taskKeyForUrl:urlStr];
     urlStr = [self delegateUrlIfNeeded:urlStr];
-    
+    if (!urlStr) {
+        ARLogError(@"HTTP URL IS NULL.");
+        if (failure) {
+            failure(0, @"HTTP URL IS NULL.");
+        }
+        return nil;
+    }
+    NSString *taskKey = [self taskKeyForUrl:urlStr];
     NSURLSessionDataTask *task = [self PUT:urlStr parameters:params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
@@ -102,9 +120,15 @@ static ARHTTPManager *sharedInstance = nil;
 }
 
 - (NSURLSessionDataTask *)patchURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
-    NSString *taskKey = [self taskKeyForUrl:urlStr];
     urlStr = [self delegateUrlIfNeeded:urlStr];
-    
+    if (!urlStr) {
+        ARLogError(@"HTTP URL IS NULL.");
+        if (failure) {
+            failure(0, @"HTTP URL IS NULL.");
+        }
+        return nil;
+    }
+    NSString *taskKey = [self taskKeyForUrl:urlStr];
     NSURLSessionDataTask *task = [self PATCH:urlStr parameters:params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
@@ -119,9 +143,15 @@ static ARHTTPManager *sharedInstance = nil;
 }
 
 - (NSURLSessionDataTask *)deleteURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
-    NSString *taskKey = [self taskKeyForUrl:urlStr];
     urlStr = [self delegateUrlIfNeeded:urlStr];
-    
+    if (!urlStr) {
+        ARLogError(@"HTTP URL IS NULL.");
+        if (failure) {
+            failure(0, @"HTTP URL IS NULL.");
+        }
+        return nil;
+    }
+    NSString *taskKey = [self taskKeyForUrl:urlStr];
     NSURLSessionDataTask *task = [self DELETE:urlStr parameters:params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
@@ -136,9 +166,15 @@ static ARHTTPManager *sharedInstance = nil;
 }
 
 - (NSURLSessionDataTask *)headURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseHead)success failure:(ARHTTPResponseFailure)failure {
-    NSString *taskKey = [self taskKeyForUrl:urlStr];
     urlStr = [self delegateUrlIfNeeded:urlStr];
-    
+    if (!urlStr) {
+        ARLogError(@"HTTP URL IS NULL.");
+        if (failure) {
+            failure(0, @"HTTP URL IS NULL.");
+        }
+        return nil;
+    }
+    NSString *taskKey = [self taskKeyForUrl:urlStr];
     NSURLSessionDataTask *task = [self HEAD:urlStr parameters:params success:success failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         [self taskfailure:failure withError:error forKey:taskKey];
     }];

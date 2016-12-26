@@ -8,10 +8,11 @@
 
 #import "ARDataCacheModel+HTTP.h"
 #import "ARHTTPManager.h"
-#import "ARDataCacheManager.h"
 
 @interface ARDataCacheModel ()
 + (instancetype)dataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params;
+- (void)addDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params;
+- (void)updateDataCacheWithData:(NSDictionary *)data;
 @end
 
 @implementation ARDataCacheModel (HTTP)
@@ -151,31 +152,4 @@
     }
 }
 
-- (void)addDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params {
-    if (!self.isInvalidated) {
-        if (urlStr) {
-            NSURL *url = [NSURL URLWithString:urlStr];
-            self.arHost = url.host;
-            self.arPath = url.path;
-        }
-        self.arParams = params.description;
-        self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[ARDataCacheManager sharedInstance].expiredInterval];
-        [[RLMRealm defaultRealm] transactionWithBlock:^{
-            [[RLMRealm defaultRealm] addObject:self];
-        }];
-    }
-}
-
-- (void)updateDataCacheWithData:(NSDictionary *)data {
-    if (!self.isInvalidated) {
-        [[RLMRealm defaultRealm] transactionWithBlock:^{
-            self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[ARDataCacheManager sharedInstance].expiredInterval];
-            for (NSString *key in data.allKeys) {
-                if ([self respondsToSelector:NSSelectorFromString(key)]) {
-                    [self setValue:data[key] forKey:key];
-                }
-            }
-        }];
-    }
-}
 @end

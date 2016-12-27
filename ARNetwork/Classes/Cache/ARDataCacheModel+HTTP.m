@@ -12,7 +12,6 @@
 @interface ARDataCacheModel ()
 + (instancetype)dataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params;
 - (void)addDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params;
-- (void)updateDataCacheWithData:(NSDictionary *)data;
 @end
 
 @implementation ARDataCacheModel (HTTP)
@@ -123,7 +122,7 @@
 }
 
 + (void)newDataCache:(ARDataCache)cache url:(NSString *)urlStr params:(NSDictionary *)params oldData:(__kindof ARDataCacheModel *)oldData dataSource:(id)data msg:(NSString *)msg success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure {
-    if (![data isKindOfClass:NSDictionary.class] && ![data isKindOfClass:NSArray.class]) {
+    if (![data isKindOfClass:NSDictionary.class]/* && ![data isKindOfClass:NSArray.class]*/) {
         if (failure) {
             failure(ARCacheErrorSource, @"Format of data source is wrong.");
         }
@@ -132,7 +131,7 @@
         return;
     }
     
-    __kindof ARDataCacheModel *newData = [[self alloc] initWithValue:data];
+    __kindof ARDataCacheModel *newData = [[self alloc] initDataCacheWithData:data];
     if (cache & (ARDataCacheOnlyUpdate | ARDataCacheUpdateIfNeeded)) {
         if (oldData) {
             [oldData updateDataCacheWithData:data];

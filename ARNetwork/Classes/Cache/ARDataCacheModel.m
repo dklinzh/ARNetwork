@@ -26,7 +26,7 @@
 //}
 
 #pragma mark -
-+ (NSArray *)equalCheckedProperties {
++ (NSArray *)valueUpdatedProperties {
     return nil;
 }
 
@@ -39,6 +39,18 @@
     NSPredicate *pred = [NSPredicate predicateWithFormat:@"arHost = %@ AND arPath = %@ AND arParams = %@", url.host, url.path, params.description];
     RLMResults<__kindof ARDataCacheModel *> *caches = [self.class objectsWithPredicate:pred];
     return caches.count > 0 ? caches.lastObject : nil;
+}
+
+- (instancetype)initDataCacheWithData:(NSDictionary *)data {
+    if (self = [self init]) {
+        for (NSString *key in data.allKeys) {
+            if ([self respondsToSelector:NSSelectorFromString(key)]) {
+                [self setValue:data[key] forKey:key];
+            }
+        }
+        [self setValueForExtraProperties];
+    }
+    return self;
 }
 
 - (void)addDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params {
@@ -58,15 +70,31 @@
 
 - (void)updateDataCacheWithData:(NSDictionary *)data {
     if (!self.isInvalidated) {
+        NSArray *valueUpdatedProperties = [self.class valueUpdatedProperties];
+        NSString *primaryKey = [self.class primaryKey];
         [[RLMRealm defaultRealm] transactionWithBlock:^{
             self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[ARDataCacheManager sharedInstance].expiredInterval];
             for (NSString *key in data.allKeys) {
+                if ([primaryKey isEqualToString:key]) {
+                    continue;
+                }
+                
                 if ([self respondsToSelector:NSSelectorFromString(key)]) {
-                    
+                    if ([valueUpdatedProperties containsObject:key]) {
+                        id value = [self valueForKey:key];
+                        if (![value isEqual:data[key]]) {
+                            
+                        }
+                    }
                     [self setValue:data[key] forKey:key];
                 }
             }
+            [self setValueForExtraProperties];
         }];
     }
+}
+
+- (void)setValueForExtraProperties {
+    
 }
 @end

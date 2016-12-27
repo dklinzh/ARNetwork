@@ -1,14 +1,19 @@
 //
-//  ARHTTPResponse.m
+//  ARHTTPOperation.m
 //  ARNetwork
 //
-//  Created by Linzh on 12/13/16.
+//  Created by Linzh on 12/27/16.
 //  Copyright © 2016 Daniel. All rights reserved.
 //
 
-#import "ARHTTPResponse.h"
+#import "ARHTTPOperation.h"
 
-@implementation ARHTTPResponse
+@implementation ARHTTPOperation
+
+#pragma mark - ARHTTPRequestDelegate
+- (NSString *)ar_taskKeyForRequestURL:(NSString *)urlStr {
+    return urlStr;
+}
 
 #pragma mark - ARHTTPResponseDelegate
 - (void)ar_onSuccess:(ARHTTPResponseSuccess)success onFailure:(ARHTTPResponseFailure)failure withData:(id)data {
@@ -29,6 +34,7 @@
             case -999: // request operation be canceled.
                 break;
             case -1001:
+            case -1005:
             case -1009: {// network unreachable
                 failure(error.code, @"网络异常，请稍后尝试。");
             }

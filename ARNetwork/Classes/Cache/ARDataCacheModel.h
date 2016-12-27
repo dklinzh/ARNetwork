@@ -14,7 +14,13 @@
 @property NSString *arParams;
 @property NSDate *arExpiredTime;
 
-+ (NSArray *)equalCheckedProperties;
++ (NSArray *)valueUpdatedProperties;
+
+- (instancetype)initDataCacheWithData:(NSDictionary *)data;
+
+- (void)updateDataCacheWithData:(NSDictionary *)data;
+
+- (void)setValueForExtraProperties NS_REQUIRES_SUPER;
 @end
 
 // This protocol enables typed collections. i.e.:

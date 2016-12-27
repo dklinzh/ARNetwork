@@ -11,8 +11,7 @@
 #import <Foundation/Foundation.h>
 //HTTP
 #import <ARNetwork/ARHTTPManager.h>
-#import <ARNetwork/ARHTTPRequest.h>
-#import <ARNetwork/ARHTTPResponse.h>
+#import <ARNetwork/ARHTTPOperation.h>
 
 //HTTPDNS
 #import <ARNetwork/ARHTTPDNS.h>

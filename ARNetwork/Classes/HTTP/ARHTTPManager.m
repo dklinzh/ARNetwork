@@ -188,8 +188,8 @@ static ARHTTPManager *sharedInstance = nil;
 
 - (NSString *)taskKeyForUrl:(NSString *)urlStr {
     NSString *taskKey;
-    if ([self.requestDelegate respondsToSelector:@selector(ar_taskKeyForRequestURL:)]) {
-        taskKey = [self.requestDelegate ar_taskKeyForRequestURL:urlStr];
+    if ([self.httpOperation respondsToSelector:@selector(ar_taskKeyForRequestURL:)]) {
+        taskKey = [self.httpOperation ar_taskKeyForRequestURL:urlStr];
     }
     
     ARLogDebug(@"Request<%@>:\n%@", taskKey, urlStr);
@@ -199,16 +199,16 @@ static ARHTTPManager *sharedInstance = nil;
 - (void)taskSuccess:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure withData:(id)data forKey:(NSString *)key {
     ARLogDebug(@"Response<%@>:\n%@", key, data);
     
-    if ([self.responseDelegate respondsToSelector:@selector(ar_onSuccess:onFailure:withData:)]) {
-        [self.responseDelegate ar_onSuccess:success onFailure:failure withData:data];
+    if ([self.httpOperation respondsToSelector:@selector(ar_onSuccess:onFailure:withData:)]) {
+        [self.httpOperation ar_onSuccess:success onFailure:failure withData:data];
     }
 }
 
 - (void)taskfailure:(ARHTTPResponseFailure)failure withError:(NSError *)error forKey:(NSString *)key {
     ARLogError(@"Response<%@>:\n%@", key, error);
     
-    if ([self.responseDelegate respondsToSelector:@selector(ar_onFailure:withError:)]) {
-        [self.responseDelegate ar_onFailure:failure withError:error];
+    if ([self.httpOperation respondsToSelector:@selector(ar_onFailure:withError:)]) {
+        [self.httpOperation ar_onFailure:failure withError:error];
     }
 }
 
@@ -236,17 +236,10 @@ static ARHTTPManager *sharedInstance = nil;
     return _acceptableContentTypes;
 }
 
-- (id<ARHTTPResponseDelegate>)responseDelegate {
-    if (_responseDelegate) {
-        return _responseDelegate;
+- (ARHTTPOperation *)httpOperation {
+    if (_httpOperation) {
+        return _httpOperation;
     }
-    return _responseDelegate = [[ARHTTPResponse alloc] init];
-}
-
-- (id<ARHTTPRequestDelegate>)requestDelegate {
-    if (_requestDelegate) {
-        return _requestDelegate;
-    }
-    return _requestDelegate = [[ARHTTPRequest alloc] init];
+    return _httpOperation = [[ARHTTPOperation alloc] init];
 }
 @end

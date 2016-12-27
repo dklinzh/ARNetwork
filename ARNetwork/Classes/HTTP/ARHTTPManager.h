@@ -7,14 +7,12 @@
 //
 
 #import <AFNetworking/AFNetworking.h>
-#import "ARHTTPRequest.h"
-#import "ARHTTPResponse.h"
+#import "ARHTTPOperation.h"
 
 @interface ARHTTPManager : AFHTTPSessionManager
 @property (nonatomic, assign) NSTimeInterval timeoutInterval;
 @property (nonatomic, strong, readonly) NSMutableSet<NSString *> *acceptableContentTypes;
-@property (nonatomic, weak) id<ARHTTPRequestDelegate> requestDelegate;
-@property (nonatomic, weak) id<ARHTTPResponseDelegate> responseDelegate;
+@property (nonatomic, weak) ARHTTPOperation *httpOperation;
 
 + (instancetype)sharedInstance;
 

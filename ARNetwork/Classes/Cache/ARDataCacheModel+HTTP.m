@@ -136,7 +136,7 @@
         if (oldData) {
             [oldData updateDataCacheWithData:data];
             if (success) {
-                success(newData, msg, NO);
+                success(oldData, msg, NO);
             }
         } else {
             [newData addDataCacheWithUrl:urlStr params:params];

@@ -28,7 +28,7 @@ static ARDataCacheManager *sharedInstance = nil;
     return sharedInstance;
 }
 
-+ (void)initDataCacheConfigurationWithSchemaVersion:(uint64_t)version {
++ (void)initConfigurationWithSchemaVersion:(uint64_t)version {
     RLMRealmConfiguration *config = [RLMRealmConfiguration defaultConfiguration];
     config.schemaVersion = version;
     config.migrationBlock = ^(RLMMigration *migration, uint64_t oldSchemaVersion) {

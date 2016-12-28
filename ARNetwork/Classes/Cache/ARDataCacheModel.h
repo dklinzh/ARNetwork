@@ -9,10 +9,12 @@
 #import <Realm/Realm.h>
 
 @interface ARDataCacheModel : RLMObject
-@property NSString *arHost;
-@property NSString *arPath;
-@property NSString *arParams;
+@property NSString *arPrimaryKey;
 @property NSDate *arExpiredTime;
+
++ (instancetype)dataCache;
+
++ (instancetype)dataCache:(NSUInteger)index;
 
 + (NSArray *)valueUpdatedProperties;
 

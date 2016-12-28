@@ -13,7 +13,7 @@
 
 + (instancetype)sharedInstance;
 
-+ (void)initDataCacheConfigurationWithSchemaVersion:(uint64_t)version;
++ (void)initConfigurationWithSchemaVersion:(uint64_t)version;
 
 + (void)clearAllDataCache;
 @end

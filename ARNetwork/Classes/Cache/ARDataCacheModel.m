@@ -8,6 +8,7 @@
 
 #import "ARDataCacheModel.h"
 #import "ARDataCacheManager.h"
+#import "NSObject+ARInspect.h"
 
 @implementation ARDataCacheModel
 
@@ -30,13 +31,26 @@
     return nil;
 }
 
++ (instancetype)dataCache {
+    return [self dataCache:0];
+}
+
++ (instancetype)dataCache:(NSUInteger)index {
+    RLMResults<__kindof ARDataCacheModel *> *results = [self allObjects];
+    if (index >= results.count) {
+        return nil;
+    }
+    return results[index];
+}
+
 + (instancetype)dataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params {
     if (!urlStr) {
         return nil;
     }
     
     NSURL *url = [NSURL URLWithString:urlStr];
-    NSPredicate *pred = [NSPredicate predicateWithFormat:@"arHost = %@ AND arPath = %@ AND arParams = %@", url.host, url.path, params.description];
+    NSString *arPrimaryKey = [NSString stringWithFormat:@"%@|%@|%@", url.host, url.path, params.description];
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@"arPrimaryKey = %@", arPrimaryKey];
     RLMResults<__kindof ARDataCacheModel *> *caches = [self.class objectsWithPredicate:pred];
     return caches.count > 0 ? caches.lastObject : nil;
 }
@@ -45,7 +59,27 @@
     if (self = [self init]) {
         for (NSString *key in data.allKeys) {
             if ([self respondsToSelector:NSSelectorFromString(key)]) {
-                [self setValue:data[key] forKey:key];
+                id value = data[key];
+                if ([value isKindOfClass:NSDictionary.class]) {
+                    id subModel = [[self ar_classOfPropertyNamed:key] alloc];
+                    if ([subModel isKindOfClass:ARDataCacheModel.class]) {
+                        [self setValue:[subModel initDataCacheWithData:value] forKey:key];
+                    }
+                } else if ([value isKindOfClass:NSArray.class]) {
+                    id rlm = [self valueForKey:key];
+                    if ([rlm isKindOfClass:RLMArray.class]) {
+                        RLMArray *rlms = (RLMArray *)rlm;
+                        Class subClass = NSClassFromString(rlms.objectClassName);
+                        if ([subClass isSubclassOfClass:ARDataCacheModel.class]) {
+                            NSArray *values = (NSArray *)value;
+                            for (NSDictionary *item in values) {
+                                [rlms addObject:[[subClass alloc] initDataCacheWithData:item]];
+                            }
+                        }
+                    }
+                } else {
+                    [self setValue:value forKey:key];
+                }
             }
         }
         [self setValueForExtraProperties];
@@ -54,16 +88,17 @@
 }
 
 - (void)addDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params {
-    if (!self.isInvalidated) {
-        if (urlStr) {
-            NSURL *url = [NSURL URLWithString:urlStr];
-            self.arHost = url.host;
-            self.arPath = url.path;
-        }
-        self.arParams = params.description;
+    if (!self.realm) {
+        NSURL *url = [NSURL URLWithString:urlStr];
+        self.arPrimaryKey = [NSString stringWithFormat:@"%@|%@|%@", url.host, url.path, params.description];
         self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[ARDataCacheManager sharedInstance].expiredInterval];
-        [[RLMRealm defaultRealm] transactionWithBlock:^{
-            [[RLMRealm defaultRealm] addObject:self];
+        RLMRealm *realm = [RLMRealm defaultRealm];
+        [realm transactionWithBlock:^{
+            if ([self.class primaryKey]) {
+                [realm addOrUpdateObject:self];
+            } else {
+                [realm addObject:self];
+            }
         }];
     }
 }
@@ -98,3 +133,4 @@
     
 }
 @end
+

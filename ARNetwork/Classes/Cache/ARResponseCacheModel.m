@@ -29,12 +29,8 @@
 - (instancetype)initAndAddDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params responseObject:(id)responseObject {
     if (self = [self init]) {
         if (!self.isInvalidated && responseObject) {
-            if (urlStr) {
-                NSURL *url = [NSURL URLWithString:urlStr];
-                self.arHost = url.host;
-                self.arPath = url.path;
-            }
-            self.arParams = params.description;
+            NSURL *url = [NSURL URLWithString:urlStr];
+            self.arPrimaryKey = [NSString stringWithFormat:@"%@|%@|%@", url.host, url.path, params.description];
             self.arResponseData = [NSJSONSerialization dataWithJSONObject:responseObject options:NSJSONWritingPrettyPrinted error:nil];
             self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[ARDataCacheManager sharedInstance].expiredInterval];
             [[RLMRealm defaultRealm] transactionWithBlock:^{

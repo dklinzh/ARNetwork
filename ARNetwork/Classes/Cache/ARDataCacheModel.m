@@ -43,6 +43,11 @@
     return results[index];
 }
 
++ (NSUInteger)dataCacheCount {
+    RLMResults<__kindof ARDataCacheModel *> *results = [self allObjects];
+    return results.count;
+}
+
 + (instancetype)dataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params {
     if (!urlStr) {
         return nil;
@@ -51,7 +56,7 @@
     NSURL *url = [NSURL URLWithString:urlStr];
     NSString *arPrimaryKey = [NSString stringWithFormat:@"%@|%@|%@", url.host, url.path, params.description];
     NSPredicate *pred = [NSPredicate predicateWithFormat:@"arPrimaryKey = %@", arPrimaryKey];
-    RLMResults<__kindof ARDataCacheModel *> *caches = [self.class objectsWithPredicate:pred];
+    RLMResults<__kindof ARDataCacheModel *> *caches = [self objectsWithPredicate:pred];
     return caches.count > 0 ? caches.lastObject : nil;
 }
 
@@ -61,19 +66,19 @@
             if ([self respondsToSelector:NSSelectorFromString(key)]) {
                 id value = data[key];
                 if ([value isKindOfClass:NSDictionary.class]) {
-                    id subModel = [[self ar_classOfPropertyNamed:key] alloc];
-                    if ([subModel isKindOfClass:ARDataCacheModel.class]) {
-                        [self setValue:[subModel initDataCacheWithData:value] forKey:key];
+                    id obj = [[self ar_classOfPropertyNamed:key] alloc];
+                    if ([obj isKindOfClass:ARDataCacheModel.class]) {
+                        [self setValue:[obj initDataCacheWithData:value] forKey:key];
                     }
                 } else if ([value isKindOfClass:NSArray.class]) {
-                    id rlm = [self valueForKey:key];
-                    if ([rlm isKindOfClass:RLMArray.class]) {
-                        RLMArray *rlms = (RLMArray *)rlm;
-                        Class subClass = NSClassFromString(rlms.objectClassName);
-                        if ([subClass isSubclassOfClass:ARDataCacheModel.class]) {
+                    id obj = [self valueForKey:key];
+                    if ([obj isKindOfClass:RLMArray.class]) {
+                        RLMArray *objs = (RLMArray *)obj;
+                        Class clazz = NSClassFromString(objs.objectClassName);
+                        if ([clazz isSubclassOfClass:ARDataCacheModel.class]) {
                             NSArray *values = (NSArray *)value;
                             for (NSDictionary *item in values) {
-                                [rlms addObject:[[subClass alloc] initDataCacheWithData:item]];
+                                [objs addObject:[[clazz alloc] initDataCacheWithData:item]];
                             }
                         }
                     }
@@ -105,28 +110,78 @@
 
 - (void)updateDataCacheWithData:(NSDictionary *)data {
     if (!self.isInvalidated) {
-        NSArray *valueUpdatedProperties = [self.class valueUpdatedProperties];
-        NSString *primaryKey = [self.class primaryKey];
         [[RLMRealm defaultRealm] transactionWithBlock:^{
+            [self updateDataCacheWithDataPartInTransaction:data];
             self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[ARDataCacheManager sharedInstance].expiredInterval];
-            for (NSString *key in data.allKeys) {
-                if ([primaryKey isEqualToString:key]) {
-                    continue;
-                }
-                
-                if ([self respondsToSelector:NSSelectorFromString(key)]) {
-                    if ([valueUpdatedProperties containsObject:key]) {
-                        id value = [self valueForKey:key];
-                        if (![value isEqual:data[key]]) {
-                            
-                        }
-                    }
-                    [self setValue:data[key] forKey:key];
-                }
-            }
-            [self setValueForExtraProperties];
         }];
     }
+}
+
+- (void)updateDataCacheWithDataPartInTransaction:(NSDictionary *)data {
+    NSArray *valueUpdatedProperties = [self.class valueUpdatedProperties];
+    NSString *primaryKey = [self.class primaryKey];
+    for (NSString *key in data.allKeys) {
+        if ([primaryKey isEqualToString:key]) {
+            continue;
+        }
+        
+        if ([self respondsToSelector:NSSelectorFromString(key)]) {
+            if ([valueUpdatedProperties containsObject:key]) {
+                id value = [self valueForKey:key];
+                if ([value isEqual:data[key]]) {
+                    continue;
+                }
+            }
+            
+            id value = data[key];
+            if ([value isKindOfClass:NSDictionary.class]) {
+                Class clazz = [self ar_classOfPropertyNamed:key];
+                if ([clazz isSubclassOfClass:ARDataCacheModel.class]) {
+                    id obj = [self valueForKey:key];
+                    if (obj) {
+                        [obj updateDataCacheWithDataPartInTransaction:value];
+                    } else {
+                        [self setValue:[[clazz alloc] initDataCacheWithData:value] forKey:key];
+                    }
+                }
+            } else if ([value isKindOfClass:NSArray.class]) {
+                id obj = [self valueForKey:key];
+                if ([obj isKindOfClass:RLMArray.class]) {
+                    RLMArray *objs = (RLMArray *)obj;
+                    Class clazz = NSClassFromString(objs.objectClassName);
+                    if ([clazz isSubclassOfClass:ARDataCacheModel.class]) {
+                        NSArray *values = (NSArray *)value;
+                        NSString *primaryKey = [clazz primaryKey];
+                        if (primaryKey) {
+                            NSMutableDictionary *map = [NSMutableDictionary dictionary];
+                            for (id item in objs) {
+                                [map setObject:item forKey:[item valueForKey:primaryKey]];
+                            }
+                            for (NSDictionary *item in values) {
+                                id primaryValue = [item valueForKey:primaryKey];
+                                id primaryObj = [map objectForKey:primaryValue];
+                                if (primaryObj) {
+                                    [primaryObj updateDataCacheWithDataPartInTransaction:item];
+                                    [map removeObjectForKey:primaryValue];
+                                } else {
+                                    [objs addObject:[[clazz alloc] initDataCacheWithData:item]];
+                                }
+                            }
+                            [[RLMRealm defaultRealm] deleteObjects:map.allValues];
+                        } else {
+                            [objs removeAllObjects];
+                            for (NSDictionary *item in values) {
+                                [objs addObject:[[clazz alloc] initDataCacheWithData:item]];
+                            }
+                        }
+                    }
+                }
+            } else {
+                [self setValue:value forKey:key];
+            }
+        }
+    }
+    [self setValueForExtraProperties];
 }
 
 - (void)setValueForExtraProperties {

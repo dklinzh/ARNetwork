@@ -11,6 +11,7 @@
 @interface ARHTTPDNS () <HttpDNSDegradationDelegate>
 @property (nonatomic, assign) BOOL httpDNSEnabled;
 @property (nonatomic, strong) NSArray *ignoredHosts;
+@property (nonatomic, assign) BOOL hostLogEnabled;
 @end
 
 @implementation ARHTTPDNS
@@ -33,7 +34,9 @@
     }
     
     NSArray *ips = [super getIpsByHost:host];
-    ARLogInfo(@"<HTTPDNS> %@ -> %@", host, ips);
+    if (self.hostLogEnabled) {
+        ARLogInfo(@"<HTTPDNS> %@ -> %@", host, ips);
+    }
     return ips;
 }
 
@@ -43,7 +46,9 @@
     }
 
     NSArray *ips = [super getIpsByHostAsync:host];
-    ARLogInfo(@"<HTTPDNS> %@ -> %@", host, ips);
+    if (self.hostLogEnabled) {
+        ARLogInfo(@"<HTTPDNS> %@ -> %@", host, ips);
+    }
     return ips;
 }
 
@@ -102,6 +107,11 @@
     self.httpDNSEnabled = YES;
 }
 
+- (void)setLogEnabled:(BOOL)enable {
+    [super setLogEnabled:enable];
+    self.hostLogEnabled = enable;
+}
+
 - (void)setHttpDNSEnabled:(BOOL)httpDNSEnabled {
     _httpDNSEnabled = httpDNSEnabled;
 }
@@ -118,7 +128,9 @@
 #pragma mark - HttpDNSDegradationDelegate
 - (BOOL)shouldDegradeHTTPDNS:(NSString *)hostName {
     if ([self.ignoredHosts containsObject:hostName]) {
-        ARLogWarn(@"<HTTPDNS> %@ -> ignored", hostName);
+        if (self.hostLogEnabled) {
+            ARLogWarn(@"<HTTPDNS> %@ -> ignored", hostName);
+        }
         return YES;
     }
     return NO;

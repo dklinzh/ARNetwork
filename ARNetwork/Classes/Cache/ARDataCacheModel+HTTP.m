@@ -99,7 +99,7 @@
 #pragma mark - Private
 + (__kindof ARDataCacheModel *)oldDataCache:(ARDataCache *)cache url:(NSString *)urlStr params:(NSDictionary *)params success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure {
     __kindof ARDataCacheModel *oldData;
-    if (*cache & (ARDataCacheOnlyLoad | ARDataCacheUpdateIfNeeded)) {
+    if (*cache != ARDataCacheNone) {
         oldData = [self dataCacheWithUrl:urlStr params:params];
         if (oldData) {
             ARLogDebug(@"Cache<%@>: %@", NSStringFromClass(self.class), oldData);
@@ -131,7 +131,6 @@
         return;
     }
     
-    __kindof ARDataCacheModel *newData = [[self alloc] initDataCacheWithData:data];
     if (cache & (ARDataCacheOnlyUpdate | ARDataCacheUpdateIfNeeded)) {
         if (oldData) {
             [oldData updateDataCacheWithData:data];
@@ -139,6 +138,7 @@
                 success(oldData, msg, NO);
             }
         } else {
+            __kindof ARDataCacheModel *newData = [[self alloc] initDataCacheWithData:data];
             [newData addDataCacheWithUrl:urlStr params:params];
             if (success) {
                 success(newData, msg, NO);
@@ -146,6 +146,7 @@
         }
     } else {
         if (success) {
+            __kindof ARDataCacheModel *newData = [[self alloc] initDataCacheWithData:data];
             success(newData, msg, NO);
         }
     }

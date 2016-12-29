@@ -16,6 +16,8 @@
 
 + (instancetype)dataCache:(NSUInteger)index;
 
++ (NSUInteger)dataCacheCount;
+
 + (NSArray *)valueUpdatedProperties;
 
 - (instancetype)initDataCacheWithData:(NSDictionary *)data;

@@ -63,7 +63,7 @@ static ARHTTPManager *sharedInstance = nil;
     NSURLSessionDataTask *task = [self GET:urlStr parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [self taskfailure:failure withError:error forKey:taskKey];
+        [self taskFailure:failure withError:error forKey:taskKey];
     }];
     return task;
 }
@@ -86,7 +86,32 @@ static ARHTTPManager *sharedInstance = nil;
     NSURLSessionDataTask *task = [self POST:urlStr parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [self taskfailure:failure withError:error forKey:taskKey];
+        [self taskFailure:failure withError:error forKey:taskKey];
+    }];
+    return task;
+}
+
++ (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params filePath:(NSString *)filePath formName:(NSString *)formName progress:(void (^)(NSProgress *uploadProgress))uploadProgress success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
+    NSURLSessionDataTask *task = [[self sharedInstance] postURL:urlStr params:params filePath:filePath formName:formName progress:uploadProgress success:success failure:failure];
+    return task;
+}
+
+- (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params filePath:(NSString *)filePath formName:(NSString *)formName progress:(void (^)(NSProgress *uploadProgress))uploadProgress success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
+    urlStr = [self delegateUrlIfNeeded:urlStr];
+    if (!urlStr) {
+        ARLogError(@"HTTP URL IS NULL.");
+        if (failure) {
+            failure(0, @"HTTP URL IS NULL.");
+        }
+        return nil;
+    }
+    NSString *taskKey = [self taskKeyForUrl:urlStr];
+    NSURLSessionDataTask *task = [self POST:urlStr parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+        [formData appendPartWithFileURL:[NSURL fileURLWithPath:filePath] name:formName error:nil];
+    } progress:uploadProgress success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey];
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        [self taskFailure:failure withError:error forKey:taskKey];
     }];
     return task;
 }
@@ -109,7 +134,7 @@ static ARHTTPManager *sharedInstance = nil;
     NSURLSessionDataTask *task = [self PUT:urlStr parameters:params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [self taskfailure:failure withError:error forKey:taskKey];
+        [self taskFailure:failure withError:error forKey:taskKey];
     }];
     return task;
 }
@@ -132,7 +157,7 @@ static ARHTTPManager *sharedInstance = nil;
     NSURLSessionDataTask *task = [self PATCH:urlStr parameters:params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [self taskfailure:failure withError:error forKey:taskKey];
+        [self taskFailure:failure withError:error forKey:taskKey];
     }];
     return task;
 }
@@ -155,7 +180,7 @@ static ARHTTPManager *sharedInstance = nil;
     NSURLSessionDataTask *task = [self DELETE:urlStr parameters:params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [self taskfailure:failure withError:error forKey:taskKey];
+        [self taskFailure:failure withError:error forKey:taskKey];
     }];
     return task;
 }
@@ -176,7 +201,7 @@ static ARHTTPManager *sharedInstance = nil;
     }
     NSString *taskKey = [self taskKeyForUrl:urlStr];
     NSURLSessionDataTask *task = [self HEAD:urlStr parameters:params success:success failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [self taskfailure:failure withError:error forKey:taskKey];
+        [self taskFailure:failure withError:error forKey:taskKey];
     }];
     return task;
 }
@@ -204,7 +229,7 @@ static ARHTTPManager *sharedInstance = nil;
     }
 }
 
-- (void)taskfailure:(ARHTTPResponseFailure)failure withError:(NSError *)error forKey:(NSString *)key {
+- (void)taskFailure:(ARHTTPResponseFailure)failure withError:(NSError *)error forKey:(NSString *)key {
     ARLogError(@"Response<%@>:\n%@", key, error);
     
     if ([self.httpOperation respondsToSelector:@selector(ar_onFailure:withError:)]) {

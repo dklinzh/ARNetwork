@@ -11,7 +11,7 @@
 @protocol ARHTTPRequestDelegate <NSObject>
 
 @optional
-- (NSString *)ar_taskKeyForRequestURL:(NSString *)urlStr;
+- (NSString *)ar_taskKeyForRequestURL:(NSString *)urlStr params:(NSDictionary *)params;
 
 @end
 

@@ -12,6 +12,7 @@ static const NSTimeInterval kARDefaultTimeoutInterval = 30;
 
 @interface ARHTTPManager ()
 @property (nonatomic, strong) NSMutableSet<NSString *> *acceptableContentTypes;
+@property (nonatomic, strong) NSMutableDictionary<NSString *, NSURLSessionDataTask *> *taskCollections;
 @end
 
 @implementation ARHTTPManager
@@ -59,7 +60,7 @@ static ARHTTPManager *sharedInstance = nil;
         }
         return nil;
     }
-    NSString *taskKey = [self taskKeyForUrl:urlStr];
+    NSString *taskKey = [self taskKeyForUrl:urlStr params:params];
     NSURLSessionDataTask *task = [self GET:urlStr parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
@@ -82,7 +83,7 @@ static ARHTTPManager *sharedInstance = nil;
         }
         return nil;
     }
-    NSString *taskKey = [self taskKeyForUrl:urlStr];
+    NSString *taskKey = [self taskKeyForUrl:urlStr params:params];
     NSURLSessionDataTask *task = [self POST:urlStr parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
@@ -105,7 +106,7 @@ static ARHTTPManager *sharedInstance = nil;
         }
         return nil;
     }
-    NSString *taskKey = [self taskKeyForUrl:urlStr];
+    NSString *taskKey = [self taskKeyForUrl:urlStr params:params];
     NSURLSessionDataTask *task = [self POST:urlStr parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
         [formData appendPartWithFileURL:[NSURL fileURLWithPath:filePath] name:formName error:nil];
     } progress:uploadProgress success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
@@ -130,7 +131,7 @@ static ARHTTPManager *sharedInstance = nil;
         }
         return nil;
     }
-    NSString *taskKey = [self taskKeyForUrl:urlStr];
+    NSString *taskKey = [self taskKeyForUrl:urlStr params:params];
     NSURLSessionDataTask *task = [self PUT:urlStr parameters:params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
@@ -153,7 +154,7 @@ static ARHTTPManager *sharedInstance = nil;
         }
         return nil;
     }
-    NSString *taskKey = [self taskKeyForUrl:urlStr];
+    NSString *taskKey = [self taskKeyForUrl:urlStr params:params];
     NSURLSessionDataTask *task = [self PATCH:urlStr parameters:params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
@@ -176,7 +177,7 @@ static ARHTTPManager *sharedInstance = nil;
         }
         return nil;
     }
-    NSString *taskKey = [self taskKeyForUrl:urlStr];
+    NSString *taskKey = [self taskKeyForUrl:urlStr params:params];
     NSURLSessionDataTask *task = [self DELETE:urlStr parameters:params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
@@ -199,7 +200,7 @@ static ARHTTPManager *sharedInstance = nil;
         }
         return nil;
     }
-    NSString *taskKey = [self taskKeyForUrl:urlStr];
+    NSString *taskKey = [self taskKeyForUrl:urlStr params:params];
     NSURLSessionDataTask *task = [self HEAD:urlStr parameters:params success:success failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         [self taskFailure:failure withError:error forKey:taskKey];
     }];
@@ -211,10 +212,10 @@ static ARHTTPManager *sharedInstance = nil;
     return urlStr;
 }
 
-- (NSString *)taskKeyForUrl:(NSString *)urlStr {
+- (NSString *)taskKeyForUrl:(NSString *)urlStr params:(NSDictionary *)params {
     NSString *taskKey;
-    if ([self.httpOperation respondsToSelector:@selector(ar_taskKeyForRequestURL:)]) {
-        taskKey = [self.httpOperation ar_taskKeyForRequestURL:urlStr];
+    if ([self.httpOperation respondsToSelector:@selector(ar_taskKeyForRequestURL:params:)]) {
+        taskKey = [self.httpOperation ar_taskKeyForRequestURL:urlStr params:params];
     }
     
     ARLogDebug(@"Request<%@>:\n%@", taskKey, urlStr);

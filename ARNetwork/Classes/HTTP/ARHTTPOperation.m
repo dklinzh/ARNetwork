@@ -11,7 +11,7 @@
 @implementation ARHTTPOperation
 
 #pragma mark - ARHTTPRequestDelegate
-- (NSString *)ar_taskKeyForRequestURL:(NSString *)urlStr {
+- (NSString *)ar_taskKeyForRequestURL:(NSString *)urlStr params:(NSDictionary *)params {
     return urlStr;
 }
 

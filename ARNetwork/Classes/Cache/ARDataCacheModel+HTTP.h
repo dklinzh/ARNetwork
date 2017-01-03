@@ -14,13 +14,13 @@ typedef void(^ARDataCacheFailure)(NSInteger code, NSString *msg);
 
 @interface ARDataCacheModel (HTTP)
 
-+ (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARDataCache)cache success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure;
++ (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure;
 
-+ (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARDataCache)cache success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure;
++ (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure;
 
-+ (NSURLSessionDataTask *)putURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARDataCache)cache success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure;
++ (NSURLSessionDataTask *)putURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure;
 
-+ (NSURLSessionDataTask *)patchURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARDataCache)cache success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure;
++ (NSURLSessionDataTask *)patchURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure;
 
-+ (NSURLSessionDataTask *)deleteURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARDataCache)cache success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure;
++ (NSURLSessionDataTask *)deleteURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure;
 @end

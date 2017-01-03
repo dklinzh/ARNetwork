@@ -6,13 +6,13 @@
 //  Copyright © 2016 Daniel. All rights reserved.
 //
 
-typedef NS_ENUM(NSInteger, ARDataCache) {
-    ARDataCacheNone = 0,
-    ARDataCacheOnlyLoad = 1,
-    ARDataCacheOnlyUpdate = 1 << 1,
-    ARDataCacheUpdateIfNeeded = 1 << 2,
-    ARDataCacheLoadAndUpdate = ARDataCacheOnlyLoad | ARDataCacheOnlyUpdate,
-    ARDataCacheLoadAndUpdateIfNeeded = ARDataCacheOnlyLoad | ARDataCacheUpdateIfNeeded,
+typedef NS_ENUM(NSInteger, ARCacheType) {
+    ARCacheTypeNone = 0,
+    ARCacheTypeOnlyLoad = 1,
+    ARCacheTypeOnlyUpdate = 1 << 1,
+    ARCacheTypeUpdateIfNeeded = 1 << 2,
+    ARCacheTypeLoadAndUpdate = ARCacheTypeOnlyLoad | ARCacheTypeOnlyUpdate,
+    ARCacheTypeLoadAndUpdateIfNeeded = ARCacheTypeOnlyLoad | ARCacheTypeUpdateIfNeeded,
 };
 
 typedef NS_ENUM(NSInteger, ARCacheError) {

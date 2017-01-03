@@ -16,14 +16,14 @@
 
 @implementation ARDataCacheModel (HTTP)
 #pragma mark - HTTP
-+ (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARDataCache)cache success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure {
-    id oldData = [self oldDataCache:&cache url:urlStr params:params success:success failure:failure];
-    if (cache == ARDataCacheOnlyLoad) {
++ (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure {
+    id oldData = [self oldDataCache:&cacheType url:urlStr params:params success:success failure:failure];
+    if (cacheType == ARCacheTypeOnlyLoad) {
         return nil;
     }
     
     NSURLSessionDataTask *task = [[ARHTTPManager sharedInstance] getURL:urlStr params:params success:^(id data, NSString *msg) {
-        [self newDataCache:cache url:urlStr params:params oldData:oldData dataSource:data msg:msg success:success failure:failure];
+        [self newDataCache:cacheType url:urlStr params:params oldData:oldData dataSource:data msg:msg success:success failure:failure];
     } failure:^(NSInteger code, NSString *msg) {
         if (failure) {
             failure(code, msg);
@@ -32,14 +32,14 @@
     return task;
 }
 
-+ (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARDataCache)cache success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure {
-    id oldData = [self oldDataCache:&cache url:urlStr params:params success:success failure:failure];
-    if (cache == ARDataCacheOnlyLoad) {
++ (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure {
+    id oldData = [self oldDataCache:&cacheType url:urlStr params:params success:success failure:failure];
+    if (cacheType == ARCacheTypeOnlyLoad) {
         return nil;
     }
     
     NSURLSessionDataTask *task = [[ARHTTPManager sharedInstance] postURL:urlStr params:params success:^(id data, NSString *msg) {
-        [self newDataCache:cache url:urlStr params:params oldData:oldData dataSource:data msg:msg success:success failure:failure];
+        [self newDataCache:cacheType url:urlStr params:params oldData:oldData dataSource:data msg:msg success:success failure:failure];
     } failure:^(NSInteger code, NSString *msg) {
         if (failure) {
             failure(code, msg);
@@ -48,14 +48,14 @@
     return task;
 }
 
-+ (NSURLSessionDataTask *)putURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARDataCache)cache success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure {
-    id oldData = [self oldDataCache:&cache url:urlStr params:params success:success failure:failure];
-    if (cache == ARDataCacheOnlyLoad) {
++ (NSURLSessionDataTask *)putURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure {
+    id oldData = [self oldDataCache:&cacheType url:urlStr params:params success:success failure:failure];
+    if (cacheType == ARCacheTypeOnlyLoad) {
         return nil;
     }
     
     NSURLSessionDataTask *task = [[ARHTTPManager sharedInstance] putURL:urlStr params:params success:^(id data, NSString *msg) {
-        [self newDataCache:cache url:urlStr params:params oldData:oldData dataSource:data msg:msg success:success failure:failure];
+        [self newDataCache:cacheType url:urlStr params:params oldData:oldData dataSource:data msg:msg success:success failure:failure];
     } failure:^(NSInteger code, NSString *msg) {
         if (failure) {
             failure(code, msg);
@@ -64,14 +64,14 @@
     return task;
 }
 
-+ (NSURLSessionDataTask *)patchURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARDataCache)cache success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure {
-    id oldData = [self oldDataCache:&cache url:urlStr params:params success:success failure:failure];
-    if (cache == ARDataCacheOnlyLoad) {
++ (NSURLSessionDataTask *)patchURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure {
+    id oldData = [self oldDataCache:&cacheType url:urlStr params:params success:success failure:failure];
+    if (cacheType == ARCacheTypeOnlyLoad) {
         return nil;
     }
     
     NSURLSessionDataTask *task = [[ARHTTPManager sharedInstance] patchURL:urlStr params:params success:^(id data, NSString *msg) {
-        [self newDataCache:cache url:urlStr params:params oldData:oldData dataSource:data msg:msg success:success failure:failure];
+        [self newDataCache:cacheType url:urlStr params:params oldData:oldData dataSource:data msg:msg success:success failure:failure];
     } failure:^(NSInteger code, NSString *msg) {
         if (failure) {
             failure(code, msg);
@@ -80,14 +80,14 @@
     return task;
 }
 
-+ (NSURLSessionDataTask *)deleteURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARDataCache)cache success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure {
-    id oldData = [self oldDataCache:&cache url:urlStr params:params success:success failure:failure];
-    if (cache == ARDataCacheOnlyLoad) {
++ (NSURLSessionDataTask *)deleteURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure {
+    id oldData = [self oldDataCache:&cacheType url:urlStr params:params success:success failure:failure];
+    if (cacheType == ARCacheTypeOnlyLoad) {
         return nil;
     }
     
     NSURLSessionDataTask *task = [[ARHTTPManager sharedInstance] deleteURL:urlStr params:params success:^(id data, NSString *msg) {
-        [self newDataCache:cache url:urlStr params:params oldData:oldData dataSource:data msg:msg success:success failure:failure];
+        [self newDataCache:cacheType url:urlStr params:params oldData:oldData dataSource:data msg:msg success:success failure:failure];
     } failure:^(NSInteger code, NSString *msg) {
         if (failure) {
             failure(code, msg);
@@ -97,31 +97,31 @@
 }
 
 #pragma mark - Private
-+ (__kindof ARDataCacheModel *)oldDataCache:(ARDataCache *)cache url:(NSString *)urlStr params:(NSDictionary *)params success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure {
++ (__kindof ARDataCacheModel *)oldDataCache:(ARCacheType *)cacheType url:(NSString *)urlStr params:(NSDictionary *)params success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure {
     __kindof ARDataCacheModel *oldData;
-    if (*cache != ARDataCacheNone) {
+    if (*cacheType != ARCacheTypeNone) {
         oldData = [self dataCacheWithUrl:urlStr params:params];
         if (oldData) {
             ARLogDebug(@"Cache<%@>: %@", NSStringFromClass(self.class), oldData);
             
-            if ((*cache & ARDataCacheOnlyLoad) && success) {
+            if ((*cacheType & ARCacheTypeOnlyLoad) && success) {
                 success(oldData, nil, YES);
             }
-            if ((*cache & ARDataCacheUpdateIfNeeded) && (oldData.arExpiredTime.timeIntervalSinceNow > 0)) {
-                *cache = ARDataCacheOnlyLoad;
+            if ((*cacheType & ARCacheTypeUpdateIfNeeded) && (oldData.arExpiredTime.timeIntervalSinceNow > 0)) {
+                *cacheType = ARCacheTypeOnlyLoad;
             }
         } else {
             ARLogWarn(@"Cache<%@>: %d, %@", NSStringFromClass(self.class), ARCacheErrorNone,  @"Have no cache in local.");
             
-            if (*cache == ARDataCacheOnlyLoad) {
-                *cache |= ARDataCacheOnlyUpdate;
+            if (*cacheType == ARCacheTypeOnlyLoad) {
+                *cacheType |= ARCacheTypeOnlyUpdate;
             }
         }
     }
     return oldData;
 }
 
-+ (void)newDataCache:(ARDataCache)cache url:(NSString *)urlStr params:(NSDictionary *)params oldData:(__kindof ARDataCacheModel *)oldData dataSource:(id)data msg:(NSString *)msg success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure {
++ (void)newDataCache:(ARCacheType)cacheType url:(NSString *)urlStr params:(NSDictionary *)params oldData:(__kindof ARDataCacheModel *)oldData dataSource:(id)data msg:(NSString *)msg success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure {
     if (![data isKindOfClass:NSDictionary.class]/* && ![data isKindOfClass:NSArray.class]*/) {
         if (failure) {
             failure(ARCacheErrorSource, @"Format of data source is wrong.");
@@ -131,7 +131,7 @@
         return;
     }
     
-    if (cache & (ARDataCacheOnlyUpdate | ARDataCacheUpdateIfNeeded)) {
+    if (cacheType & (ARCacheTypeOnlyUpdate | ARCacheTypeUpdateIfNeeded)) {
         if (oldData) {
             [oldData updateDataCacheWithData:data];
             if (success) {

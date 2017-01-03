@@ -13,23 +13,23 @@ typedef void(^ARResponseCacheSuccess)(id data, NSString *msg, BOOL isCached);
 typedef void(^ARResponseCacheFailure)(NSInteger code, NSString *msg);
 
 @interface ARHTTPManager (Cache)
-+ (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARDataCache)cache success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
++ (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
 
-- (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARDataCache)cache success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
+- (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
 
-+ (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARDataCache)cache success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
++ (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
 
-- (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARDataCache)cache success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
+- (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
 
-+ (NSURLSessionDataTask *)putURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARDataCache)cache success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
++ (NSURLSessionDataTask *)putURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
 
-- (NSURLSessionDataTask *)putURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARDataCache)cache success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
+- (NSURLSessionDataTask *)putURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
 
-+ (NSURLSessionDataTask *)patchURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARDataCache)cache success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
++ (NSURLSessionDataTask *)patchURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
 
-- (NSURLSessionDataTask *)patchURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARDataCache)cache success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
+- (NSURLSessionDataTask *)patchURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
 
-+ (NSURLSessionDataTask *)deleteURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARDataCache)cache success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
++ (NSURLSessionDataTask *)deleteURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
 
-- (NSURLSessionDataTask *)deleteURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARDataCache)cache success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
+- (NSURLSessionDataTask *)deleteURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
 @end

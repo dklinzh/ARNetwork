@@ -32,7 +32,8 @@
 }
 
 + (instancetype)dataCache {
-    return [self dataCache:0];
+    RLMResults<__kindof ARDataCacheModel *> *results = [self allObjects];
+    return results.lastObject;
 }
 
 + (instancetype)dataCache:(NSUInteger)index {

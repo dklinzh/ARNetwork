@@ -15,5 +15,5 @@
 
 + (void)initConfigurationWithSchemaVersion:(uint64_t)version;
 
-+ (void)clearAllDataCache;
++ (void)allClear;
 @end

@@ -41,7 +41,7 @@ static ARDataCacheManager *sharedInstance = nil;
     ARLogInfo(@"Realm: %@", [RLMRealm defaultRealm].configuration.fileURL);
 }
 
-+ (void)clearAllDataCache {
++ (void)allClear {
     RLMRealm *realm = [RLMRealm defaultRealm];
     [realm beginWriteTransaction];
     [realm deleteAllObjects];

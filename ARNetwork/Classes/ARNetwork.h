@@ -24,4 +24,7 @@
 #import <ARNetwork/ARDataCacheModel.h>
 #import <ARNetwork/ARDataCacheModel+HTTP.h>
 
+//Detector
+#import <ARNetwork/ARWiFiDetector.h>
+
 #endif /* ARNetwork_h */

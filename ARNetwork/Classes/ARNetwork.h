@@ -26,5 +26,6 @@
 
 //Detector
 #import <ARNetwork/ARWiFiDetector.h>
+#import <ARNetwork/ARNetworkIndicator.h>
 
 #endif /* ARNetwork_h */

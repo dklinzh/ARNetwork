@@ -23,6 +23,10 @@ static const NSTimeInterval kARDefaultTimeoutInterval = 30;
     if (self = [super init]) {
         self.requestSerializer.timeoutInterval = self.timeoutInterval;
         self.responseSerializer.acceptableContentTypes = self.acceptableContentTypes;
+//        AFSecurityPolicy *policy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+//        [policy setValidatesDomainName:NO];
+//        [policy setAllowInvalidCertificates:YES];
+//        self.securityPolicy = policy;
     }
     return self;
 }
@@ -60,11 +64,22 @@ static ARHTTPManager *sharedInstance = nil;
         }
         return nil;
     }
+#ifdef DEBUG
+    CFTimeInterval startTime = CACurrentMediaTime();
     NSString *taskKey = [self taskKeyForUrl:urlStr params:params];
+#endif
     NSURLSessionDataTask *task = [self GET:urlStr parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey];
+#ifdef DEBUG
+        [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey startTime:startTime];
+#else
+        [self taskSuccess:success failure:failure withData:responseObject];
+#endif
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [self taskFailure:failure withError:error forKey:taskKey];
+#ifdef DEBUG
+        [self taskFailure:failure withError:error forKey:taskKey startTime:startTime];
+#else
+        [self taskFailure:failure withError:error];
+#endif
     }];
     return task;
 }
@@ -83,11 +98,22 @@ static ARHTTPManager *sharedInstance = nil;
         }
         return nil;
     }
+#ifdef DEBUG
+    CFTimeInterval startTime = CACurrentMediaTime();
     NSString *taskKey = [self taskKeyForUrl:urlStr params:params];
+#endif
     NSURLSessionDataTask *task = [self POST:urlStr parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey];
+#ifdef DEBUG
+        [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey startTime:startTime];
+#else
+        [self taskSuccess:success failure:failure withData:responseObject];
+#endif
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [self taskFailure:failure withError:error forKey:taskKey];
+#ifdef DEBUG
+        [self taskFailure:failure withError:error forKey:taskKey startTime:startTime];
+#else
+        [self taskFailure:failure withError:error];
+#endif
     }];
     return task;
 }
@@ -106,13 +132,24 @@ static ARHTTPManager *sharedInstance = nil;
         }
         return nil;
     }
+#ifdef DEBUG
+    CFTimeInterval startTime = CACurrentMediaTime();
     NSString *taskKey = [self taskKeyForUrl:urlStr params:params];
+#endif
     NSURLSessionDataTask *task = [self POST:urlStr parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
         [formData appendPartWithFileURL:[NSURL fileURLWithPath:filePath] name:formName error:nil];
     } progress:uploadProgress success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey];
+#ifdef DEBUG
+        [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey startTime:startTime];
+#else
+        [self taskSuccess:success failure:failure withData:responseObject];
+#endif
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [self taskFailure:failure withError:error forKey:taskKey];
+#ifdef DEBUG
+        [self taskFailure:failure withError:error forKey:taskKey startTime:startTime];
+#else
+        [self taskFailure:failure withError:error];
+#endif
     }];
     return task;
 }
@@ -131,11 +168,22 @@ static ARHTTPManager *sharedInstance = nil;
         }
         return nil;
     }
+#ifdef DEBUG
+    CFTimeInterval startTime = CACurrentMediaTime();
     NSString *taskKey = [self taskKeyForUrl:urlStr params:params];
+#endif
     NSURLSessionDataTask *task = [self PUT:urlStr parameters:params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey];
+#ifdef DEBUG
+        [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey startTime:startTime];
+#else
+        [self taskSuccess:success failure:failure withData:responseObject];
+#endif
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [self taskFailure:failure withError:error forKey:taskKey];
+#ifdef DEBUG
+        [self taskFailure:failure withError:error forKey:taskKey startTime:startTime];
+#else
+        [self taskFailure:failure withError:error];
+#endif
     }];
     return task;
 }
@@ -154,11 +202,22 @@ static ARHTTPManager *sharedInstance = nil;
         }
         return nil;
     }
+#ifdef DEBUG
+    CFTimeInterval startTime = CACurrentMediaTime();
     NSString *taskKey = [self taskKeyForUrl:urlStr params:params];
+#endif
     NSURLSessionDataTask *task = [self PATCH:urlStr parameters:params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey];
+#ifdef DEBUG
+        [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey startTime:startTime];
+#else
+        [self taskSuccess:success failure:failure withData:responseObject];
+#endif
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [self taskFailure:failure withError:error forKey:taskKey];
+#ifdef DEBUG
+        [self taskFailure:failure withError:error forKey:taskKey startTime:startTime];
+#else
+        [self taskFailure:failure withError:error];
+#endif
     }];
     return task;
 }
@@ -177,11 +236,22 @@ static ARHTTPManager *sharedInstance = nil;
         }
         return nil;
     }
+#ifdef DEBUG
+    CFTimeInterval startTime = CACurrentMediaTime();
     NSString *taskKey = [self taskKeyForUrl:urlStr params:params];
+#endif
     NSURLSessionDataTask *task = [self DELETE:urlStr parameters:params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey];
+#ifdef DEBUG
+        [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey startTime:startTime];
+#else
+        [self taskSuccess:success failure:failure withData:responseObject];
+#endif
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [self taskFailure:failure withError:error forKey:taskKey];
+#ifdef DEBUG
+        [self taskFailure:failure withError:error forKey:taskKey startTime:startTime];
+#else
+        [self taskFailure:failure withError:error];
+#endif
     }];
     return task;
 }
@@ -200,9 +270,16 @@ static ARHTTPManager *sharedInstance = nil;
         }
         return nil;
     }
+#ifdef DEBUG
+    CFTimeInterval startTime = CACurrentMediaTime();
     NSString *taskKey = [self taskKeyForUrl:urlStr params:params];
+#endif
     NSURLSessionDataTask *task = [self HEAD:urlStr parameters:params success:success failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [self taskFailure:failure withError:error forKey:taskKey];
+#ifdef DEBUG
+        [self taskFailure:failure withError:error forKey:taskKey startTime:startTime];
+#else
+        [self taskFailure:failure withError:error];
+#endif
     }];
     return task;
 }
@@ -222,21 +299,33 @@ static ARHTTPManager *sharedInstance = nil;
     return taskKey;
 }
 
-- (void)taskSuccess:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure withData:(id)data forKey:(NSString *)key {
-    ARLogDebug(@"Response<%@>:\n%@", key, data);
-    
+- (void)taskSuccess:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure withData:(id)data {
     if ([self.httpOperation respondsToSelector:@selector(ar_onSuccess:onFailure:withData:)]) {
         [self.httpOperation ar_onSuccess:success onFailure:failure withData:data];
     }
 }
 
-- (void)taskFailure:(ARHTTPResponseFailure)failure withError:(NSError *)error forKey:(NSString *)key {
-    ARLogError(@"Response<%@>:\n%@", key, error);
-    
+- (void)taskFailure:(ARHTTPResponseFailure)failure withError:(NSError *)error {
     if ([self.httpOperation respondsToSelector:@selector(ar_onFailure:withError:)]) {
         [self.httpOperation ar_onFailure:failure withError:error];
     }
 }
+
+#ifdef DEBUG
+- (void)taskSuccess:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure withData:(id)data forKey:(NSString *)key startTime:(CFTimeInterval)startTime {
+    [self taskSuccess:success failure:failure withData:data];
+    
+    CFTimeInterval endTime = CACurrentMediaTime();
+    ARLogDebug(@"Response<%@>: %.f ms\n%@", key, (endTime - startTime) * 1000, data);
+}
+
+- (void)taskFailure:(ARHTTPResponseFailure)failure withError:(NSError *)error forKey:(NSString *)key startTime:(CFTimeInterval)startTime {
+    [self taskFailure:failure withError:error];
+    
+    CFTimeInterval endTime = CACurrentMediaTime();
+    ARLogError(@"Response<%@>: %.f ms\n%@", key, (endTime - startTime) * 1000, error);
+}
+#endif
 
 #pragma mark -
 - (NSTimeInterval)timeoutInterval {

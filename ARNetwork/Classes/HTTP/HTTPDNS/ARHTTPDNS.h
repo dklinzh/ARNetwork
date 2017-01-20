@@ -18,5 +18,9 @@
 
 + (NSString *)getIpURLByHostURL:(NSString *)hostUrl;
 
++ (NSString *)getIpURLByHostURL:(NSString *)hostUrl onDNS:(void(^)(NSString *host, NSString *ip))block;
+
 + (NSString *)getIpURLByHostURLAsync:(NSString *)hostUrl;
+
++ (NSString *)getIpURLByHostURLAsync:(NSString *)hostUrl onDNS:(void(^)(NSString *host, NSString *ip))block;
 @end

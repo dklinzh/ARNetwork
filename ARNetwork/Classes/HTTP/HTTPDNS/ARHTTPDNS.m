@@ -55,6 +55,10 @@
 #pragma mark -
 
 + (NSString *)getIpURLByHostURL:(NSString *)hostUrl {
+    return [self getIpURLByHostURL:hostUrl onDNS:nil];
+}
+
++ (NSString *)getIpURLByHostURL:(NSString *)hostUrl onDNS:(void(^)(NSString *host, NSString *ip))block {
     if (![[self sharedInstance] httpDNSEnabled]) {
         return hostUrl;
     }
@@ -67,16 +71,28 @@
     
     NSString *ip = [[self sharedInstance] getIpByHostInURLFormat:host];
     if (ip) {
+        if (block) {
+            block(host, ip);
+        }
+        
         NSRange hostFirstRange = [hostUrl rangeOfString: host];
         if (hostFirstRange.location != NSNotFound) {
             NSString* ipUrl = [hostUrl stringByReplacingCharactersInRange:hostFirstRange withString:ip];
             return ipUrl;
         }
     }
+    
+    if (block) {
+        block(host, nil);
+    }
     return hostUrl;
 }
 
 + (NSString *)getIpURLByHostURLAsync:(NSString *)hostUrl {
+    return [self getIpURLByHostURLAsync:hostUrl onDNS:nil];
+}
+
++ (NSString *)getIpURLByHostURLAsync:(NSString *)hostUrl onDNS:(void(^)(NSString *host, NSString *ip))block {
     if (![[self sharedInstance] httpDNSEnabled]) {
         return hostUrl;
     }
@@ -89,11 +105,19 @@
     
     NSString *ip = [[self sharedInstance] getIpByHostAsyncInURLFormat:host];
     if (ip) {
+        if (block) {
+            block(host, ip);
+        }
+        
         NSRange hostFirstRange = [hostUrl rangeOfString: host];
         if (hostFirstRange.location != NSNotFound) {
             NSString* ipUrl = [hostUrl stringByReplacingCharactersInRange:hostFirstRange withString:ip];
             return ipUrl;
         }
+    }
+    
+    if (block) {
+        block(host, nil);
     }
     return hostUrl;
 }

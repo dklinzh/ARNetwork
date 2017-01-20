@@ -15,6 +15,10 @@
 
 @implementation ARHTTPManager (HTTPDNS)
 - (NSString *)delegateUrlIfNeeded:(NSString *)urlStr {
-    return [ARHTTPDNS getIpURLByHostURLAsync:urlStr];
+    return [ARHTTPDNS getIpURLByHostURLAsync:urlStr onDNS:^(NSString *host, NSString *ip) {
+        if (ip) {
+            [self.requestSerializer setValue:host forHTTPHeaderField:@"Host"];
+        }
+    }];
 }
 @end

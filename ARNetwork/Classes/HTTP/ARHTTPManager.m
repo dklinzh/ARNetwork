@@ -23,9 +23,10 @@ static const NSTimeInterval kARDefaultTimeoutInterval = 30;
     if (self = [super init]) {
         self.requestSerializer.timeoutInterval = self.timeoutInterval;
         self.responseSerializer.acceptableContentTypes = self.acceptableContentTypes;
-//        AFSecurityPolicy *policy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
-//        [policy setValidatesDomainName:NO];
-//        [policy setAllowInvalidCertificates:YES];
+        
+//        AFSecurityPolicy *policy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeCertificate];
+//        policy.validatesDomainName = NO;
+//        policy.allowInvalidCertificates = YES;
 //        self.securityPolicy = policy;
     }
     return self;

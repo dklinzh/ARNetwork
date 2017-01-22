@@ -10,11 +10,13 @@
 #import "AlicloudHttpDNS.h" //* https://help.aliyun.com/document_detail/30141.html
 
 @interface ARHTTPDNS : HttpDnsService
+@property (nonatomic, assign, getter=isHttpDNSEnabled) BOOL httpDNSEnabled;
+
 - (void)seAccountId:(NSInteger)accountId;
 
-- (void)setHttpDNSEnabled:(BOOL)httpDNSEnabled;
-
 - (void)setPreResolveHosts:(NSArray *)preResolveHosts ignoreddHosts:(NSArray *)ignoredHosts;
+
+- (NSString *)getHostByIP:(NSString *)ip;
 
 + (NSString *)getIpURLByHostURL:(NSString *)hostUrl;
 

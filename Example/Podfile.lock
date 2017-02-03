@@ -14,23 +14,23 @@ PODS:
   - AFNetworking/Serialization (3.1.0)
   - AFNetworking/UIKit (3.1.0):
     - AFNetworking/NSURLSession
-  - ARNetwork (0.2.9):
-    - ARNetwork/Cache (= 0.2.9)
-    - ARNetwork/Detector (= 0.2.9)
-    - ARNetwork/HTTP (= 0.2.9)
-    - ARNetwork/HTTPDNS (= 0.2.9)
-  - ARNetwork/Cache (0.2.9):
+  - ARNetwork (0.3.0):
+    - ARNetwork/Cache (= 0.3.0)
+    - ARNetwork/Detector (= 0.3.0)
+    - ARNetwork/HTTP (= 0.3.0)
+    - ARNetwork/HTTPDNS (= 0.3.0)
+  - ARNetwork/Cache (0.3.0):
     - ARNetwork/HTTP
     - Realm (~> 2.1)
-  - ARNetwork/Detector (0.2.9)
-  - ARNetwork/HTTP (0.2.9):
+  - ARNetwork/Detector (0.3.0)
+  - ARNetwork/HTTP (0.3.0):
     - AFNetworking (~> 3.1)
-  - ARNetwork/HTTPDNS (0.2.9):
+  - ARNetwork/HTTPDNS (0.3.0):
     - ARNetwork/HTTP
   - Expecta (1.0.5)
-  - Realm (2.1.2):
-    - Realm/Headers (= 2.1.2)
-  - Realm/Headers (2.1.2)
+  - Realm (2.3.0):
+    - Realm/Headers (= 2.3.0)
+  - Realm/Headers (2.3.0)
   - Specta (1.0.5)
 
 DEPENDENCIES:
@@ -44,9 +44,9 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
-  ARNetwork: 1ca78f2740d46e62450e8e58223e0d2d9e143a9c
+  ARNetwork: ec64cc5e3153a6a5bda22a84371629ce80a42c01
   Expecta: e1c022fcd33910b6be89c291d2775b3fe27a89fe
-  Realm: efe855f4d977c8ce5a82d3116d9f1ff155a6550c
+  Realm: 69d7de9aa569a11eed490aaabc8f2109e3985ecf
   Specta: ac94d110b865115fe60ff2c6d7281053c6f8e8a2
 
 PODFILE CHECKSUM: 15953a9586980d65bf1221c3ab07b5857917a832

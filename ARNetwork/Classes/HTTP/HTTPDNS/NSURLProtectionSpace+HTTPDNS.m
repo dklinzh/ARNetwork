@@ -14,9 +14,12 @@
 @implementation NSURLProtectionSpace (HTTPDNS)
 
 + (void)load {
-//    method_exchangeImplementations(class_getInstanceMethod(self, @selector(host)), class_getInstanceMethod(self, @selector(ar_host)));
-    
-     [self ar_swizzle:@selector(host) with:(IMP)ar_host store:(IMP *)&hostIMP];
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        //    method_exchangeImplementations(class_getInstanceMethod(self, @selector(host)), class_getInstanceMethod(self, @selector(ar_host)));
+        
+        [self ar_swizzle:@selector(host) with:(IMP)ar_host store:(IMP *)&hostIMP];
+    });
 }
 
 //- (NSString *)ar_host {

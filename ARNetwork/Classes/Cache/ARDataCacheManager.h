@@ -1,4 +1,4 @@
-//
+    //
 //  ARDataCacheManager.h
 //  ARNetwork
 //
@@ -13,7 +13,10 @@
 
 + (instancetype)sharedInstance;
 
-+ (void)initConfigurationWithSchemaVersion:(uint64_t)version;
+- (void)initConfigurationWithSchemaVersion:(uint64_t)version;
 
-+ (void)allClear;
+- (void)initConfigurationWithSchemaVersion:(uint64_t)version dataEncryption:(BOOL)enabled;
+
+- (void)allClear;
 @end
+ 

@@ -10,6 +10,7 @@
 
 @interface ARDataCacheManager : NSObject
 @property (nonatomic, assign) NSTimeInterval expiredInterval;
+@property (nonatomic, assign) BOOL onlyAccessibleWhenUnlocked;
 
 + (instancetype)sharedInstance;
 

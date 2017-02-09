@@ -10,6 +10,10 @@
 #import "ARDataCacheManager.h"
 #import "NSObject+ARInspect.h"
 
+@interface ARDataCacheManager ()
++ (RLMRealm *)defaultRealm;
+@end
+
 @implementation ARDataCacheModel
 
 // Specify default values for properties
@@ -32,12 +36,12 @@
 }
 
 + (instancetype)dataCache {
-    RLMResults<__kindof ARDataCacheModel *> *results = [self allObjects];
+    RLMResults<__kindof ARDataCacheModel *> *results = [self allObjectsInRealm:[ARDataCacheManager defaultRealm]];
     return results.lastObject;
 }
 
 + (instancetype)dataCache:(NSUInteger)index {
-    RLMResults<__kindof ARDataCacheModel *> *results = [self allObjects];
+    RLMResults<__kindof ARDataCacheModel *> *results = [self allObjectsInRealm:[ARDataCacheManager defaultRealm]];
     if (index >= results.count) {
         return nil;
     }
@@ -45,7 +49,7 @@
 }
 
 + (NSUInteger)dataCacheCount {
-    RLMResults<__kindof ARDataCacheModel *> *results = [self allObjects];
+    RLMResults<__kindof ARDataCacheModel *> *results = [self allObjectsInRealm:[ARDataCacheManager defaultRealm]];
     return results.count;
 }
 
@@ -57,7 +61,7 @@
     NSURL *url = [NSURL URLWithString:urlStr];
     NSString *arPrimaryKey = [NSString stringWithFormat:@"%@|%@|%@", url.host, url.path, params.description];
     NSPredicate *pred = [NSPredicate predicateWithFormat:@"arPrimaryKey = %@", arPrimaryKey];
-    RLMResults<__kindof ARDataCacheModel *> *caches = [self objectsWithPredicate:pred];
+    RLMResults<__kindof ARDataCacheModel *> *caches = [self objectsInRealm:[ARDataCacheManager defaultRealm] withPredicate:pred];
     return caches.count > 0 ? caches.lastObject : nil;
 }
 
@@ -98,7 +102,7 @@
         NSURL *url = [NSURL URLWithString:urlStr];
         self.arPrimaryKey = [NSString stringWithFormat:@"%@|%@|%@", url.host, url.path, params.description];
         self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[ARDataCacheManager sharedInstance].expiredInterval];
-        RLMRealm *realm = [RLMRealm defaultRealm];
+        RLMRealm *realm = [ARDataCacheManager defaultRealm];
         [realm transactionWithBlock:^{
             if ([self.class primaryKey]) {
                 [realm addOrUpdateObject:self];
@@ -111,7 +115,7 @@
 
 - (void)updateDataCacheWithData:(NSDictionary *)data {
     if (!self.isInvalidated) {
-        [[RLMRealm defaultRealm] transactionWithBlock:^{
+        [[ARDataCacheManager defaultRealm] transactionWithBlock:^{
             [self updateDataCacheWithDataPartInTransaction:data];
             self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[ARDataCacheManager sharedInstance].expiredInterval];
         }];
@@ -168,7 +172,7 @@
                                     [objs addObject:[[clazz alloc] initDataCacheWithData:item]];
                                 }
                             }
-                            [[RLMRealm defaultRealm] deleteObjects:map.allValues];
+                            [[ARDataCacheManager defaultRealm] deleteObjects:map.allValues];
                         } else {
                             [objs removeAllObjects];
                             for (NSDictionary *item in values) {

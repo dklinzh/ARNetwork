@@ -9,6 +9,10 @@
 #import "ARResponseCacheModel.h"
 #import "ARDataCacheManager.h"
 
+@interface ARDataCacheManager ()
++ (RLMRealm *)defaultRealm;
+@end
+
 @implementation ARResponseCacheModel
 
 // Specify default values for properties
@@ -33,8 +37,9 @@
             self.arPrimaryKey = [NSString stringWithFormat:@"%@|%@|%@", url.host, url.path, params.description];
             self.arResponseData = [NSJSONSerialization dataWithJSONObject:responseObject options:NSJSONWritingPrettyPrinted error:nil];
             self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[ARDataCacheManager sharedInstance].expiredInterval];
-            [[RLMRealm defaultRealm] transactionWithBlock:^{
-                [[RLMRealm defaultRealm] addObject:self];
+            RLMRealm *realm = [ARDataCacheManager defaultRealm];
+            [realm transactionWithBlock:^{
+                [realm addObject:self];
             }];
         }
     }
@@ -43,7 +48,7 @@
 
 - (void)updateDataCacheWithResponseObject:(id)responseObject {
     if (!self.isInvalidated) {
-        [[RLMRealm defaultRealm] transactionWithBlock:^{
+        [[ARDataCacheManager defaultRealm] transactionWithBlock:^{
             self.arResponseData = responseObject ? [NSJSONSerialization dataWithJSONObject:responseObject options:NSJSONWritingPrettyPrinted error:nil] : nil;
             self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[ARDataCacheManager sharedInstance].expiredInterval];
         }];

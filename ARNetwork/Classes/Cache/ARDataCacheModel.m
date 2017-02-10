@@ -9,6 +9,7 @@
 #import "ARDataCacheModel.h"
 #import "ARDataCacheManager.h"
 #import "NSObject+ARInspect.h"
+#import "NSString+ARSHA1.h"
 
 @implementation ARDataCacheModel
 
@@ -88,7 +89,7 @@
     }
     
     NSURL *url = [NSURL URLWithString:urlStr];
-    NSString *arPrimaryKey = [NSString stringWithFormat:@"%@|%@|%@", url.host, url.path, params.description];
+    NSString *arPrimaryKey = [[NSString stringWithFormat:@"%@|%@|%@", url.host, url.path, params.description] ar_SHA1];
     NSPredicate *pred = [NSPredicate predicateWithFormat:@"arPrimaryKey = %@", arPrimaryKey];
     RLMResults<__kindof ARDataCacheModel *> *caches = [self ar_objectsWithPredicate:pred];
     return caches.count > 0 ? caches.lastObject : nil;
@@ -129,7 +130,7 @@
 - (void)addDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params {
     if (!self.realm) {
         NSURL *url = [NSURL URLWithString:urlStr];
-        self.arPrimaryKey = [NSString stringWithFormat:@"%@|%@|%@", url.host, url.path, params.description];
+        self.arPrimaryKey = [[NSString stringWithFormat:@"%@|%@|%@", url.host, url.path, params.description] ar_SHA1];
         self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[ARDataCacheManager sharedInstance].expiredInterval];
         RLMRealm *realm = [ARDataCacheManager defaultRealm];
         [realm transactionWithBlock:^{

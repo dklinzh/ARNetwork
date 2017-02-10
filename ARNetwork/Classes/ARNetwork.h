@@ -9,6 +9,7 @@
 #ifndef ARNetwork_h
 #define ARNetwork_h
 #import <Foundation/Foundation.h>
+
 //HTTP
 #import <ARNetwork/ARHTTPManager.h>
 #import <ARNetwork/ARHTTPOperation.h>

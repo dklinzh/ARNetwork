@@ -8,6 +8,7 @@
 
 #import "ARResponseCacheModel.h"
 #import "ARDataCacheManager.h"
+#import "NSString+ARSHA1.h"
 
 @implementation ARResponseCacheModel
 
@@ -30,7 +31,7 @@
     if (self = [self init]) {
         if (!self.isInvalidated && responseObject) {
             NSURL *url = [NSURL URLWithString:urlStr];
-            self.arPrimaryKey = [NSString stringWithFormat:@"%@|%@|%@", url.host, url.path, params.description];
+            self.arPrimaryKey = [[NSString stringWithFormat:@"%@|%@|%@", url.host, url.path, params.description] ar_SHA1];
             self.arResponseData = [NSJSONSerialization dataWithJSONObject:responseObject options:NSJSONWritingPrettyPrinted error:nil];
             self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[ARDataCacheManager sharedInstance].expiredInterval];
             RLMRealm *realm = [ARDataCacheManager defaultRealm];

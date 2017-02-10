@@ -9,10 +9,6 @@
 #import "ARResponseCacheModel.h"
 #import "ARDataCacheManager.h"
 
-@interface ARDataCacheManager ()
-+ (RLMRealm *)defaultRealm;
-@end
-
 @implementation ARResponseCacheModel
 
 // Specify default values for properties

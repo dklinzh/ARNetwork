@@ -11,8 +11,6 @@
 
 @interface ARDataCacheManager ()
 @property (nonatomic, strong) RLMRealmConfiguration *defaultConfig;
-
-+ (RLMRealm *)defaultRealm;
 @end
 
 @implementation ARDataCacheManager
@@ -60,13 +58,13 @@ static ARDataCacheManager *sharedInstance = nil;
             NSData *key = [self searchEncryptionKey];
             if (key) {
                 config.encryptionKey = key;
-                [self defaultRealmNoThrow];
+                [ARDataCacheManager defaultRealm];
             } else {
                 key = [self addEncryptionKey];
                 NSURL *tempUrl = [config.fileURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:@"temp.realm"];
                 BOOL res;
                 @autoreleasepool {
-                    res = [[self defaultRealmNoThrow] writeCopyToURL:tempUrl encryptionKey:key error:nil];
+                    res = [[ARDataCacheManager defaultRealm] writeCopyToURL:tempUrl encryptionKey:key error:nil];
                 }
                 if (res) {
                     if ([[NSFileManager defaultManager] removeItemAtURL:config.fileURL error:nil]) {
@@ -86,7 +84,7 @@ static ARDataCacheManager *sharedInstance = nil;
                 BOOL res;
                 @autoreleasepool {
                     config.encryptionKey = key;
-                    res = [[self defaultRealmNoThrow] writeCopyToURL:tempUrl encryptionKey:nil error:nil];
+                    res = [[ARDataCacheManager defaultRealm] writeCopyToURL:tempUrl encryptionKey:nil error:nil];
                 }
                 if (res) {
                     if ([[NSFileManager defaultManager] removeItemAtURL:config.fileURL error:nil]) {
@@ -98,7 +96,7 @@ static ARDataCacheManager *sharedInstance = nil;
                     }
                 }
             } else {
-                [self defaultRealmNoThrow];
+                [ARDataCacheManager defaultRealm];
             }
         }
         
@@ -115,27 +113,23 @@ static ARDataCacheManager *sharedInstance = nil;
     }
 }
 
-#pragma mark -
-
 + (RLMRealm *)defaultRealm {
-    return [RLMRealm realmWithConfiguration:[ARDataCacheManager sharedInstance].defaultConfig error:nil];
-}
-
-- (RLMRealm *)defaultRealmNoThrow {
-    RLMRealm *realm;
-    @try {
-        realm = [ARDataCacheManager defaultRealm];
-    } @catch (NSException *exception) {
+    NSError *error = nil;
+    ARDataCacheManager *manager = [ARDataCacheManager sharedInstance];
+    RLMRealm *realm = [RLMRealm realmWithConfiguration:manager.defaultConfig error:&error];
+    if (error) {
         NSFileManager *fm = [NSFileManager defaultManager];
-        NSArray<NSString *> *paths = [fm contentsOfDirectoryAtPath:self.defaultConfig.fileURL.URLByDeletingLastPathComponent.path error:nil];
+        NSArray<NSString *> *paths = [fm contentsOfDirectoryAtPath:manager.defaultConfig.fileURL.URLByDeletingLastPathComponent.path error:nil];
         for (NSString *path in paths) {
-            [fm removeItemAtURL:[self.defaultConfig.fileURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:path] error:nil];
+            [fm removeItemAtURL:[manager.defaultConfig.fileURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:path] error:nil];
         }
         
-        realm = [ARDataCacheManager defaultRealm];
+        realm = [RLMRealm realmWithConfiguration:manager.defaultConfig error:&error];
     }
     return realm;
 }
+
+#pragma mark -
 
 - (NSData *)searchEncryptionKey {
     NSData *tag = [[self keychainId] dataUsingEncoding:NSUTF8StringEncoding];

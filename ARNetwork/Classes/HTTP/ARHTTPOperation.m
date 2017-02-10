@@ -32,6 +32,7 @@
     if (failure) {
         switch (error.code) {
             case -999: // request operation be canceled.
+                failure(error.code, nil);
                 break;
             case -1001:
             case -1005:

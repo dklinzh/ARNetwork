@@ -8,11 +8,15 @@
 
 #import <Foundation/Foundation.h>
 
+@class RLMRealm;
+
 @interface ARDataCacheManager : NSObject
 @property (nonatomic, assign) NSTimeInterval expiredInterval;
 @property (nonatomic, assign) BOOL onlyAccessibleWhenUnlocked;
 
 + (instancetype)sharedInstance;
+
++ (RLMRealm *)defaultRealm;
 
 - (void)initConfigurationWithSchemaVersion:(uint64_t)version;
 

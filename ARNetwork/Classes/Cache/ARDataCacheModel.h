@@ -12,6 +12,20 @@
 @property NSString *arPrimaryKey;
 @property NSDate *arExpiredTime;
 
++ (instancetype)ar_createInDefaultRealmWithValue:(id)value;
+
++ (instancetype)ar_createOrUpdateInDefaultRealmWithValue:(id)value;
+
++ (RLMResults *)ar_allObjects;
+
++ (RLMResults *)ar_objectsWhere:(NSString *)predicateFormat, ...;
+
++ (RLMResults *)ar_objectsWhere:(NSString *)predicateFormat args:(va_list)args;
+
++ (RLMResults *)ar_objectsWithPredicate:(NSPredicate *)predicate;
+
++ (instancetype)ar_objectForPrimaryKey:(id)primaryKey;
+
 + (instancetype)dataCache;
 
 + (instancetype)dataCache:(NSUInteger)index;

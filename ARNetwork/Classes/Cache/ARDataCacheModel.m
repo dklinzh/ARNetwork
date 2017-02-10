@@ -10,10 +10,6 @@
 #import "ARDataCacheManager.h"
 #import "NSObject+ARInspect.h"
 
-@interface ARDataCacheManager ()
-+ (RLMRealm *)defaultRealm;
-@end
-
 @implementation ARDataCacheModel
 
 // Specify default values for properties
@@ -31,17 +27,50 @@
 //}
 
 #pragma mark -
++ (instancetype)ar_createInDefaultRealmWithValue:(id)value {
+    return [self createInRealm:[ARDataCacheManager defaultRealm] withValue:value];
+}
+
++ (instancetype)ar_createOrUpdateInDefaultRealmWithValue:(id)value {
+    return [self createOrUpdateInRealm:[ARDataCacheManager defaultRealm] withValue:value];
+}
+
++ (RLMResults *)ar_allObjects {
+    return [self allObjectsInRealm:[ARDataCacheManager defaultRealm]];
+}
+
++ (RLMResults *)ar_objectsWhere:(NSString *)predicateFormat, ... {
+    va_list args;
+    va_start(args, predicateFormat);
+    RLMResults *results = [self ar_objectsWhere:predicateFormat args:args];
+    va_end(args);
+    return results;
+}
+
++ (RLMResults *)ar_objectsWhere:(NSString *)predicateFormat args:(va_list)args {
+    return [self objectsInRealm:[ARDataCacheManager defaultRealm] where:predicateFormat args:args];
+}
+
++ (RLMResults *)ar_objectsWithPredicate:(NSPredicate *)predicate {
+    return [self objectsInRealm:[ARDataCacheManager defaultRealm] withPredicate:predicate];
+}
+
++ (instancetype)ar_objectForPrimaryKey:(id)primaryKey {
+    return [self objectInRealm:[ARDataCacheManager defaultRealm] forPrimaryKey:primaryKey];
+}
+
+#pragma mark -
 + (NSArray *)valueUpdatedProperties {
     return nil;
 }
 
 + (instancetype)dataCache {
-    RLMResults<__kindof ARDataCacheModel *> *results = [self allObjectsInRealm:[ARDataCacheManager defaultRealm]];
+    RLMResults<__kindof ARDataCacheModel *> *results = [self ar_allObjects];
     return results.lastObject;
 }
 
 + (instancetype)dataCache:(NSUInteger)index {
-    RLMResults<__kindof ARDataCacheModel *> *results = [self allObjectsInRealm:[ARDataCacheManager defaultRealm]];
+    RLMResults<__kindof ARDataCacheModel *> *results = [self ar_allObjects];
     if (index >= results.count) {
         return nil;
     }
@@ -49,7 +78,7 @@
 }
 
 + (NSUInteger)dataCacheCount {
-    RLMResults<__kindof ARDataCacheModel *> *results = [self allObjectsInRealm:[ARDataCacheManager defaultRealm]];
+    RLMResults<__kindof ARDataCacheModel *> *results = [self ar_allObjects];
     return results.count;
 }
 
@@ -61,7 +90,7 @@
     NSURL *url = [NSURL URLWithString:urlStr];
     NSString *arPrimaryKey = [NSString stringWithFormat:@"%@|%@|%@", url.host, url.path, params.description];
     NSPredicate *pred = [NSPredicate predicateWithFormat:@"arPrimaryKey = %@", arPrimaryKey];
-    RLMResults<__kindof ARDataCacheModel *> *caches = [self objectsInRealm:[ARDataCacheManager defaultRealm] withPredicate:pred];
+    RLMResults<__kindof ARDataCacheModel *> *caches = [self ar_objectsWithPredicate:pred];
     return caches.count > 0 ? caches.lastObject : nil;
 }
 
@@ -190,7 +219,7 @@
 }
 
 - (void)setValueForExtraProperties {
-    
+    // Set value for any additional properties on the subclass of 'ARDataCacheModel'
 }
 @end
 

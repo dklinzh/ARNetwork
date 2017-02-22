@@ -15,7 +15,7 @@
     return class_swizzleMethodAndStore(self, original, replacement, store);
 }
 
-BOOL class_swizzleMethodAndStore(Class class, SEL original, IMP replacement, IMPPointer store) {
+static BOOL class_swizzleMethodAndStore(Class class, SEL original, IMP replacement, IMPPointer store) {
     IMP imp = NULL;
     Method method = class_getInstanceMethod(class, original);
     if (method) {
@@ -30,4 +30,5 @@ BOOL class_swizzleMethodAndStore(Class class, SEL original, IMP replacement, IMP
     }
     return (imp != NULL);
 }
+
 @end

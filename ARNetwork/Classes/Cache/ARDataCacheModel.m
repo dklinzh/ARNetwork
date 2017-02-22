@@ -13,21 +13,8 @@
 
 @implementation ARDataCacheModel
 
-// Specify default values for properties
-
-//+ (NSDictionary *)defaultPropertyValues
-//{
-//    return @{};
-//}
-
-// Specify properties to ignore (Realm won't persist these)
-
-//+ (NSArray *)ignoredProperties
-//{
-//    return @[];
-//}
-
 #pragma mark -
+
 + (instancetype)ar_createInDefaultRealmWithValue:(id)value {
     return [self createInRealm:[ARDataCacheManager defaultRealm] withValue:value];
 }
@@ -97,9 +84,8 @@
 
 - (instancetype)initDataCacheWithData:(NSDictionary *)data {
     if (self = [self init]) {
-        for (NSString *key in data.allKeys) {
+        [data enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, id  _Nonnull value, BOOL * _Nonnull stop) {
             if ([self respondsToSelector:NSSelectorFromString(key)]) {
-                id value = data[key];
                 if ([value isKindOfClass:NSDictionary.class]) {
                     id obj = [[self ar_classOfPropertyNamed:key] alloc];
                     if ([obj isKindOfClass:ARDataCacheModel.class]) {
@@ -121,7 +107,7 @@
                     [self setValue:value forKey:key];
                 }
             }
-        }
+        }];
         [self setValueForExtraProperties];
     }
     return self;
@@ -155,20 +141,19 @@
 - (void)updateDataCacheWithDataPartInTransaction:(NSDictionary *)data {
     NSArray *valueUpdatedProperties = [self.class valueUpdatedProperties];
     NSString *primaryKey = [self.class primaryKey];
-    for (NSString *key in data.allKeys) {
+    [data enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, id  _Nonnull value, BOOL * _Nonnull stop) {
         if ([primaryKey isEqualToString:key]) {
-            continue;
+            return;
         }
         
         if ([self respondsToSelector:NSSelectorFromString(key)]) {
             if ([valueUpdatedProperties containsObject:key]) {
                 id value = [self valueForKey:key];
                 if ([value isEqual:data[key]]) {
-                    continue;
+                    return;
                 }
             }
             
-            id value = data[key];
             if ([value isKindOfClass:NSDictionary.class]) {
                 Class clazz = [self ar_classOfPropertyNamed:key];
                 if ([clazz isSubclassOfClass:ARDataCacheModel.class]) {
@@ -215,7 +200,7 @@
                 [self setValue:value forKey:key];
             }
         }
-    }
+    }];
     [self setValueForExtraProperties];
 }
 

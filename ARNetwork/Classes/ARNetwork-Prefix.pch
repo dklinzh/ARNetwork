@@ -12,8 +12,9 @@
 // Include any system framework and library headers here that should be included in all compilation units.
 // You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
 
-#ifdef DEBUG
 #define ARNetworkDomain @"ARNetwork"
+
+#ifdef DEBUG
 
 #define ARLogLevel(level, frmt, ...) NSLog([NSString stringWithFormat:@"%@[%@]: %@", ARNetworkDomain, level, frmt], ##__VA_ARGS__)
 

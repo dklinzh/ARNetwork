@@ -8,7 +8,8 @@
 
 #import "ARHTTPManager.h"
 
-static const NSTimeInterval kARDefaultTimeoutInterval = 30;
+static NSTimeInterval const kARDefaultTimeoutInterval = 30;
+static NSMutableOrderedSet<Class> *arProtocolClasses;
 
 @interface ARHTTPManager ()
 @property (nonatomic, strong) NSMutableSet<NSString *> *acceptableContentTypes;
@@ -32,13 +33,41 @@ static const NSTimeInterval kARDefaultTimeoutInterval = 30;
     return self;
 }
 
-//+ (instancetype)allocWithZone:(struct _NSZone *)zone {
-//    static dispatch_once_t onceToken;
-//    dispatch_once(&onceToken,^{
-//        sharedInstance = [super allocWithZone:zone];
-//    });
-//    return sharedInstance;
-//}
+- (instancetype)initWithBaseURL:(NSURL *)url sessionConfiguration:(NSURLSessionConfiguration *)configuration {
+    configuration = [self registerProtocolsOnSessionConfiguration:configuration];
+    return [super initWithBaseURL:url sessionConfiguration:configuration];
+}
+
+#pragma mark - URLProtocol
++ (void)registerProtocolClass:(Class)protocolClass {
+    if (!arProtocolClasses) {
+        arProtocolClasses = [NSMutableOrderedSet orderedSet];
+    }
+    [arProtocolClasses addObject:protocolClass];
+}
+
++ (void)unregisterProtocolClass:(Class)protocolClass {
+    if (arProtocolClasses) {
+        [arProtocolClasses removeObject:protocolClass];
+        
+        if (arProtocolClasses.count == 0) {
+            arProtocolClasses = nil;
+        }
+    }
+}
+
+- (NSURLSessionConfiguration *)registerProtocolsOnSessionConfiguration:(NSURLSessionConfiguration *)configuration {
+    if (arProtocolClasses) {
+        if (!configuration) {
+            configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+        }
+        NSMutableArray *protocols = [[arProtocolClasses array] mutableCopy];
+        [protocols addObjectsFromArray:configuration.protocolClasses];
+        configuration.protocolClasses = [protocols copy];
+        return configuration;
+    }
+    return configuration;
+}
 
 #pragma mark - HTTP
 static ARHTTPManager *sharedInstance = nil;

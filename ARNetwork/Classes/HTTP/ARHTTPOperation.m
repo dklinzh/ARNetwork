@@ -36,9 +36,8 @@
                 break;
             case -1001:
             case -1005:
-            case -1009: {// network unreachable
+            case -1009: // network unreachable
                 failure(error.code, @"网络异常，请稍后尝试。");
-            }
                 break;
             default:
                 failure(error.code, @"系统繁忙，请稍后尝试。");

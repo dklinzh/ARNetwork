@@ -15,6 +15,10 @@
 @property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, NSURLSessionDataTask *> *taskCollections;
 @property (nonatomic, weak) ARHTTPOperation *httpOperation;
 
++ (void)registerProtocolClass:(Class)protocolClass;
+
++ (void)unregisterProtocolClass:(Class)protocolClass;
+
 + (instancetype)sharedInstance;
 
 + (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure;

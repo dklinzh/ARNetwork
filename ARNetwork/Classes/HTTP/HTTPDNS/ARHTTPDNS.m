@@ -20,9 +20,10 @@
 - (instancetype)init {
     if (self = [super init]) {
         [self setLogEnabled:NO];
-        [self setHTTPSRequestEnabled:NO];
+        [self setHTTPSRequestEnabled:YES];
         [self setExpiredIPEnabled:YES];
         [self setPreResolveAfterNetworkChanged:NO];
+//        self.timeoutInterval = 30;
     }
     return self;
 }

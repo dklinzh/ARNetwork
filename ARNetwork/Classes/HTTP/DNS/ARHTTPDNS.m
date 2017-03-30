@@ -7,44 +7,58 @@
 //
 
 #import "ARHTTPDNS.h"
+#import <AlicloudHttpDNS/AlicloudHttpDNS.h> //* https://help.aliyun.com/document_detail/30141.html
 
 @interface ARHTTPDNS () <HttpDNSDegradationDelegate>
 @property (nonatomic, strong) NSArray *ignoredHosts;
-@property (nonatomic, assign) BOOL hostLogEnabled;
+@property (nonatomic, assign) BOOL dnsLogEnabled;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, NSString *> *dnsMap;
 @end
 
 @implementation ARHTTPDNS
+static ARHTTPDNS *sharedInstance = nil;
 
-#pragma mark - Override
++ (instancetype)allocWithZone:(struct _NSZone *)zone {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken,^{
+        sharedInstance = [super allocWithZone:zone];
+    });
+    return sharedInstance;
+}
+
++ (instancetype)sharedInstance {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedInstance = [[self alloc] init];
+    });
+    return sharedInstance;
+}
+
 - (instancetype)init {
     if (self = [super init]) {
-        [self setLogEnabled:NO];
-        [self setHTTPSRequestEnabled:YES];
-        [self setExpiredIPEnabled:YES];
-        [self setPreResolveAfterNetworkChanged:NO];
-//        self.timeoutInterval = 30;
+        self.dnsLogEnabled = NO;
+        [[HttpDnsService sharedInstance] setHTTPSRequestEnabled:YES];
+        [[HttpDnsService sharedInstance] setExpiredIPEnabled:YES];
+        [[HttpDnsService sharedInstance] setPreResolveAfterNetworkChanged:NO];
+//        [HttpDnsService sharedInstance].timeoutInterval = 30;
     }
     return self;
 }
 
-- (NSArray *)getIpsByHost:(NSString *)host {
+- (NSString *)getIpByHostAsync:(NSString *)host {
     if (!self.isHttpDNSEnabled) {
-        return host ? @[host] : nil;
+        return host ? host : nil;
     }
     
-    NSArray *ips = [super getIpsByHost:host];
-    for (NSString *ip in ips) {
-        if ([ip isEqualToString:host]) {
-            continue;
-        }
+    NSString *ip = [[HttpDnsService sharedInstance] getIpByHostAsync:host];
+    if (![ip isEqualToString:host]) {
         [self.dnsMap setValue:host forKey:ip];
     }
     
-    if (self.hostLogEnabled) {
-        ARLogInfo(@"<HTTPDNS> %@ -> %@", host, ips);
+    if (self.dnsLogEnabled) {
+        ARLogInfo(@"<HTTPDNS> %@ -> %@", host, ip);
     }
-    return ips;
+    return ip;
 }
 
 - (NSArray *)getIpsByHostAsync:(NSString *)host {
@@ -52,7 +66,7 @@
         return host ? @[host] : nil;
     }
 
-    NSArray *ips = [super getIpsByHostAsync:host];
+    NSArray *ips = [[HttpDnsService sharedInstance] getIpsByHostAsync:host];
     for (NSString *ip in ips) {
         if ([ip isEqualToString:host]) {
             continue;
@@ -60,46 +74,26 @@
         [self.dnsMap setValue:host forKey:ip];
     }
     
-    if (self.hostLogEnabled) {
+    if (self.dnsLogEnabled) {
         ARLogInfo(@"<HTTPDNS> %@ -> %@", host, ips);
     }
     return ips;
 }
 
-#pragma mark -
-
-+ (NSString *)getIpURLByHostURL:(NSString *)hostUrl {
-    return [self getIpURLByHostURL:hostUrl onDNS:nil];
-}
-
-+ (NSString *)getIpURLByHostURL:(NSString *)hostUrl onDNS:(void(^)(NSString *host, NSString *ip))block {
-    if (![[self sharedInstance] isHttpDNSEnabled]) {
-        return hostUrl;
+- (NSString *)getIpByHostAsyncInURLFormat:(NSString *)host {
+    if (!self.isHttpDNSEnabled) {
+        return host ? host : nil;
     }
     
-    NSURL *url = [NSURL URLWithString:hostUrl];
-    NSString *host = url.host;
-    if (!host) {
-        return hostUrl;
+    NSString *ip = [[HttpDnsService sharedInstance] getIpByHostAsyncInURLFormat:host];
+    if (![ip isEqualToString:host]) {
+        [self.dnsMap setValue:host forKey:ip];
     }
     
-    NSString *ip = [[self sharedInstance] getIpByHostInURLFormat:host];
-    if (ip && ![ip isEqualToString:host]) {
-        if (block) {
-            block(host, ip);
-        }
-        
-        NSRange hostFirstRange = [hostUrl rangeOfString: host];
-        if (hostFirstRange.location != NSNotFound) {
-            NSString* ipUrl = [hostUrl stringByReplacingCharactersInRange:hostFirstRange withString:ip];
-            return ipUrl;
-        }
+    if (self.dnsLogEnabled) {
+        ARLogInfo(@"<HTTPDNS> %@ -> %@", host, ip);
     }
-    
-    if (block) {
-        block(host, nil);
-    }
-    return hostUrl;
+    return ip;
 }
 
 + (NSString *)getIpURLByHostURLAsync:(NSString *)hostUrl {
@@ -137,25 +131,21 @@
 }
 
 - (void)seAccountId:(NSInteger)accountId {
-    self.accountID = accountId;
-}
-
-- (void)setAccountID:(int)accountID {
-    [super setAccountID:accountID];
+    [HttpDnsService sharedInstance].accountID = (int)accountId;
     self.httpDNSEnabled = YES;
 }
 
-- (void)setLogEnabled:(BOOL)enable {
-    [super setLogEnabled:enable];
-    self.hostLogEnabled = enable;
+- (void)setDnsLogEnabled:(BOOL)dnsLogEnabled {
+    _dnsLogEnabled = dnsLogEnabled;
+    [[HttpDnsService sharedInstance] setLogEnabled:dnsLogEnabled];
 }
 
 - (void)setPreResolveHosts:(NSArray *)preResolveHosts ignoreddHosts:(NSArray *)ignoredHosts {
-    [self setPreResolveHosts:preResolveHosts];
+    [[HttpDnsService sharedInstance] setPreResolveHosts:preResolveHosts];
     if ((self.ignoredHosts = ignoredHosts)) {
-        [self setDelegateForDegradationFilter:self];
+        [[HttpDnsService sharedInstance] setDelegateForDegradationFilter:self];
     } else {
-        [self setDelegateForDegradationFilter:nil];
+        [[HttpDnsService sharedInstance] setDelegateForDegradationFilter:nil];
     }
 }
 
@@ -175,7 +165,7 @@
 #pragma mark - HttpDNSDegradationDelegate
 - (BOOL)shouldDegradeHTTPDNS:(NSString *)hostName {
     if ([self.ignoredHosts containsObject:hostName]) {
-        if (self.hostLogEnabled) {
+        if (self.dnsLogEnabled) {
             ARLogWarn(@"<HTTPDNS> %@ -> ignored", hostName);
         }
         return YES;

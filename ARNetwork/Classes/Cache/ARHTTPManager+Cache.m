@@ -160,7 +160,8 @@
                 success(data, msg, NO);
             }
         } else {
-            [[ARResponseCacheModel alloc] initAndAddDataCacheWithUrl:urlStr params:params responseObject:data];
+            __attribute__((unused))
+            id unused = [[ARResponseCacheModel alloc] initAndAddDataCacheWithUrl:urlStr params:params responseObject:data];
             if (success) {
                 success(data, msg, NO);
             }

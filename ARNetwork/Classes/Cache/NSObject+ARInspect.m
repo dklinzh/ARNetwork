@@ -15,7 +15,7 @@
     NSMutableArray *propertyNames = [NSMutableArray new];
     
     // Collect for this class.
-    NSUInteger propertyCount;
+    uint propertyCount;
     objc_property_t *properties = class_copyPropertyList(self, &propertyCount);
     for (int index = 0; index < propertyCount; index++)
     {
@@ -49,7 +49,7 @@
         propertyType = [self ar_typeNameForTypeEncoding:[NSString stringWithFormat:@"T%@", propertyAttributes]];
         
         if (getter == NULL)
-        { ARLogError(@"No property called `%@` of %@", propertyName, NSStringFromClass(self)); }
+        { ARLogError(@"No property called `%@` of %@", propertyName, NSStringFromClass(self.class)); }
     }
     
     // Or go on with property attribute parsing.
@@ -61,7 +61,7 @@
         propertyAttributes = [NSString stringWithCString:propertyAttributesCString encoding:NSUTF8StringEncoding];
         
         if (propertyAttributesCString == NULL)
-        { ARLogError(@"Could not get attributes for property called `%@` of <%@>", propertyName, NSStringFromClass(self)); }
+        { ARLogError(@"Could not get attributes for property called `%@` of <%@>", propertyName, NSStringFromClass(self.class)); }
         
         // Parse property attributes.
         NSArray *splitPropertyAttributes = [propertyAttributes componentsSeparatedByString:@","];
@@ -74,7 +74,7 @@
             propertyType = (splitEncodeType.count > 1) ? splitEncodeType[1] : [self ar_typeNameForTypeEncoding:encodeType];
         }
         else
-        { ARLogError(@"Could not parse attributes for property called `%@` of <%@>å", propertyName, NSStringFromClass(self)); }
+        { ARLogError(@"Could not parse attributes for property called `%@` of <%@>å", propertyName, NSStringFromClass(self.class)); }
     }
     
     return propertyType;

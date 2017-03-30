@@ -194,7 +194,7 @@ static ARDataCacheManager *sharedInstance = nil;
     
     NSFileProtectionType protection = onlyAccessibleWhenUnlocked ? NSFileProtectionComplete : NSFileProtectionCompleteUntilFirstUserAuthentication;
     NSString *folderPath = self.defaultConfig.fileURL.URLByDeletingLastPathComponent.path;
-    BOOL res = [[NSFileManager defaultManager] setAttributes:@{NSFileProtectionKey: protection} ofItemAtPath:folderPath error:nil];
+    [[NSFileManager defaultManager] setAttributes:@{NSFileProtectionKey: protection} ofItemAtPath:folderPath error:nil];
 }
 
 @end

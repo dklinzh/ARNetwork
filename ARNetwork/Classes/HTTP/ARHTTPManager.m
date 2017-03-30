@@ -88,7 +88,7 @@ static ARHTTPManager *sharedInstance = nil;
 - (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
     urlStr = [self delegateUrlIfNeeded:urlStr];
     if (!urlStr) {
-        ARLogError(@"HTTP URL IS NULL.");
+        ARLogError(@"%@", @"HTTP URL IS NULL.");
         if (failure) {
             failure(0, @"HTTP URL IS NULL.");
         }
@@ -122,7 +122,7 @@ static ARHTTPManager *sharedInstance = nil;
 - (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
     urlStr = [self delegateUrlIfNeeded:urlStr];
     if (!urlStr) {
-        ARLogError(@"HTTP URL IS NULL.");
+        ARLogError(@"%@", @"HTTP URL IS NULL.");
         if (failure) {
             failure(0, @"HTTP URL IS NULL.");
         }
@@ -156,7 +156,7 @@ static ARHTTPManager *sharedInstance = nil;
 - (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params filePath:(NSString *)filePath formName:(NSString *)formName progress:(void (^)(NSProgress *uploadProgress))uploadProgress success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
     urlStr = [self delegateUrlIfNeeded:urlStr];
     if (!urlStr) {
-        ARLogError(@"HTTP URL IS NULL.");
+        ARLogError(@"%@", @"HTTP URL IS NULL.");
         if (failure) {
             failure(0, @"HTTP URL IS NULL.");
         }
@@ -192,7 +192,7 @@ static ARHTTPManager *sharedInstance = nil;
 - (NSURLSessionDataTask *)putURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
     urlStr = [self delegateUrlIfNeeded:urlStr];
     if (!urlStr) {
-        ARLogError(@"HTTP URL IS NULL.");
+        ARLogError(@"%@", @"HTTP URL IS NULL.");
         if (failure) {
             failure(0, @"HTTP URL IS NULL.");
         }
@@ -226,7 +226,7 @@ static ARHTTPManager *sharedInstance = nil;
 - (NSURLSessionDataTask *)patchURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
     urlStr = [self delegateUrlIfNeeded:urlStr];
     if (!urlStr) {
-        ARLogError(@"HTTP URL IS NULL.");
+        ARLogError(@"%@", @"HTTP URL IS NULL.");
         if (failure) {
             failure(0, @"HTTP URL IS NULL.");
         }
@@ -260,7 +260,7 @@ static ARHTTPManager *sharedInstance = nil;
 - (NSURLSessionDataTask *)deleteURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
     urlStr = [self delegateUrlIfNeeded:urlStr];
     if (!urlStr) {
-        ARLogError(@"HTTP URL IS NULL.");
+        ARLogError(@"%@", @"HTTP URL IS NULL.");
         if (failure) {
             failure(0, @"HTTP URL IS NULL.");
         }
@@ -294,7 +294,7 @@ static ARHTTPManager *sharedInstance = nil;
 - (NSURLSessionDataTask *)headURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseHead)success failure:(ARHTTPResponseFailure)failure {
     urlStr = [self delegateUrlIfNeeded:urlStr];
     if (!urlStr) {
-        ARLogError(@"HTTP URL IS NULL.");
+        ARLogError(@"%@", @"HTTP URL IS NULL.");
         if (failure) {
             failure(0, @"HTTP URL IS NULL.");
         }

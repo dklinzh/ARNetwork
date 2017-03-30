@@ -13,7 +13,7 @@
 @property (nonatomic, assign) NSTimeInterval timeoutInterval;
 @property (nonatomic, strong, readonly) NSMutableSet<NSString *> *acceptableContentTypes;
 @property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, NSURLSessionDataTask *> *taskCollections;
-@property (nonatomic, weak) ARHTTPOperation *httpOperation;
+@property (nonatomic, strong) ARHTTPOperation *httpOperation;
 
 + (void)registerProtocolClass:(Class)protocolClass;
 

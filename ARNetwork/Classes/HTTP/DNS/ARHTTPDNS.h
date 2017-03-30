@@ -7,20 +7,23 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "AlicloudHttpDNS.h" //* https://help.aliyun.com/document_detail/30141.html
 
-@interface ARHTTPDNS : HttpDnsService
+@interface ARHTTPDNS : NSObject
 @property (nonatomic, assign, getter=isHttpDNSEnabled) BOOL httpDNSEnabled;
+
++ (instancetype)sharedInstance;
 
 - (void)seAccountId:(NSInteger)accountId;
 
 - (void)setPreResolveHosts:(NSArray *)preResolveHosts ignoreddHosts:(NSArray *)ignoredHosts;
 
+- (NSString *)getIpByHostAsync:(NSString *)host;
+
+- (NSArray *)getIpsByHostAsync:(NSString *)host;
+
+- (NSString *)getIpByHostAsyncInURLFormat:(NSString *)host;
+
 - (NSString *)getHostByIP:(NSString *)ip;
-
-+ (NSString *)getIpURLByHostURL:(NSString *)hostUrl;
-
-+ (NSString *)getIpURLByHostURL:(NSString *)hostUrl onDNS:(void(^)(NSString *host, NSString *ip))block;
 
 + (NSString *)getIpURLByHostURLAsync:(NSString *)hostUrl;
 

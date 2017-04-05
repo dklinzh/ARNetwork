@@ -14,6 +14,7 @@
 @property (nonatomic, strong, readonly) NSMutableSet<NSString *> *acceptableContentTypes;
 @property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, NSURLSessionDataTask *> *taskCollections;
 @property (nonatomic, strong) ARHTTPOperation *httpOperation;
+@property (nonatomic, assign) BOOL allowRequestRedirection;
 
 + (void)registerProtocolClass:(Class)protocolClass;
 

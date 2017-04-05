@@ -387,4 +387,20 @@ static ARHTTPManager *sharedInstance = nil;
     }
     return _httpOperation = [[ARHTTPOperation alloc] init];
 }
+
+- (void)setAllowRequestRedirection:(BOOL)allowRequestRedirection {
+    if (_allowRequestRedirection != allowRequestRedirection) {
+        _allowRequestRedirection = allowRequestRedirection;
+        if (_allowRequestRedirection) {
+            [self setTaskWillPerformHTTPRedirectionBlock:^NSURLRequest * _Nonnull(NSURLSession * _Nonnull session, NSURLSessionTask * _Nonnull task, NSURLResponse * _Nonnull response, NSURLRequest * _Nonnull request) {
+                ARLogInfo(@"HTTPRedirection: %@ >->-> %@", response.URL, request.URL);
+                
+                return request;
+            }];
+        } else {
+            [self setTaskWillPerformHTTPRedirectionBlock:nil];
+        }
+    }
+}
+
 @end

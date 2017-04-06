@@ -393,8 +393,8 @@ static ARHTTPManager *sharedInstance = nil;
         _allowRequestRedirection = allowRequestRedirection;
         if (_allowRequestRedirection) {
             [self setTaskWillPerformHTTPRedirectionBlock:^NSURLRequest * _Nonnull(NSURLSession * _Nonnull session, NSURLSessionTask * _Nonnull task, NSURLResponse * _Nonnull response, NSURLRequest * _Nonnull request) {
+                request = [NSURLRequest requestWithURL:[NSURL URLWithString:[self delegateUrlIfNeeded:request.URL.absoluteString]]];
                 ARLogInfo(@"HTTPRedirection: %@ >->-> %@", response.URL, request.URL);
-                
                 return request;
             }];
         } else {

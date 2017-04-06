@@ -51,6 +51,10 @@ static ARHTTPDNS *sharedInstance = nil;
     }
     
     NSString *ip = [[HttpDnsService sharedInstance] getIpByHostAsync:host];
+    if (!ip) {
+        return host;
+    }
+    
     if (![ip isEqualToString:host]) {
         [self.dnsMap setValue:host forKey:ip];
     }
@@ -67,6 +71,10 @@ static ARHTTPDNS *sharedInstance = nil;
     }
 
     NSArray *ips = [[HttpDnsService sharedInstance] getIpsByHostAsync:host];
+    if (!ips) {
+        return @[host];
+    }
+    
     for (NSString *ip in ips) {
         if ([ip isEqualToString:host]) {
             continue;
@@ -86,6 +94,10 @@ static ARHTTPDNS *sharedInstance = nil;
     }
     
     NSString *ip = [[HttpDnsService sharedInstance] getIpByHostAsyncInURLFormat:host];
+    if (!ip) {
+        return host;
+    }
+    
     if (![ip isEqualToString:host]) {
         [self.dnsMap setValue:host forKey:ip];
     }

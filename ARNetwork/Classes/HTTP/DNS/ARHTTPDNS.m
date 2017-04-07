@@ -39,7 +39,7 @@ static ARHTTPDNS *sharedInstance = nil;
         self.dnsLogEnabled = NO;
         [[HttpDnsService sharedInstance] setHTTPSRequestEnabled:YES];
         [[HttpDnsService sharedInstance] setExpiredIPEnabled:YES];
-        [[HttpDnsService sharedInstance] setPreResolveAfterNetworkChanged:NO];
+        [[HttpDnsService sharedInstance] setPreResolveAfterNetworkChanged:YES];
 //        [HttpDnsService sharedInstance].timeoutInterval = 30;
     }
     return self;
@@ -51,6 +51,9 @@ static ARHTTPDNS *sharedInstance = nil;
     }
     
     NSString *ip = [[HttpDnsService sharedInstance] getIpByHostAsync:host];
+    if (!ip) {
+        ip = [self.dnsMap allKeysForObject:host].firstObject;
+    }
     if (!ip) {
         return host;
     }
@@ -71,6 +74,9 @@ static ARHTTPDNS *sharedInstance = nil;
     }
 
     NSArray *ips = [[HttpDnsService sharedInstance] getIpsByHostAsync:host];
+    if (!ips) {
+        ips = [self.dnsMap allKeysForObject:host];
+    }
     if (!ips) {
         return @[host];
     }
@@ -94,6 +100,9 @@ static ARHTTPDNS *sharedInstance = nil;
     }
     
     NSString *ip = [[HttpDnsService sharedInstance] getIpByHostAsyncInURLFormat:host];
+    if (!ip) {
+        ip = [self.dnsMap allKeysForObject:host].firstObject;
+    }
     if (!ip) {
         return host;
     }

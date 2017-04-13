@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @interface ARWiFiDetector : NSObject
+@property (nonatomic, strong, readonly) NSString *ssid;
 
 - (NSString *)localIP;
 

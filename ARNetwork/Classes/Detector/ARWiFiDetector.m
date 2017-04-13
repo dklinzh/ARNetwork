@@ -54,6 +54,11 @@
     return info;
 }
 
+- (NSString *)ssid {
+    NSDictionary *info = [self currentNetworkInfo];
+    return [info valueForKey:@"SSID"];
+}
+
 - (BOOL)isWiFiConnected {
     return [[self currentNetworkInfo] objectForKey:@"SSID"] ? YES : NO;
 }

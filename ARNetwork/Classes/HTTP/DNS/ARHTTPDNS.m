@@ -9,6 +9,8 @@
 #import "ARHTTPDNS.h"
 #import <AlicloudHttpDNS/AlicloudHttpDNS.h> //* https://help.aliyun.com/document_detail/30141.html
 
+static NSString *const kARDNSMapUserDefaultsKey = @"kARDNSMapUserDefaultsKey";
+
 @interface ARHTTPDNS () <HttpDNSDegradationDelegate>
 @property (nonatomic, strong) NSArray *ignoredHosts;
 @property (nonatomic, assign) BOOL dnsLogEnabled;
@@ -59,7 +61,7 @@ static ARHTTPDNS *sharedInstance = nil;
     }
     
     if (![ip isEqualToString:host]) {
-        [self.dnsMap setValue:host forKey:ip];
+        [self setDNSMapWithHost:host ip:ip];
     }
     
     if (self.dnsLogEnabled) {
@@ -85,7 +87,7 @@ static ARHTTPDNS *sharedInstance = nil;
         if ([ip isEqualToString:host]) {
             continue;
         }
-        [self.dnsMap setValue:host forKey:ip];
+        [self setDNSMapWithHost:host ip:ip];
     }
     
     if (self.dnsLogEnabled) {
@@ -108,7 +110,7 @@ static ARHTTPDNS *sharedInstance = nil;
     }
     
     if (![ip isEqualToString:host]) {
-        [self.dnsMap setValue:host forKey:ip];
+        [self setDNSMapWithHost:host ip:ip];
     }
     
     if (self.dnsLogEnabled) {
@@ -176,11 +178,20 @@ static ARHTTPDNS *sharedInstance = nil;
 
 #pragma mark -
 
+- (void)setDNSMapWithHost:(NSString *)host ip:(NSString *)ip {
+    if (![[self.dnsMap valueForKey:ip] isEqualToString:host]) {
+        [self.dnsMap setValue:host forKey:ip];
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setObject:self.dnsMap forKey:kARDNSMapUserDefaultsKey];
+        [defaults synchronize];
+    }
+}
+
 - (NSMutableDictionary<NSString *,NSString *> *)dnsMap {
     if (_dnsMap) {
         return _dnsMap;
     }
-    return _dnsMap = [NSMutableDictionary dictionary];
+    return _dnsMap = [[[NSUserDefaults standardUserDefaults] objectForKey:kARDNSMapUserDefaultsKey] mutableCopy] ?: [NSMutableDictionary dictionary];
 }
 
 #pragma mark - HttpDNSDegradationDelegate

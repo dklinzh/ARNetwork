@@ -8,17 +8,26 @@
 
 #import "ARHTTPManager.h"
 #import "ARHTTPDNS.h"
+#import <objc/runtime.h>
 
 @interface ARHTTPManager ()
 - (NSString *)delegateUrlIfNeeded:(NSString *)urlStr;
 @end
 
 @implementation ARHTTPManager (HTTPDNS)
-- (NSString *)delegateUrlIfNeeded:(NSString *)urlStr {
++ (void)load {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        method_exchangeImplementations(class_getInstanceMethod(self, @selector(delegateUrlIfNeeded:)), class_getInstanceMethod(self, @selector(ar_delegateUrlIfNeeded:)));
+    });
+}
+
+- (NSString *)ar_delegateUrlIfNeeded:(NSString *)urlStr {
     return [ARHTTPDNS getIpURLByHostURLAsync:urlStr onDNS:^(NSString *host, NSString *ip) {
         if (ip) {
             [self.requestSerializer setValue:host forHTTPHeaderField:@"Host"];
         }
     }];
 }
+
 @end

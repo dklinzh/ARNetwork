@@ -34,7 +34,6 @@
 //    return ip;
 //}
 
-static NSString * ar_host(id self, SEL _cmd);
 static NSString * (*hostIMP)(id self, SEL _cmd);
 
 static NSString * ar_host(id self, SEL _cmd) {

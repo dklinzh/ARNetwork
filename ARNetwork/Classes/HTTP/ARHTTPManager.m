@@ -154,6 +154,15 @@ static ARHTTPManager *sharedInstance = nil;
 }
 
 - (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params filePath:(NSString *)filePath formName:(NSString *)formName progress:(void (^)(NSProgress *uploadProgress))uploadProgress success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
+    return [self postURL:urlStr params:params filePaths:filePath ? @[filePath] : nil formName:formName progress:uploadProgress success:success failure:failure];
+}
+
++ (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params filePaths:(NSArray<NSString *> *)filePaths formName:(NSString *)formName progress:(void (^)(NSProgress *uploadProgress))uploadProgress success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
+    NSURLSessionDataTask *task = [[self sharedInstance] postURL:urlStr params:params filePaths:filePaths formName:formName progress:uploadProgress success:success failure:failure];
+    return task;
+}
+
+- (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params filePaths:(NSArray<NSString *> *)filePaths formName:(NSString *)formName progress:(void (^)(NSProgress *uploadProgress))uploadProgress success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
     urlStr = [self delegateUrlIfNeeded:urlStr];
     if (!urlStr) {
         ARLogError(@"%@", @"HTTP URL IS NULL.");
@@ -167,8 +176,15 @@ static ARHTTPManager *sharedInstance = nil;
     NSString *taskKey = [self taskKeyForUrl:urlStr params:params];
 #endif
     NSURLSessionDataTask *task = [self POST:urlStr parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
-        [formData appendPartWithFileURL:[NSURL fileURLWithPath:filePath] name:formName error:nil];
-    } progress:uploadProgress success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        for (NSString *path in filePaths) {
+            [formData appendPartWithFileURL:[NSURL fileURLWithPath:path] name:formName error:nil];
+        }
+    } progress:^(NSProgress * _Nonnull progress) {
+        ARLogInfo(@"upload files - %@", progress.localizedDescription);
+        if (uploadProgress) {
+            uploadProgress(progress);
+        }
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
 #ifdef DEBUG
         [self taskSuccess:success failure:failure withData:responseObject forKey:taskKey startTime:startTime];
 #else

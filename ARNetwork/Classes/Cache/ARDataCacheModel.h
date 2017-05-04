@@ -34,6 +34,8 @@
 
 + (NSArray *)equalValueSkippedProperties;
 
++ (NSTimeInterval)expiredInterval;
+
 - (instancetype)initDataCacheWithData:(NSDictionary *)data;
 
 - (void)updateDataCacheWithData:(NSDictionary *)data;

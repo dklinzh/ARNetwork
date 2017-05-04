@@ -48,6 +48,10 @@
 }
 
 #pragma mark -
++ (NSTimeInterval)expiredInterval {
+    return 0;
+}
+
 + (NSArray *)equalValueSkippedProperties {
     return nil;
 }
@@ -117,7 +121,7 @@
     if (!self.realm) {
         NSURL *url = [NSURL URLWithString:urlStr];
         self.arPrimaryKey = [[NSString stringWithFormat:@"%@|%@|%@", url.host, url.path, params.description] ar_SHA1];
-        self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[ARDataCacheManager sharedInstance].expiredInterval];
+        self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[self.class expiredInterval] > 0 ? : [ARDataCacheManager sharedInstance].expiredInterval];
         RLMRealm *realm = [ARDataCacheManager defaultRealm];
         [realm transactionWithBlock:^{
             if ([self.class primaryKey]) {
@@ -133,7 +137,7 @@
     if (!self.isInvalidated) {
         [[ARDataCacheManager defaultRealm] transactionWithBlock:^{
             [self updateDataCacheWithDataPartInTransaction:data];
-            self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[ARDataCacheManager sharedInstance].expiredInterval];
+            self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[self.class expiredInterval] > 0 ? : [ARDataCacheManager sharedInstance].expiredInterval];
         }];
     }
 }

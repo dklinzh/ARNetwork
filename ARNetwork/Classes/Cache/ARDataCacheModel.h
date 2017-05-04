@@ -32,7 +32,7 @@
 
 + (NSUInteger)dataCacheCount;
 
-+ (NSArray *)valueUpdatedProperties;
++ (NSArray *)equalValueSkippedProperties;
 
 - (instancetype)initDataCacheWithData:(NSDictionary *)data;
 

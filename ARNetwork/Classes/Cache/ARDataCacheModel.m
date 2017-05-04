@@ -48,7 +48,7 @@
 }
 
 #pragma mark -
-+ (NSArray *)valueUpdatedProperties {
++ (NSArray *)equalValueSkippedProperties {
     return nil;
 }
 
@@ -139,7 +139,7 @@
 }
 
 - (void)updateDataCacheWithDataPartInTransaction:(NSDictionary *)data {
-    NSArray *valueUpdatedProperties = [self.class valueUpdatedProperties];
+    NSArray *equalValueSkippedProperties = [self.class equalValueSkippedProperties];
     NSString *primaryKey = [self.class primaryKey];
     [data enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, id  _Nonnull value, BOOL * _Nonnull stop) {
         if ([primaryKey isEqualToString:key]) {
@@ -147,7 +147,7 @@
         }
         
         if ([self respondsToSelector:NSSelectorFromString(key)]) {
-            if ([valueUpdatedProperties containsObject:key]) {
+            if ([equalValueSkippedProperties containsObject:key]) {
                 id value = [self valueForKey:key];
                 if ([value isEqual:data[key]]) {
                     return;

@@ -8,6 +8,7 @@
 
 #import "ARDataCacheManager.h"
 #import <Realm/Realm.h>
+#import "NSString+ARSHA1.h"
 
 @interface ARDataCacheManager ()
 @property (nonatomic, strong) RLMRealmConfiguration *defaultConfig;
@@ -127,6 +128,11 @@ static ARDataCacheManager *sharedInstance = nil;
         realm = [RLMRealm realmWithConfiguration:manager.defaultConfig error:&error];
     }
     return realm;
+}
+
++ (NSString *)ar_primaryKeyWithUrl:(NSString *)urlStr params:(NSDictionary *)params {
+    NSURL *url = [NSURL URLWithString:urlStr];
+    return [[NSString stringWithFormat:@"%@|%@|%@", url.host, url.path, params.description] ar_SHA1];
 }
 
 #pragma mark -

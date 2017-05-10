@@ -8,7 +8,14 @@
 
 #import "ARResponseCacheModel.h"
 #import "ARDataCacheManager.h"
-#import "NSString+ARSHA1.h"
+
+@interface ARDataCacheManager ()
++ (NSString *)ar_primaryKeyWithUrl:(NSString *)urlStr params:(NSDictionary *)params;
+@end
+
+@interface ARDataCacheModel ()
++ (instancetype)dataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params;
+@end
 
 @implementation ARResponseCacheModel
 
@@ -27,11 +34,14 @@
 //}
 
 #pragma mark -
++ (instancetype)dataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params {
+    return [super dataCacheWithUrl:urlStr params:params];
+}
+
 - (instancetype)initAndAddDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params responseObject:(id)responseObject {
     if (self = [self init]) {
         if (!self.isInvalidated && responseObject) {
-            NSURL *url = [NSURL URLWithString:urlStr];
-            self.arPrimaryKey = [[NSString stringWithFormat:@"%@|%@|%@", url.host, url.path, params.description] ar_SHA1];
+            self.arPrimaryKey = [ARDataCacheManager ar_primaryKeyWithUrl:urlStr params:params];
             self.arResponseData = [NSJSONSerialization dataWithJSONObject:responseObject options:NSJSONWritingPrettyPrinted error:nil];
             self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[ARDataCacheManager sharedInstance].expiredInterval];
             RLMRealm *realm = [ARDataCacheManager defaultRealm];

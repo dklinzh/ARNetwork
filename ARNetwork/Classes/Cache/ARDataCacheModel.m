@@ -9,7 +9,10 @@
 #import "ARDataCacheModel.h"
 #import "ARDataCacheManager.h"
 #import "NSObject+ARInspect.h"
-#import "NSString+ARSHA1.h"
+
+@interface ARDataCacheManager ()
++ (NSString *)ar_primaryKeyWithUrl:(NSString *)urlStr params:(NSDictionary *)params;
+@end
 
 @implementation ARDataCacheModel
 
@@ -79,8 +82,7 @@
         return nil;
     }
     
-    NSURL *url = [NSURL URLWithString:urlStr];
-    NSString *arPrimaryKey = [[NSString stringWithFormat:@"%@|%@|%@", url.host, url.path, params.description] ar_SHA1];
+    NSString *arPrimaryKey = [ARDataCacheManager ar_primaryKeyWithUrl:urlStr params:params];
     NSPredicate *pred = [NSPredicate predicateWithFormat:@"arPrimaryKey = %@", arPrimaryKey];
     RLMResults<__kindof ARDataCacheModel *> *caches = [self ar_objectsWithPredicate:pred];
     return caches.count > 0 ? caches.lastObject : nil;
@@ -119,8 +121,7 @@
 
 - (void)addDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params {
     if (!self.realm) {
-        NSURL *url = [NSURL URLWithString:urlStr];
-        self.arPrimaryKey = [[NSString stringWithFormat:@"%@|%@|%@", url.host, url.path, params.description] ar_SHA1];
+        self.arPrimaryKey = [ARDataCacheManager ar_primaryKeyWithUrl:urlStr params:params];
         self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[self.class expiredInterval] > 0 ? : [ARDataCacheManager sharedInstance].expiredInterval];
         RLMRealm *realm = [ARDataCacheManager defaultRealm];
         [realm transactionWithBlock:^{

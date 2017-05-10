@@ -11,6 +11,7 @@
 
 @interface ARDataCacheModel ()
 + (instancetype)dataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params;
+
 - (void)addDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params;
 @end
 

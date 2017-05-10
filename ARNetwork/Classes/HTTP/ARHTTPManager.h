@@ -9,8 +9,16 @@
 #import <AFNetworking/AFNetworking.h>
 #import "ARHTTPOperation.h"
 
+/**
+ A basic session manager whit some HTTP operations.
+ */
 @interface ARHTTPManager : AFHTTPSessionManager
+
+/**
+ The timeout interval for creating request, in seconds. Defaults to 30 s.
+ */
 @property (nonatomic, assign) NSTimeInterval timeoutInterval;
+
 @property (nonatomic, strong, readonly) NSMutableSet<NSString *> *acceptableContentTypes;
 @property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, NSURLSessionDataTask *> *taskCollections;
 @property (nonatomic, strong) ARHTTPOperation *httpOperation;

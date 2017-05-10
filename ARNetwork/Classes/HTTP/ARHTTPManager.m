@@ -12,7 +12,6 @@ static NSTimeInterval const kARDefaultTimeoutInterval = 30;
 static NSMutableOrderedSet<Class> *arProtocolClasses;
 
 @interface ARHTTPManager ()
-@property (nonatomic, strong) NSMutableSet<NSString *> *acceptableContentTypes;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, NSURLSessionDataTask *> *taskCollections;
 @end
 
@@ -23,7 +22,6 @@ static NSMutableOrderedSet<Class> *arProtocolClasses;
 - (instancetype)init {
     if (self = [super init]) {
         self.requestSerializer.timeoutInterval = self.timeoutInterval;
-        self.responseSerializer.acceptableContentTypes = self.acceptableContentTypes;
         
 //        AFSecurityPolicy *policy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeCertificate];
 //        policy.validatesDomainName = NO;
@@ -388,13 +386,11 @@ static ARHTTPManager *sharedInstance = nil;
     }
 }
 
-- (NSMutableSet<NSString *> *)acceptableContentTypes {
-    if (_acceptableContentTypes) {
-        return _acceptableContentTypes;
+- (void)setExtraContentTypes:(NSSet<NSString *> *)extraContentTypes {
+    if (!extraContentTypes) {
+        return;
     }
-    _acceptableContentTypes = [NSMutableSet setWithSet:self.responseSerializer.acceptableContentTypes];
-    [_acceptableContentTypes addObject:@"text/html"];
-    return _acceptableContentTypes;
+    self.responseSerializer.acceptableContentTypes = [self.responseSerializer.acceptableContentTypes setByAddingObjectsFromSet:extraContentTypes];
 }
 
 - (ARHTTPOperation *)httpOperation {

@@ -19,7 +19,11 @@
  */
 @property (nonatomic, assign) NSTimeInterval timeoutInterval;
 
-@property (nonatomic, strong, readonly) NSMutableSet<NSString *> *acceptableContentTypes;
+/**
+ The extra acceptable MIME types for responses. When non-`nil`, responses with a `Content-Type` with MIME types that do not intersect with the set will result in an error during validation.
+ */
+@property (nonatomic, copy) NSSet<NSString *> *extraContentTypes;
+
 @property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, NSURLSessionDataTask *> *taskCollections;
 @property (nonatomic, strong) ARHTTPOperation *httpOperation;
 @property (nonatomic, assign) BOOL allowRequestRedirection;

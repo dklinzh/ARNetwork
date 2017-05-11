@@ -387,6 +387,7 @@ static ARHTTPManager *sharedInstance = nil;
 }
 
 - (void)setExtraContentTypes:(NSSet<NSString *> *)extraContentTypes {
+    _extraContentTypes = extraContentTypes;
     if (!extraContentTypes) {
         return;
     }

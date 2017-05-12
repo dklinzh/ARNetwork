@@ -1,6 +1,6 @@
 # ARNetwork
 
-[![CI Status](http://img.shields.io/travis/Daniel/ARNetwork.svg?style=flat)](https://travis-ci.org/Daniel/ARNetwork)
+[![CI Status](http://img.shields.io/travis/dklinzh/ARNetwork.svg?style=flat)](https://travis-ci.org/dklinzh/ARNetwork)
 [![Version](https://img.shields.io/cocoapods/v/ARNetwork.svg?style=flat)](http://cocoapods.org/pods/ARNetwork)
 [![License](https://img.shields.io/cocoapods/l/ARNetwork.svg?style=flat)](http://cocoapods.org/pods/ARNetwork)
 [![Platform](https://img.shields.io/cocoapods/p/ARNetwork.svg?style=flat)](http://cocoapods.org/pods/ARNetwork)

@@ -49,6 +49,8 @@ Pod::Spec.new do |s|
   end
 
   s.subspec 'Detector' do |ss|
+    ss.dependency 'AFNetworking/UIKit', '~> 3.1'
+
     ss.source_files = 'ARNetwork/Classes/Detector/*.{h,m}'
   end
 end

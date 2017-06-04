@@ -10,7 +10,7 @@
 /**
  The operation type of reponse data with local cache.
  */
-typedef NS_ENUM(NSInteger, ARCacheType) {
+typedef NS_OPTIONS(NSInteger, ARCacheType) {
     ARCacheTypeNone = 0, // Do not use the operation of data cache.
     ARCacheTypeOnlyLoad = 1, // Only load data if there are caches in local, otherwise create cache with data source from remote server.
     ARCacheTypeOnlyUpdate = 1 << 1, // Only create or update cache with data source from remote server.

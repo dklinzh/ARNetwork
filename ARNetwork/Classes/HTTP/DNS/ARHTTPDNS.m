@@ -12,7 +12,7 @@
 static NSString *const kARDNSMapUserDefaultsKey = @"kARDNSMapUserDefaultsKey";
 
 @interface ARHTTPDNS () <HttpDNSDegradationDelegate>
-@property (nonatomic, strong) NSArray *ignoredHosts;
+@property (nonatomic, copy) NSArray *ignoredHosts;
 @property (nonatomic, assign) BOOL dnsLogEnabled;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, NSString *> *dnsMap;
 @end

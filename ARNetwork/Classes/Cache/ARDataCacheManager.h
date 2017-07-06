@@ -10,6 +10,8 @@
 
 @class RLMRealm;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  An manager for maintaining the cache data in local database.
  */
@@ -61,3 +63,4 @@
 - (void)allClear;
 @end
  
+NS_ASSUME_NONNULL_END

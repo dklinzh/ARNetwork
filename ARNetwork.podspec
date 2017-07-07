@@ -43,7 +43,7 @@ Pod::Spec.new do |s|
 
   s.subspec 'Cache' do |ss|
     ss.dependency 'ARNetwork/HTTP'
-    ss.dependency 'Realm', '~> 2.7'
+    ss.dependency 'Realm', '~> 2.8'
 
     ss.source_files = 'ARNetwork/Classes/Cache/*.{h,m}'
   end

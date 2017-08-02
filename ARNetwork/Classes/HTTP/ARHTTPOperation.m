@@ -19,11 +19,11 @@
 - (void)ar_onSuccess:(ARHTTPResponseSuccess)success onFailure:(ARHTTPResponseFailure)failure withData:(id)data {
     if (data) {
         if (success) {
-            success(data, @"操作成功");
+            success(data, @"操作成功"); // FIXME: localization
         }
     } else {
         if (failure) {
-            failure(0, @"操作失败");
+            failure(0, @"操作失败"); // FIXME: localization
         }
     }
 }
@@ -37,10 +37,10 @@
             case -1001:
             case -1005:
             case -1009: // network unreachable
-                failure(error.code, @"网络异常，请稍后尝试。");
+                failure(error.code, @"网络异常，请稍后尝试。"); // FIXME: localization
                 break;
             default:
-                failure(error.code, @"系统繁忙，请稍后尝试。");
+                failure(error.code, @"系统繁忙，请稍后尝试。"); // FIXME: localization
                 break;
         }
     }

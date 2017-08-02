@@ -15,6 +15,7 @@ static NSString *const kARDNSMapUserDefaultsKey = @"kARDNSMapUserDefaultsKey";
 @property (nonatomic, copy) NSArray *ignoredHosts;
 @property (nonatomic, assign) BOOL dnsLogEnabled;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, NSString *> *dnsMap;
+@property (nonatomic, strong) HttpDnsService *httpDNSService;
 @end
 
 @implementation ARHTTPDNS
@@ -38,11 +39,7 @@ static ARHTTPDNS *sharedInstance = nil;
 
 - (instancetype)init {
     if (self = [super init]) {
-        self.dnsLogEnabled = NO;
-        [[HttpDnsService sharedInstance] setHTTPSRequestEnabled:YES];
-        [[HttpDnsService sharedInstance] setExpiredIPEnabled:YES];
-        [[HttpDnsService sharedInstance] setPreResolveAfterNetworkChanged:YES];
-//        [HttpDnsService sharedInstance].timeoutInterval = 30;
+        _dnsLogEnabled = NO;
     }
     return self;
 }
@@ -52,7 +49,7 @@ static ARHTTPDNS *sharedInstance = nil;
         return host ? host : nil;
     }
     
-    NSString *ip = [[HttpDnsService sharedInstance] getIpByHostAsync:host];
+    NSString *ip = [self.httpDNSService getIpByHostAsync:host];
     if (!ip) {
         ip = [self.dnsMap allKeysForObject:host].firstObject;
     }
@@ -75,7 +72,7 @@ static ARHTTPDNS *sharedInstance = nil;
         return host ? @[host] : nil;
     }
 
-    NSArray *ips = [[HttpDnsService sharedInstance] getIpsByHostAsync:host];
+    NSArray *ips = [self.httpDNSService getIpsByHostAsync:host];
     if (!ips) {
         ips = [self.dnsMap allKeysForObject:host];
     }
@@ -101,7 +98,7 @@ static ARHTTPDNS *sharedInstance = nil;
         return host ? host : nil;
     }
     
-    NSString *ip = [[HttpDnsService sharedInstance] getIpByHostAsyncInURLFormat:host];
+    NSString *ip = [self.httpDNSService getIpByHostAsyncInURLFormat:host];
     if (!ip) {
         ip = [self.dnsMap allKeysForObject:host].firstObject;
     }
@@ -153,22 +150,27 @@ static ARHTTPDNS *sharedInstance = nil;
     return hostUrl;
 }
 
-- (void)seAccountId:(NSInteger)accountId {
-    [HttpDnsService sharedInstance].accountID = (int)accountId;
+- (void)seAccountId:(NSInteger)accountID {
+    self.httpDNSService = [[HttpDnsService alloc] initWithAccountID:(int)accountID];
+    [self.httpDNSService setHTTPSRequestEnabled:YES];
+    [self.httpDNSService setExpiredIPEnabled:YES];
+    [self.httpDNSService setPreResolveAfterNetworkChanged:YES];
+    //        self.httpDNSService.timeoutInterval = 30;
+    
     self.httpDNSEnabled = YES;
 }
 
 - (void)setDnsLogEnabled:(BOOL)dnsLogEnabled {
     _dnsLogEnabled = dnsLogEnabled;
-    [[HttpDnsService sharedInstance] setLogEnabled:dnsLogEnabled];
+    [self.httpDNSService setLogEnabled:dnsLogEnabled];
 }
 
 - (void)setPreResolveHosts:(NSArray *)preResolveHosts ignoreddHosts:(NSArray *)ignoredHosts {
-    [[HttpDnsService sharedInstance] setPreResolveHosts:preResolveHosts];
+    [self.httpDNSService setPreResolveHosts:preResolveHosts];
     if ((self.ignoredHosts = ignoredHosts)) {
-        [[HttpDnsService sharedInstance] setDelegateForDegradationFilter:self];
+        [self.httpDNSService setDelegateForDegradationFilter:self];
     } else {
-        [[HttpDnsService sharedInstance] setDelegateForDegradationFilter:nil];
+        [self.httpDNSService setDelegateForDegradationFilter:nil];
     }
 }
 

@@ -13,7 +13,7 @@
 
 + (instancetype)sharedInstance;
 
-- (void)seAccountId:(NSInteger)accountId;
+- (void)seAccountId:(NSInteger)accountID;
 
 - (void)setPreResolveHosts:(NSArray *)preResolveHosts ignoreddHosts:(NSArray *)ignoredHosts;
 

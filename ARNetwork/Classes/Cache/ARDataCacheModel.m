@@ -102,10 +102,19 @@
                     if ([obj isKindOfClass:RLMArray.class]) {
                         RLMArray *objs = (RLMArray *)obj;
                         Class clazz = NSClassFromString(objs.objectClassName);
-                        if ([clazz isSubclassOfClass:ARDataCacheModel.class]) {
+                        if ([clazz isSubclassOfClass:ARWrapedString.class]) {
                             NSArray *values = (NSArray *)value;
-                            for (NSDictionary *item in values) {
-                                [objs addObject:[[clazz alloc] initDataCacheWithData:item]];
+                            for (id item in values) {
+                                if ([item isKindOfClass:NSString.class]) {
+                                    [objs addObject:[[ARWrapedString alloc] initWithString:item]];
+                                }
+                            }
+                        } else if ([clazz isSubclassOfClass:ARDataCacheModel.class]) {
+                            NSArray *values = (NSArray *)value;
+                            for (id item in values) {
+                                if ([item isKindOfClass:NSDictionary.class]) {
+                                    [objs addObject:[[clazz alloc] initDataCacheWithData:item]];
+                                }
                             }
                         }
                     }
@@ -174,7 +183,15 @@
                 if ([obj isKindOfClass:RLMArray.class]) {
                     RLMArray *objs = (RLMArray *)obj;
                     Class clazz = NSClassFromString(objs.objectClassName);
-                    if ([clazz isSubclassOfClass:ARDataCacheModel.class]) {
+                    if ([clazz isSubclassOfClass:ARWrapedString.class]) {
+                        [objs removeAllObjects];
+                        NSArray *values = (NSArray *)value;
+                        for (id item in values) {
+                            if ([item isKindOfClass:NSString.class]) {
+                                [objs addObject:[[ARWrapedString alloc] initWithString:item]];
+                            }
+                        }
+                    } else if ([clazz isSubclassOfClass:ARDataCacheModel.class]) {
                         NSArray *values = (NSArray *)value;
                         NSString *primaryKey = [clazz primaryKey];
                         if (primaryKey) {
@@ -182,21 +199,25 @@
                             for (id item in objs) {
                                 [map setObject:item forKey:[item valueForKey:primaryKey]];
                             }
-                            for (NSDictionary *item in values) {
-                                id primaryValue = [item valueForKey:primaryKey];
-                                id primaryObj = [map objectForKey:primaryValue];
-                                if (primaryObj) {
-                                    [primaryObj updateDataCacheWithDataPartInTransaction:item];
-                                    [map removeObjectForKey:primaryValue];
-                                } else {
-                                    [objs addObject:[[clazz alloc] initDataCacheWithData:item]];
+                            for (id item in values) {
+                                if ([item isKindOfClass:NSDictionary.class]) {
+                                    id primaryValue = [item valueForKey:primaryKey];
+                                    id primaryObj = [map objectForKey:primaryValue];
+                                    if (primaryObj) {
+                                        [primaryObj updateDataCacheWithDataPartInTransaction:item];
+                                        [map removeObjectForKey:primaryValue];
+                                    } else {
+                                        [objs addObject:[[clazz alloc] initDataCacheWithData:item]];
+                                    }
                                 }
                             }
                             [[ARDataCacheManager defaultRealm] deleteObjects:map.allValues];
                         } else {
                             [objs removeAllObjects];
-                            for (NSDictionary *item in values) {
-                                [objs addObject:[[clazz alloc] initDataCacheWithData:item]];
+                            for (id item in values) {
+                                if ([item isKindOfClass:NSDictionary.class]) {
+                                    [objs addObject:[[clazz alloc] initDataCacheWithData:item]];
+                                }
                             }
                         }
                     }
@@ -214,3 +235,13 @@
 }
 @end
 
+@implementation ARWrapedString
+
+- (instancetype)initWithString:(NSString *)string {
+    if (self = [super init]) {
+        self.value = string;
+    }
+    return self;
+}
+
+@end

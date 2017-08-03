@@ -135,8 +135,23 @@
  Override this method to set value for any additional properties on this kind of object.
  */
 - (void)setValueForExtraProperties NS_REQUIRES_SUPER;
-@end
 
-// This protocol enables typed collections. i.e.:
-// RLMArray<ARDataCacheModel>
+@end
 RLM_ARRAY_TYPE(ARDataCacheModel)
+
+/**
+ Wraped string object for storing flat arrays of strings on a Realm model
+ */
+@interface ARWrapedString : ARDataCacheModel
+@property NSString *value;
+
+/**
+ Creates an unmanaged instance of a wraped string Realm object.
+
+ @param string The value of string
+ @return ARCacheString instance
+ */
+- (instancetype)initWithString:(NSString *)string;
+
+@end
+RLM_ARRAY_TYPE(ARWrapedString)

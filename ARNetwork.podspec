@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'ARNetwork'
-  s.version          = '0.3.4'
+  s.version          = '0.3.5'
   s.summary          = 'An iOS network framework in combination with HTTP/HTTPS task and data cache. (AFNetworking+Realm)'
   s.description      = <<-DESC
                         An iOS network framework in combination with HTTP/HTTPS task and data cache. (AFNetworking+Realm)
@@ -43,7 +43,7 @@ Pod::Spec.new do |s|
 
   s.subspec 'Cache' do |ss|
     ss.dependency 'ARNetwork/HTTP'
-    ss.dependency 'Realm', '~> 2.8'
+    ss.dependency 'Realm', '~> 2.9'
 
     ss.source_files = 'ARNetwork/Classes/Cache/*.{h,m}'
   end

@@ -78,6 +78,12 @@ static ARHTTPManager *sharedInstance = nil;
     return sharedInstance;
 }
 
+- (void)setHTTPHeaders:(NSDictionary *)headers {
+    [headers enumerateKeysAndObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+        [self.requestSerializer setValue:obj forHTTPHeaderField:key];
+    }];
+}
+
 + (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
     NSURLSessionDataTask *task = [[self sharedInstance] getURL:urlStr params:params success:success failure:failure];
     return task;

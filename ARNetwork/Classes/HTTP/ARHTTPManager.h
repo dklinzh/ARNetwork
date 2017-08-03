@@ -34,6 +34,13 @@
 
 + (instancetype)sharedInstance;
 
+/**
+ Set HTTP header fields for the HTTP manager
+
+ @param headers The dictionary of header fields
+ */
+- (void)setHTTPHeaders:(NSDictionary *)headers;
+
 + (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure;
 
 - (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure;

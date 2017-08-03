@@ -16,6 +16,11 @@
 @end
 
 @implementation ARDataCacheModel (HTTP)
+
++ (void)setHTTPHeaders:(NSDictionary *)headers {
+    [[ARHTTPManager sharedInstance] setHTTPHeaders:headers];
+}
+
 #pragma mark - HTTP
 + (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure {
     id oldData = [self oldDataCache:&cacheType url:urlStr params:params success:success failure:failure];

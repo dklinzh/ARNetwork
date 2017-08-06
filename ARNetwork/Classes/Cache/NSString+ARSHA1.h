@@ -1,9 +1,9 @@
 //
 //  NSString+ARSHA1.h
-//  Pods
+//  ARNetwork
 //
 //  Created by Linzh on 2/10/17.
-//
+//  Copyright © 2017 Daniel. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

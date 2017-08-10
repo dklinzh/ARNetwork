@@ -21,7 +21,7 @@ static NSMutableOrderedSet<Class> *arProtocolClasses;
 #pragma mark - Override
 - (instancetype)init {
     if (self = [super init]) {
-        self.requestSerializer.timeoutInterval = self.timeoutInterval;
+        self.requestEncodedType = ARRequestEncodedTypeDefault;
         
 //        AFSecurityPolicy *policy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeCertificate];
 //        policy.validatesDomainName = NO;
@@ -420,6 +420,23 @@ static ARHTTPManager *sharedInstance = nil;
             [self setTaskWillPerformHTTPRedirectionBlock:nil];
         }
     }
+}
+
+- (void)setRequestEncodedType:(ARRequestEncodedType)requestEncodedType {
+    _requestEncodedType = requestEncodedType;
+    
+    switch (requestEncodedType) {
+        case ARRequestEncodedTypeJSON:
+            self.requestSerializer = [AFJSONRequestSerializer serializer];
+            break;
+        case ARRequestEncodedTypePlist:
+            self.requestSerializer = [AFPropertyListRequestSerializer serializer];
+            break;
+        default:
+            self.requestSerializer = [AFHTTPRequestSerializer serializer];
+            break;
+    }
+    self.requestSerializer.timeoutInterval = self.timeoutInterval;
 }
 
 @end

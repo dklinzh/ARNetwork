@@ -9,6 +9,12 @@
 #import <AFNetworking/AFNetworking.h>
 #import "ARHTTPOperation.h"
 
+typedef NS_ENUM(NSUInteger, ARRequestEncodedType) {
+    ARRequestEncodedTypeDefault,
+    ARRequestEncodedTypeJSON,
+    ARRequestEncodedTypePlist,
+};
+
 /**
  A basic session manager whit some HTTP operations.
  */
@@ -27,6 +33,8 @@
 @property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, NSURLSessionDataTask *> *taskCollections;
 @property (nonatomic, strong) ARHTTPOperation *httpOperation;
 @property (nonatomic, assign) BOOL allowRequestRedirection;
+
+@property (nonatomic, assign) ARRequestEncodedType requestEncodedType;
 
 + (void)registerProtocolClass:(Class)protocolClass;
 

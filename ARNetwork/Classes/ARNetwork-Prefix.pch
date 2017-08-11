@@ -16,13 +16,16 @@
 
 #ifdef DEBUG
 
-#define ARLogLevel(level, frmt, ...) NSLog([NSString stringWithFormat:@"%@[%@]: %@", ARNetworkDomain, level, frmt], ##__VA_ARGS__)
+#define ARLogLevel(level, frmt, ...) NSLog([NSString stringWithFormat:@"[%@] %@ %@", ARNetworkDomain, level, frmt], ##__VA_ARGS__)
 
-#define ARLogVerbose(frmt, ...)     ARLogLevel(@"VERBOSE", frmt, ##__VA_ARGS__)
-#define ARLogDebug(frmt, ...)       ARLogLevel(@"DEBUG", frmt, ##__VA_ARGS__)
-#define ARLogInfo(frmt, ...)        ARLogLevel(@"INFO", frmt, ##__VA_ARGS__)
-#define ARLogWarn(frmt, ...)        ARLogLevel(@"WARN", frmt, ##__VA_ARGS__)
-#define ARLogError(frmt, ...)       ARLogLevel(@"ERROR", frmt, ##__VA_ARGS__)
+#define ARLogVerbose(frmt, ...)     ARLogLevel(@"🌐", frmt, ##__VA_ARGS__)
+#define ARLogDebug(frmt, ...)       ARLogLevel(@"✳️", frmt, ##__VA_ARGS__)
+#define ARLogInfo(frmt, ...)        ARLogLevel(@"ℹ️", frmt, ##__VA_ARGS__)
+#define ARLogWarn(frmt, ...)        ARLogLevel(@"⚠️", frmt, ##__VA_ARGS__)
+#define ARLogError(frmt, ...)       ARLogLevel(@"🛑", frmt, ##__VA_ARGS__)
+
+#define ARLogSuccess(frmt, ...)     ARLogLevel(@"✅✅✅", frmt, ##__VA_ARGS__)
+#define ARLogFailure(frmt, ...)     ARLogLevel(@"❌❌❌", frmt, ##__VA_ARGS__)
 
 #else
 #define ARLogVerbose(frmt, ...)
@@ -30,6 +33,9 @@
 #define ARLogInfo(frmt, ...)
 #define ARLogWarn(frmt, ...)
 #define ARLogError(frmt, ...)
+
+#define ARLogSuccess(frmt, ...)
+#define ARLogFailure(frmt, ...)
 #endif
 
 #endif /* ARNetwork_Prefix_pch */

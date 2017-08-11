@@ -23,6 +23,8 @@
  */
 @property NSDate *arExpiredTime;
 
++ (RLMRealm *)ar_defaultRealm;
+
 /**
  Creates an instance of the `ARDataCacheModel` object with a given value, and adds it to the default Realm database.
 
@@ -85,7 +87,7 @@
 
  @return An instance of this kind of object
  */
-+ (instancetype)dataCache;
++ (_Nullable instancetype)dataCache;
 
 /**
  Returns the cache data of this object type with the given index from the default Realm database.
@@ -93,7 +95,7 @@
  @param index An index of the object in the `RLMResults` contains all objects of this type.
  @return An instance of this kind of object.
  */
-+ (instancetype)dataCache:(NSUInteger)index;
++ (_Nullable instancetype)dataCache:(NSUInteger)index;
 
 /**
  Returns the number of all objects of this type from the default Realm database.

@@ -11,6 +11,8 @@
 
 @interface ARDataCacheManager ()
 + (NSString *)ar_primaryKeyWithUrl:(NSString *)urlStr params:(NSDictionary *)params;
++ (RLMRealm *)ar_realmWithModelClass:(Class)clazz;
++ (instancetype)ar_managerWithModelClass:(Class)clazz;
 @end
 
 @interface ARDataCacheModel ()
@@ -43,8 +45,8 @@
         if (!self.isInvalidated && responseObject) {
             self.arPrimaryKey = [ARDataCacheManager ar_primaryKeyWithUrl:urlStr params:params];
             self.arResponseData = [NSJSONSerialization dataWithJSONObject:responseObject options:NSJSONWritingPrettyPrinted error:nil];
-            self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[ARDataCacheManager sharedInstance].expiredInterval];
-            RLMRealm *realm = [ARDataCacheManager defaultRealm];
+            self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[ARDataCacheManager ar_managerWithModelClass:self.class].expiredInterval];
+            RLMRealm *realm = [ARDataCacheManager ar_realmWithModelClass:self.class];
             [realm transactionWithBlock:^{
                 [realm addObject:self];
             }];
@@ -55,9 +57,9 @@
 
 - (void)updateDataCacheWithResponseObject:(id)responseObject {
     if (!self.isInvalidated) {
-        [[ARDataCacheManager defaultRealm] transactionWithBlock:^{
+        [[ARDataCacheManager ar_realmWithModelClass:self.class] transactionWithBlock:^{
             self.arResponseData = responseObject ? [NSJSONSerialization dataWithJSONObject:responseObject options:NSJSONWritingPrettyPrinted error:nil] : nil;
-            self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[ARDataCacheManager sharedInstance].expiredInterval];
+            self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[ARDataCacheManager ar_managerWithModelClass:self.class].expiredInterval];
         }];
     }
 }

@@ -7,44 +7,115 @@
 //
 
 #import "ARDataCacheManager.h"
-#import <Realm/Realm.h>
 #import "NSString+ARSHA1.h"
+#import "ARDataCacheModel.h"
+#import "ARResponseCacheModel.h"
+
+static NSString *const kDefaultSchemaName = @"default";
 
 @interface ARDataCacheManager ()
 @property (nonatomic, strong) RLMRealmConfiguration *defaultConfig;
+@property (nonatomic, copy) NSString *schemaName;
+
 @end
 
 @implementation ARDataCacheManager
-static ARDataCacheManager *sharedInstance = nil;
 
-+ (instancetype)allocWithZone:(struct _NSZone *)zone {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken,^{
-        sharedInstance = [super allocWithZone:zone];
-    });
-    return sharedInstance;
+- (instancetype)initDefaultSchemaWithVersion:(NSUInteger)version {
+    return [self initDefaultSchemaWithVersion:version dataEncryption:NO];
 }
 
-- (instancetype)init {
+- (instancetype)initDefaultSchemaWithVersion:(NSUInteger)version dataEncryption:(BOOL)enabled {
+    return [self initSchemaWithName:kDefaultSchemaName version:version dataEncryption:enabled];
+}
+
+- (instancetype)initSchemaWithName:(NSString *)name version:(NSUInteger)version {
+    return [self initSchemaWithName:name version:version dataEncryption:NO];
+}
+
+- (instancetype)initSchemaWithName:(NSString *)name version:(NSUInteger)version dataEncryption:(BOOL)enabled {
     if (self = [super init]) {
+        self.schemaName = name;
         self.onlyAccessibleWhenUnlocked = NO;
+        
+        [self configureWithSchemaVersion:version dataEncryption:enabled];
+        
     }
     return self;
 }
 
-+ (instancetype)sharedInstance {
+- (void)allClear {
+    @autoreleasepool {
+        RLMRealm *realm = [self defaultRealm];
+        [realm beginWriteTransaction];
+        [realm deleteAllObjects];
+        [realm commitWriteTransaction];
+    }
+}
+
+- (RLMRealm *)defaultRealm {
+    NSError *error = nil;
+    RLMRealm *realm = [RLMRealm realmWithConfiguration:self.defaultConfig error:&error];
+    if (error) {
+        NSFileManager *fm = [NSFileManager defaultManager];
+        NSArray<NSString *> *paths = [fm contentsOfDirectoryAtPath:self.defaultConfig.fileURL.URLByDeletingLastPathComponent.path error:nil];
+        for (NSString *path in paths) {
+            [fm removeItemAtURL:[self.defaultConfig.fileURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:path] error:nil];
+        }
+        
+        realm = [RLMRealm realmWithConfiguration:self.defaultConfig error:&error];
+    }
+    return realm;
+}
+
+#pragma mark - Schema Register
+
+- (void)registerDataCacheModels:(NSArray<Class> *)classes {
+    for (Class clazz in classes) {
+        if ([clazz isSubclassOfClass:ARDataCacheModel.class]) {
+            [[self.class arSchemaManagers] setValue:self forKey:NSStringFromClass(clazz)];
+        }
+    }
+}
+
++ (NSMutableDictionary *)arSchemaManagers {
+    static NSMutableDictionary *arSchemaManagers;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        sharedInstance = [[self alloc] init];
+        arSchemaManagers = [NSMutableDictionary dictionary];
+    });
+    return arSchemaManagers;
+}
+
++ (instancetype)ar_managerWithModelClass:(Class)clazz {
+    NSArray *keys = [NSStringFromClass(clazz) componentsSeparatedByString:@" "];
+    ARDataCacheManager *manager = [[self.class arSchemaManagers] valueForKey:keys.lastObject];
+    NSAssert(manager, @"[ARNetwork] ⚠️ Class `%@` has not been registered in a schema.", NSStringFromClass(clazz));
+    return manager;
+}
+
++ (RLMRealm *)ar_realmWithModelClass:(Class)clazz {
+    return [[self ar_managerWithModelClass:clazz] defaultRealm];
+}
+
++ (NSString *)ar_primaryKeyWithUrl:(NSString *)urlStr params:(NSDictionary *)params {
+    NSURL *url = [NSURL URLWithString:urlStr];
+    return [[NSString stringWithFormat:@"%@|%@|%@", url.host, url.path, params.description] ar_SHA1];
+}
+
++ (instancetype)sharedInstance {
+    static ARDataCacheManager *sharedInstance;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedInstance = [[ARDataCacheManager alloc] initSchemaWithName:@"" version:0 dataEncryption:true];
+        [sharedInstance registerDataCacheModels:@[ARResponseCacheModel.class]];
     });
     return sharedInstance;
 }
 
-- (void)initConfigurationWithSchemaVersion:(uint64_t)version {
-    [self initConfigurationWithSchemaVersion:version dataEncryption:NO];
-}
+#pragma mark -
 
-- (void)initConfigurationWithSchemaVersion:(uint64_t)version dataEncryption:(BOOL)enabled {
+- (void)configureWithSchemaVersion:(uint64_t)version dataEncryption:(BOOL)enabled {
     @autoreleasepool {
         RLMRealmConfiguration *config = self.defaultConfig;
         config.schemaVersion = version;
@@ -59,13 +130,13 @@ static ARDataCacheManager *sharedInstance = nil;
             NSData *key = [self searchEncryptionKey];
             if (key) {
                 config.encryptionKey = key;
-                [ARDataCacheManager defaultRealm];
+                [self defaultRealm];
             } else {
                 key = [self addEncryptionKey];
-                NSURL *tempUrl = [config.fileURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:@"temp.realm"];
+                NSURL *tempUrl = [self tempFileURL];
                 BOOL res;
                 @autoreleasepool {
-                    res = [[ARDataCacheManager defaultRealm] writeCopyToURL:tempUrl encryptionKey:key error:nil];
+                    res = [[self defaultRealm] writeCopyToURL:tempUrl encryptionKey:key error:nil];
                 }
                 if (res) {
                     if ([[NSFileManager defaultManager] removeItemAtURL:config.fileURL error:nil]) {
@@ -81,11 +152,11 @@ static ARDataCacheManager *sharedInstance = nil;
             NSData *key = [self searchEncryptionKey];
             if (key) {
                 [self deleteEncryptionKey];
-                NSURL *tempUrl = [config.fileURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:@"temp.realm"];
+                NSURL *tempUrl = [self tempFileURL];
                 BOOL res;
                 @autoreleasepool {
                     config.encryptionKey = key;
-                    res = [[ARDataCacheManager defaultRealm] writeCopyToURL:tempUrl encryptionKey:nil error:nil];
+                    res = [[self defaultRealm] writeCopyToURL:tempUrl encryptionKey:nil error:nil];
                 }
                 if (res) {
                     if ([[NSFileManager defaultManager] removeItemAtURL:config.fileURL error:nil]) {
@@ -97,48 +168,16 @@ static ARDataCacheManager *sharedInstance = nil;
                     }
                 }
             } else {
-                [ARDataCacheManager defaultRealm];
+                [self defaultRealm];
             }
         }
         
-        ARLogInfo(@"Realm: %@", [ARDataCacheManager defaultRealm].configuration.fileURL);
+        ARLogInfo(@"Realm: %@", [self defaultRealm].configuration.fileURL);
     }
 }
-
-- (void)allClear {
-    @autoreleasepool {
-        RLMRealm *realm = [ARDataCacheManager defaultRealm];
-        [realm beginWriteTransaction];
-        [realm deleteAllObjects];
-        [realm commitWriteTransaction];
-    }
-}
-
-+ (RLMRealm *)defaultRealm {
-    NSError *error = nil;
-    ARDataCacheManager *manager = [ARDataCacheManager sharedInstance];
-    RLMRealm *realm = [RLMRealm realmWithConfiguration:manager.defaultConfig error:&error];
-    if (error) {
-        NSFileManager *fm = [NSFileManager defaultManager];
-        NSArray<NSString *> *paths = [fm contentsOfDirectoryAtPath:manager.defaultConfig.fileURL.URLByDeletingLastPathComponent.path error:nil];
-        for (NSString *path in paths) {
-            [fm removeItemAtURL:[manager.defaultConfig.fileURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:path] error:nil];
-        }
-        
-        realm = [RLMRealm realmWithConfiguration:manager.defaultConfig error:&error];
-    }
-    return realm;
-}
-
-+ (NSString *)ar_primaryKeyWithUrl:(NSString *)urlStr params:(NSDictionary *)params {
-    NSURL *url = [NSURL URLWithString:urlStr];
-    return [[NSString stringWithFormat:@"%@|%@|%@", url.host, url.path, params.description] ar_SHA1];
-}
-
-#pragma mark -
 
 - (NSData *)searchEncryptionKey {
-    NSData *tag = [[self keychainId] dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *tag = [[self keychainID] dataUsingEncoding:NSUTF8StringEncoding];
     NSDictionary *query = @{(__bridge id)kSecClass: (__bridge id)kSecClassKey,
                             (__bridge id)kSecAttrApplicationTag: tag,
                             (__bridge id)kSecAttrKeySizeInBits: @512,
@@ -159,27 +198,27 @@ static ARDataCacheManager *sharedInstance = nil;
     OSStatus status = SecRandomCopyBytes(kSecRandomDefault, 64, buffer);
     NSAssert(status == errSecSuccess, @"[ARNetwork] Failed to generate random bytes for key");
     NSData *keyData = [[NSData alloc] initWithBytes:buffer length:sizeof(buffer)];
-    NSData *tag = [[self keychainId] dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *tag = [[self keychainID] dataUsingEncoding:NSUTF8StringEncoding];
     NSDictionary *query = @{(__bridge id)kSecClass: (__bridge id)kSecClassKey,
                             (__bridge id)kSecAttrApplicationTag: tag,
                             (__bridge id)kSecAttrKeySizeInBits: @512,
                             (__bridge id)kSecValueData: keyData,
                             (__bridge id)kSecAttrAccessible: (__bridge id)kSecAttrAccessibleWhenUnlocked};
     status = SecItemAdd((__bridge CFDictionaryRef)query, NULL);
-    NSAssert(status == errSecSuccess, @"[ARNetwork] Failed to insert new key in the keychain");
+    NSAssert(status == errSecSuccess, @"[ARNetwork] ⚠️ Failed to insert new key in the keychain");
     return keyData;
 }
 
 - (void)deleteEncryptionKey {
-    NSData *tag = [[self keychainId] dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *tag = [[self keychainID] dataUsingEncoding:NSUTF8StringEncoding];
     NSDictionary *query = @{(__bridge id)kSecClass: (__bridge id)kSecClassKey,
                             (__bridge id)kSecAttrApplicationTag: tag};
     OSStatus status = SecItemDelete((__bridge CFDictionaryRef)query);
-    NSAssert(status == errSecSuccess, @"[ARNetwork] Failed to delete the invalid key in the keychain");
+    NSAssert(status == errSecSuccess, @"[ARNetwork] ⚠️ Failed to delete the invalid key in the keychain");
 }
 
-- (NSString *)keychainId {
-    return [NSString stringWithFormat:@"%@.arnetwork.datacache", [[NSBundle mainBundle] bundleIdentifier]];
+- (NSString *)keychainID {
+    return [NSString stringWithFormat:@"%@.arnetwork.datacache.%@", [[NSBundle mainBundle] bundleIdentifier], self.schemaName];
 }
 
 - (RLMRealmConfiguration *)defaultConfig {
@@ -187,12 +226,16 @@ static ARDataCacheManager *sharedInstance = nil;
         return _defaultConfig;
     }
     _defaultConfig = [RLMRealmConfiguration defaultConfiguration];
-    _defaultConfig.fileURL = [_defaultConfig.fileURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:[ARNetworkDomain stringByAppendingPathComponent:@"DataCache"]];
+    _defaultConfig.fileURL = [_defaultConfig.fileURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:[ARNetworkDomain stringByAppendingPathComponent:[NSString stringWithFormat:@"DataCache/%@.schema", self.schemaName]]];
     NSError *error = nil;
     [[NSFileManager defaultManager] createDirectoryAtURL:_defaultConfig.fileURL withIntermediateDirectories:YES attributes:nil error:&error];
-    NSAssert(!error, @"[ARNetwork] Failed to create default directory of data cache\n%@", error);
-    _defaultConfig.fileURL = [_defaultConfig.fileURL URLByAppendingPathComponent:@"default.realm"];
+    NSAssert(!error, @"[ARNetwork] ⚠️ Failed to create default directory of data cache\n%@", error);
+    _defaultConfig.fileURL = [_defaultConfig.fileURL URLByAppendingPathComponent:@"data.ar.realm"];
     return _defaultConfig;
+}
+
+- (NSURL *)tempFileURL {
+    return [self.defaultConfig.fileURL.URLByDeletingPathExtension URLByAppendingPathExtension:@".temp.realm"];
 }
 
 - (void)setOnlyAccessibleWhenUnlocked:(BOOL)onlyAccessibleWhenUnlocked {

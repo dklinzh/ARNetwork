@@ -27,40 +27,26 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, assign) BOOL onlyAccessibleWhenUnlocked;
 
-/**
- The singleton of class `ARDataCacheManager`.
-
- @return The instance of `ARDataCacheManager`
- */
+// FIXME: ARResponseCacheModel
 + (instancetype)sharedInstance;
 
-/**
- The default RLMRealm object for the default database of ARNetwork framework.
+- (instancetype)init NS_UNAVAILABLE;
 
- @return The default RLMRealm object for the default database of ARNetwork framework.
- */
-+ (RLMRealm *)defaultRealm;
+- (instancetype)initDefaultSchemaWithVersion:(NSUInteger)version;
 
+- (instancetype)initDefaultSchemaWithVersion:(NSUInteger)version dataEncryption:(BOOL)enabled;
 
-/**
- Initialize the Realm configuration before using the caches from local database.
+- (instancetype)initSchemaWithName:(NSString *)name version:(NSUInteger)version;
 
- @param version The current schema version. The version should be upgrade when the data structure of table or database was changed.
- */
-- (void)initConfigurationWithSchemaVersion:(uint64_t)version;
+- (instancetype)initSchemaWithName:(NSString *)name version:(NSUInteger)version dataEncryption:(BOOL)enabled;
 
-/**
- Initialize the Realm configuration before using the caches from local database.
-
- @param version The current schema version. The version should be upgrade when the data structure of table or database was changed.
- @param enabled Whether the cache data in the local database should be encrypted. Defaults to FALSE
- */
-- (void)initConfigurationWithSchemaVersion:(uint64_t)version dataEncryption:(BOOL)enabled;
+- (void)registerDataCacheModels:(NSArray<Class> *)classes;
 
 /**
  Clear all of the data cache.
  */
 - (void)allClear;
+
 @end
  
 NS_ASSUME_NONNULL_END

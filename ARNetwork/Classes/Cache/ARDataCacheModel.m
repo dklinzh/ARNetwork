@@ -12,22 +12,28 @@
 
 @interface ARDataCacheManager ()
 + (NSString *)ar_primaryKeyWithUrl:(NSString *)urlStr params:(NSDictionary *)params;
++ (RLMRealm *)ar_realmWithModelClass:(Class)clazz;
++ (instancetype)ar_managerWithModelClass:(Class)clazz;
 @end
 
 @implementation ARDataCacheModel
 
 #pragma mark -
 
++ (RLMRealm *)ar_defaultRealm {
+    return [ARDataCacheManager ar_realmWithModelClass:self.class];
+}
+
 + (instancetype)ar_createInDefaultRealmWithValue:(id)value {
-    return [self createInRealm:[ARDataCacheManager defaultRealm] withValue:value];
+    return [self createInRealm:[self ar_defaultRealm] withValue:value];
 }
 
 + (instancetype)ar_createOrUpdateInDefaultRealmWithValue:(id)value {
-    return [self createOrUpdateInRealm:[ARDataCacheManager defaultRealm] withValue:value];
+    return [self createOrUpdateInRealm:[self ar_defaultRealm] withValue:value];
 }
 
 + (RLMResults *)ar_allObjects {
-    return [self allObjectsInRealm:[ARDataCacheManager defaultRealm]];
+    return [self allObjectsInRealm:[self ar_defaultRealm]];
 }
 
 + (RLMResults *)ar_objectsWhere:(NSString *)predicateFormat, ... {
@@ -39,20 +45,20 @@
 }
 
 + (RLMResults *)ar_objectsWhere:(NSString *)predicateFormat args:(va_list)args {
-    return [self objectsInRealm:[ARDataCacheManager defaultRealm] where:predicateFormat args:args];
+    return [self objectsInRealm:[self ar_defaultRealm] where:predicateFormat args:args];
 }
 
 + (RLMResults *)ar_objectsWithPredicate:(NSPredicate *)predicate {
-    return [self objectsInRealm:[ARDataCacheManager defaultRealm] withPredicate:predicate];
+    return [self objectsInRealm:[self ar_defaultRealm] withPredicate:predicate];
 }
 
 + (instancetype)ar_objectForPrimaryKey:(id)primaryKey {
-    return [self objectInRealm:[ARDataCacheManager defaultRealm] forPrimaryKey:primaryKey];
+    return [self objectInRealm:[self ar_defaultRealm] forPrimaryKey:primaryKey];
 }
 
 #pragma mark -
 + (NSTimeInterval)expiredInterval {
-    return 0;
+    return [ARDataCacheManager ar_managerWithModelClass:self.class].expiredInterval;
 }
 
 + (NSArray *)equalValueSkippedProperties {
@@ -60,13 +66,12 @@
 }
 
 + (instancetype)dataCache {
-    RLMResults<__kindof ARDataCacheModel *> *results = [self ar_allObjects];
-    return results.lastObject;
+    return [self dataCache:0];
 }
 
 + (instancetype)dataCache:(NSUInteger)index {
     RLMResults<__kindof ARDataCacheModel *> *results = [self ar_allObjects];
-    if (index >= results.count) {
+    if (index + 1 > results.count) {
         return nil;
     }
     return results[index];
@@ -131,8 +136,8 @@
 - (void)addDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params {
     if (!self.realm) {
         self.arPrimaryKey = [ARDataCacheManager ar_primaryKeyWithUrl:urlStr params:params];
-        self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[self.class expiredInterval] > 0 ? : [ARDataCacheManager sharedInstance].expiredInterval];
-        RLMRealm *realm = [ARDataCacheManager defaultRealm];
+        self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[self.class expiredInterval]];
+        RLMRealm *realm = [self.class ar_defaultRealm];
         [realm transactionWithBlock:^{
             if ([self.class primaryKey]) {
                 [realm addOrUpdateObject:self];
@@ -145,9 +150,9 @@
 
 - (void)updateDataCacheWithData:(NSDictionary *)data {
     if (!self.isInvalidated) {
-        [[ARDataCacheManager defaultRealm] transactionWithBlock:^{
+        [[self.class ar_defaultRealm] transactionWithBlock:^{
             [self updateDataCacheWithDataPartInTransaction:data];
-            self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[self.class expiredInterval] > 0 ? : [ARDataCacheManager sharedInstance].expiredInterval];
+            self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[self.class expiredInterval]];
         }];
     }
 }
@@ -211,7 +216,7 @@
                                     }
                                 }
                             }
-                            [[ARDataCacheManager defaultRealm] deleteObjects:map.allValues];
+                            [[self.class ar_defaultRealm] deleteObjects:map.allValues];
                         } else {
                             [objs removeAllObjects];
                             for (id item in values) {

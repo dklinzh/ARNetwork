@@ -12,7 +12,7 @@
  */
 typedef NS_OPTIONS(NSInteger, ARCacheType) {
     ARCacheTypeNone = 0, // Do not use the operation of data cache.
-    ARCacheTypeOnlyLoad = 1, // Only load data if there are caches in local, otherwise create cache with data source from remote server.
+    ARCacheTypeOnlyLoad = 1, // Only load data if there are valid caches in local, otherwise create cache with data source from remote server.
     ARCacheTypeOnlyUpdate = 1 << 1, // Only create or update cache with data source from remote server.
     ARCacheTypeUpdateIfNeeded = 1 << 2, // Only create or update cache with data source from remote server if the local cache was expired.
     ARCacheTypeLoadAndUpdate = ARCacheTypeOnlyLoad | ARCacheTypeOnlyUpdate, // Load the existed data in local and then create or update cache with data source from remote server.

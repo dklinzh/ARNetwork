@@ -366,14 +366,14 @@ static ARHTTPManager *sharedInstance = nil;
     [self taskSuccess:success failure:failure withData:data];
     
     CFTimeInterval endTime = CACurrentMediaTime();
-    ARLogDebug(@"Response<%@>: %.f ms\n%@", key, (endTime - startTime) * 1000, data);
+    ARLogSuccess(@"Response<%@>: %.f ms\n%@", key, (endTime - startTime) * 1000, data);
 }
 
 - (void)taskFailure:(ARHTTPResponseFailure)failure withError:(NSError *)error forKey:(NSString *)key startTime:(CFTimeInterval)startTime {
     [self taskFailure:failure withError:error];
     
     CFTimeInterval endTime = CACurrentMediaTime();
-    ARLogError(@"Response<%@>: %.f ms\n%@", key, (endTime - startTime) * 1000, error);
+    ARLogFailure(@"Response<%@>: %.f ms\n%@", key, (endTime - startTime) * 1000, error);
 }
 #endif
 

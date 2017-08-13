@@ -87,7 +87,7 @@
 
  @return An instance of this kind of object
  */
-+ (_Nullable instancetype)dataCache;
++ (nullable instancetype)dataCache;
 
 /**
  Returns the cache data of this object type with the given index from the default Realm database.
@@ -95,7 +95,7 @@
  @param index An index of the object in the `RLMResults` contains all objects of this type.
  @return An instance of this kind of object.
  */
-+ (_Nullable instancetype)dataCache:(NSUInteger)index;
++ (nullable instancetype)dataCache:(NSUInteger)index;
 
 /**
  Returns the number of all objects of this type from the default Realm database.

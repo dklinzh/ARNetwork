@@ -8,6 +8,8 @@
 
 #import <Realm/Realm.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  The base class of object modeling from reponse data with cache.
  */
@@ -16,12 +18,12 @@
 /**
  The primary key for a specific cache data with the kind of class `ARDataCacheModel`. (Read only)
  */
-@property NSString *arPrimaryKey;
+@property NSString * _arPrimaryKey;
 
 /**
  The expired time for a specific cache data with the kind of class `ARDataCacheModel`. (Read only)
  */
-@property NSDate *arExpiredTime;
+@property NSDate * _Nullable _arExpiredTime;
 
 + (RLMRealm *)ar_defaultRealm;
 
@@ -80,7 +82,7 @@
  @param primaryKey The value of primary key.
  @return An object of this object type, or `nil` if an object with the given primary key does not exist.
  */
-+ (instancetype)ar_objectForPrimaryKey:(id)primaryKey;
++ (nullable instancetype)ar_objectForPrimaryKey:(id)primaryKey;
 
 /**
  Returns the latest cache data of this object type from the default Realm database.
@@ -109,7 +111,7 @@
 
  @return An array of property names.
  */
-+ (NSArray *)equalValueSkippedProperties;
++ (nullable NSArray *)equalValueSkippedProperties;
 
 /**
  Override this method to specify the time interval of expired cache data to this kind of object. Defaults to 0 s.
@@ -157,3 +159,5 @@ RLM_ARRAY_TYPE(ARDataCacheModel)
 
 @end
 RLM_ARRAY_TYPE(ARWrapedString)
+
+NS_ASSUME_NONNULL_END

@@ -88,7 +88,7 @@
     }
     
     NSString *arPrimaryKey = [ARDataCacheManager ar_primaryKeyWithUrl:urlStr params:params];
-    NSPredicate *pred = [NSPredicate predicateWithFormat:@"arPrimaryKey = %@", arPrimaryKey];
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@"_arPrimaryKey = %@", arPrimaryKey];
     RLMResults<__kindof ARDataCacheModel *> *caches = [self ar_objectsWithPredicate:pred];
     return caches.count > 0 ? caches.lastObject : nil;
 }
@@ -135,8 +135,8 @@
 
 - (void)addDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params {
     if (!self.realm) {
-        self.arPrimaryKey = [ARDataCacheManager ar_primaryKeyWithUrl:urlStr params:params];
-        self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[self.class expiredInterval]];
+        self._arPrimaryKey = [ARDataCacheManager ar_primaryKeyWithUrl:urlStr params:params];
+        self._arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[self.class expiredInterval]];
         RLMRealm *realm = [self.class ar_defaultRealm];
         [realm transactionWithBlock:^{
             if ([self.class primaryKey]) {
@@ -152,7 +152,7 @@
     if (!self.isInvalidated) {
         [[self.class ar_defaultRealm] transactionWithBlock:^{
             [self updateDataCacheWithDataPartInTransaction:data];
-            self.arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[self.class expiredInterval]];
+            self._arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[self.class expiredInterval]];
         }];
     }
 }

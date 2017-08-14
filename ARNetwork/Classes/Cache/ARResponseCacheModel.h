@@ -9,7 +9,7 @@
 #import "ARDataCacheModel.h"
 
 @interface ARResponseCacheModel : ARDataCacheModel
-@property NSData *arResponseData;
+@property NSData *_arResponseData;
 
 @end
 

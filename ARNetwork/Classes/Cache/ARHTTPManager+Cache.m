@@ -138,7 +138,7 @@
             if ((*cacheType & ARCacheTypeOnlyLoad) && success) {
                 success(oldData.responseObject, nil, YES);
             }
-            if ((*cacheType & ARCacheTypeUpdateIfNeeded) && (oldData.arExpiredTime.timeIntervalSinceNow > 0)) {
+            if ((*cacheType & ARCacheTypeUpdateIfNeeded) && (oldData._arExpiredTime.timeIntervalSinceNow > 0)) {
                 *cacheType = ARCacheTypeOnlyLoad;
             }
         } else {

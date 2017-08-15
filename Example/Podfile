@@ -1,5 +1,5 @@
-#source 'https://github.com/aliyun/aliyun-specs.git'
 source 'https://github.com/CocoaPods/Specs.git'
+source 'https://github.com/aliyun/aliyun-specs.git'
 
 platform :ios, '8.0'
 
@@ -14,4 +14,8 @@ target 'ARNetwork_Example' do
         pod 'Specta'
         pod 'Expecta'
     end
+end
+
+pre_install do |installer|
+    def installer.verify_no_static_framework_transitive_dependencies; end
 end

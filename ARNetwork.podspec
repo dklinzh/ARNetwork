@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'ARNetwork'
-  s.version          = '0.3.5'
+  s.version          = '0.4.0'
   s.summary          = 'An iOS network framework in combination with HTTP/HTTPS task and data cache. (AFNetworking+Realm)'
   s.description      = <<-DESC
                         An iOS network framework in combination with HTTP/HTTPS task and data cache. (AFNetworking+Realm)
@@ -24,6 +24,14 @@ Pod::Spec.new do |s|
   s.prefix_header_file = 'ARNetwork/Classes/ARNetwork-Prefix.pch'
   s.public_header_files = 'ARNetwork/Classes/ARNetwork.h'
   s.source_files = 'ARNetwork/Classes/ARNetwork.h'
+  s.default_subspecs = 'Default'
+
+  s.subspec 'Default' do |ss|
+    ss.dependency 'ARNetwork/HTTP'
+    ss.dependency 'ARNetwork/DNS'
+    ss.dependency 'ARNetwork/Cache'
+    ss.dependency 'ARNetwork/Detector'
+  end
 
   s.subspec 'HTTP' do |ss|
     ss.dependency 'AFNetworking', '~> 3.1'
@@ -31,12 +39,16 @@ Pod::Spec.new do |s|
     ss.source_files = 'ARNetwork/Classes/HTTP/*.{h,m}'
   end
 
-  s.subspec 'HTTPDNS' do |ss|
+  s.subspec 'DNS' do |ss|
     ss.dependency 'ARNetwork/HTTP'
-    ss.libraries = 'resolv'
-    ss.frameworks = 'CoreTelephony', 'SystemConfiguration'
-    ss.vendored_frameworks = 'ARNetwork/Frameworks/HTTPDNS/*.framework'
-    # ss.dependency 'AlicloudHTTPDNS', '~> 1.3'
+      # sss.libraries = 'resolv'
+      # sss.frameworks = 'CoreTelephony', 'SystemConfiguration'
+      # sss.vendored_frameworks = 'ARNetwork/Frameworks/HTTPDNS/*.framework'
+    ss.dependency 'AlicloudHTTPDNS'
+    ss.pod_target_xcconfig = {
+      'FRAMEWORK_SEARCH_PATHS' => '$(inherited) "$(PODS_ROOT)/AlicloudHTTPDNS/**"',
+      'OTHER_LDFLAGS'          => '$(inherited) -undefined dynamic_lookup'
+    }
 
     ss.source_files = 'ARNetwork/Classes/HTTP/DNS/*.{h,m}'
   end
@@ -53,4 +65,5 @@ Pod::Spec.new do |s|
 
     ss.source_files = 'ARNetwork/Classes/Detector/*.{h,m}'
   end
+
 end

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0E6D61232789F09CE4EF09D0 /* Pods_ARNetwork_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C1669146C7F6C8F6B1CA1A4 /* Pods_ARNetwork_Example.framework */; };
+		37CBB6BB025E4CB751B095B0 /* Pods_ARNetwork_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7932155579FA8FA8751DDB06 /* Pods_ARNetwork_Tests.framework */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58F195388D20070C39A /* CoreGraphics.framework */; };
 		6003F592195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
@@ -20,8 +22,6 @@
 		6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
 		6003F5BA195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5B8195388D20070C39A /* InfoPlist.strings */; };
 		6003F5BC195388D20070C39A /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5BB195388D20070C39A /* Tests.m */; };
-		6B901A9B6AD2C5B2555AA452 /* Pods_ARNetwork_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15EC2348DD7D286CEEBDF2DE /* Pods_ARNetwork_Tests.framework */; };
-		749ECB7B9128D22CE3902C4D /* Pods_ARNetwork_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D7996C374155F30A8EFBA35 /* Pods_ARNetwork_Example.framework */; };
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
 /* End PBXBuildFile section */
 
@@ -36,10 +36,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		15EC2348DD7D286CEEBDF2DE /* Pods_ARNetwork_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ARNetwork_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A5FAA4B0F423CE742DFA68B /* Pods-ARNetwork_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ARNetwork_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-ARNetwork_Example/Pods-ARNetwork_Example.release.xcconfig"; sourceTree = "<group>"; };
 		1BD1F6D040BD2234B5CFBE6F /* Pods-ARNetwork_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ARNetwork_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ARNetwork_Example/Pods-ARNetwork_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		1FA03288613396E61C8C92FA /* Pods-ARNetwork_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ARNetwork_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ARNetwork_Tests/Pods-ARNetwork_Tests.release.xcconfig"; sourceTree = "<group>"; };
+		2C1669146C7F6C8F6B1CA1A4 /* Pods_ARNetwork_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ARNetwork_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D51D8097005E065D0D0D09B /* Pods-ARNetwork_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ARNetwork_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ARNetwork_Tests/Pods-ARNetwork_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		6003F58A195388D20070C39A /* ARNetwork_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARNetwork_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F58D195388D20070C39A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -61,7 +61,7 @@
 		6003F5BB195388D20070C39A /* Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Tests.m; sourceTree = "<group>"; };
 		606FC2411953D9B200FFA9A0 /* Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tests-Prefix.pch"; sourceTree = "<group>"; };
 		67C53CEE184E1635110D78D5 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
-		7D7996C374155F30A8EFBA35 /* Pods_ARNetwork_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ARNetwork_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7932155579FA8FA8751DDB06 /* Pods_ARNetwork_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ARNetwork_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		84FF111489CAE4D2F33364B7 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		B12EBA07FD66F85C1995F59C /* ARNetwork.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = ARNetwork.podspec; path = ../ARNetwork.podspec; sourceTree = "<group>"; };
@@ -76,7 +76,7 @@
 				6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */,
 				6003F592195388D20070C39A /* UIKit.framework in Frameworks */,
 				6003F58E195388D20070C39A /* Foundation.framework in Frameworks */,
-				749ECB7B9128D22CE3902C4D /* Pods_ARNetwork_Example.framework in Frameworks */,
+				0E6D61232789F09CE4EF09D0 /* Pods_ARNetwork_Example.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,7 +87,7 @@
 				6003F5B0195388D20070C39A /* XCTest.framework in Frameworks */,
 				6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */,
 				6003F5B1195388D20070C39A /* Foundation.framework in Frameworks */,
-				6B901A9B6AD2C5B2555AA452 /* Pods_ARNetwork_Tests.framework in Frameworks */,
+				37CBB6BB025E4CB751B095B0 /* Pods_ARNetwork_Tests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -122,8 +122,8 @@
 				6003F58F195388D20070C39A /* CoreGraphics.framework */,
 				6003F591195388D20070C39A /* UIKit.framework */,
 				6003F5AF195388D20070C39A /* XCTest.framework */,
-				7D7996C374155F30A8EFBA35 /* Pods_ARNetwork_Example.framework */,
-				15EC2348DD7D286CEEBDF2DE /* Pods_ARNetwork_Tests.framework */,
+				2C1669146C7F6C8F6B1CA1A4 /* Pods_ARNetwork_Example.framework */,
+				7932155579FA8FA8751DDB06 /* Pods_ARNetwork_Tests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

@@ -151,7 +151,11 @@ static ARHTTPDNS *sharedInstance = nil;
 }
 
 - (void)seAccountID:(NSInteger)accountID {
-    self.httpDNSService = [[HttpDnsService alloc] initWithAccountID:(int)accountID];
+    [self seAccountID:accountID secret:nil];
+}
+
+- (void)seAccountID:(NSInteger)accountID secret:(NSString *)secret {
+    self.httpDNSService = secret ? [[HttpDnsService alloc] initWithAccountID:(int)accountID secretKey:secret] : [[HttpDnsService alloc] initWithAccountID:(int)accountID];
     [self.httpDNSService setHTTPSRequestEnabled:YES];
     [self.httpDNSService setExpiredIPEnabled:YES];
     [self.httpDNSService setPreResolveAfterNetworkChanged:YES];

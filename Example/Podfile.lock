@@ -14,24 +14,32 @@ PODS:
   - AFNetworking/Serialization (3.1.0)
   - AFNetworking/UIKit (3.1.0):
     - AFNetworking/NSURLSession
-  - ARNetwork (0.3.5):
-    - ARNetwork/Cache (= 0.3.5)
-    - ARNetwork/Detector (= 0.3.5)
-    - ARNetwork/HTTP (= 0.3.5)
-    - ARNetwork/HTTPDNS (= 0.3.5)
-  - ARNetwork/Cache (0.3.5):
+  - AlicloudHTTPDNS (1.5.5):
+    - AlicloudUtils
+  - AlicloudUTDID (1.1.0.16)
+  - AlicloudUtils (1.2.1):
+    - AlicloudUTDID
+  - ARNetwork (0.4.0):
+    - ARNetwork/Default (= 0.4.0)
+  - ARNetwork/Cache (0.4.0):
     - ARNetwork/HTTP
     - Realm (~> 2.9)
-  - ARNetwork/Detector (0.3.5):
-    - AFNetworking/UIKit (~> 3.1)
-  - ARNetwork/HTTP (0.3.5):
-    - AFNetworking (~> 3.1)
-  - ARNetwork/HTTPDNS (0.3.5):
+  - ARNetwork/Default (0.4.0):
+    - ARNetwork/Cache
+    - ARNetwork/Detector
+    - ARNetwork/DNS
     - ARNetwork/HTTP
+  - ARNetwork/Detector (0.4.0):
+    - AFNetworking/UIKit (~> 3.1)
+  - ARNetwork/DNS (0.4.0):
+    - AlicloudHTTPDNS
+    - ARNetwork/HTTP
+  - ARNetwork/HTTP (0.4.0):
+    - AFNetworking (~> 3.1)
   - Expecta (1.0.6)
-  - Realm (2.9.0):
-    - Realm/Headers (= 2.9.0)
-  - Realm/Headers (2.9.0)
+  - Realm (2.9.1):
+    - Realm/Headers (= 2.9.1)
+  - Realm/Headers (2.9.1)
   - Specta (1.0.6)
 
 DEPENDENCIES:
@@ -45,11 +53,14 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
-  ARNetwork: d0a5026b2eddd4567cb830497317f9ce484c7c7e
+  AlicloudHTTPDNS: 843e0b6992be0cd5b6806d008ceef19839ae8149
+  AlicloudUTDID: f5a7bc1420c5f83e3bd40296e5ab2e5a804a12f8
+  AlicloudUtils: 03c182a3cb21a556a516e495775773c1299e40e6
+  ARNetwork: d37cbd46e1e91e7277f8fcdb9f55711892f4dc86
   Expecta: 3b6bd90a64b9a1dcb0b70aa0e10a7f8f631667d5
-  Realm: f14ab1673502559cb16592ddb8f383c474c13e05
+  Realm: f91fb43bd474c4f731a116ebf7392c75dd015920
   Specta: f506f3a8361de16bc0dcf3b17b75e269072ba465
 
-PODFILE CHECKSUM: 1ea42a6d11a68e4c9078bee13aabdcd168cfaf0a
+PODFILE CHECKSUM: 9b86403e8c93a4521112acde3b7368bb6516ba27
 
 COCOAPODS: 1.2.1

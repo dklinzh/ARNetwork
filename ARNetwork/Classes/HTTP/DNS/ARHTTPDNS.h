@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface ARHTTPDNS : NSObject
 @property (nonatomic, assign, getter=isHttpDNSEnabled) BOOL httpDNSEnabled;
 
@@ -17,15 +19,17 @@
 
 - (void)setPreResolveHosts:(NSArray *)preResolveHosts ignoreddHosts:(NSArray *)ignoredHosts;
 
-- (NSString *)getIpByHostAsync:(NSString *)host;
+- (nullable NSString *)getIpByHostAsync:(NSString *)host;
 
-- (NSArray *)getIpsByHostAsync:(NSString *)host;
+- (nullable NSArray *)getIpsByHostAsync:(NSString *)host;
 
-- (NSString *)getIpByHostAsyncInURLFormat:(NSString *)host;
+- (nullable NSString *)getIpByHostAsyncInURLFormat:(NSString *)host;
 
-- (NSString *)getHostByIP:(NSString *)ip;
+- (nullable NSString *)getHostByIP:(NSString *)ip;
 
-+ (NSString *)getIpURLByHostURLAsync:(NSString *)hostUrl;
++ (nullable NSString *)getIpURLByHostURLAsync:(NSString *)hostUrl;
 
-+ (NSString *)getIpURLByHostURLAsync:(NSString *)hostUrl onDNS:(void(^)(NSString *host, NSString *ip))block;
++ (nullable NSString *)getIpURLByHostURLAsync:(NSString *)hostUrl onDNS:(nullable void(^)(NSString *host, NSString * _Nullable ip))block;
 @end
+
+NS_ASSUME_NONNULL_END

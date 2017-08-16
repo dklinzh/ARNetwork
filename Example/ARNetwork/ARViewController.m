@@ -7,7 +7,7 @@
 //
 
 #import "ARViewController.h"
-#import <ARNetwork/ARNetwork.h>
+@import ARNetwork;
 
 @interface ARViewController ()
 
@@ -19,6 +19,12 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    
+    [[ARHTTPManager sharedInstance] getURL:@"http://httpbin.org/get" params:nil success:^(id data, NSString *msg) {
+        
+    } failure:^(NSInteger code, NSString *msg) {
+        
+    }];
 }
 
 - (void)didReceiveMemoryWarning

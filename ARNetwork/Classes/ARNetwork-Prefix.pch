@@ -28,14 +28,15 @@
 #define ARLogFailure(frmt, ...)     ARLogLevel(@"❌❌❌", frmt, ##__VA_ARGS__)
 
 #else
+
 #define ARLogVerbose(frmt, ...)
 #define ARLogDebug(frmt, ...)
 #define ARLogInfo(frmt, ...)
 #define ARLogWarn(frmt, ...)
 #define ARLogError(frmt, ...)
-
 #define ARLogSuccess(frmt, ...)
 #define ARLogFailure(frmt, ...)
+
 #endif
 
 #endif /* ARNetwork_Prefix_pch */

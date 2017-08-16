@@ -22,8 +22,6 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '7.0'
 
   s.prefix_header_file = 'ARNetwork/Classes/ARNetwork-Prefix.pch'
-  s.public_header_files = 'ARNetwork/Classes/ARNetwork.h'
-  s.source_files = 'ARNetwork/Classes/ARNetwork.h'
   s.default_subspecs = 'Default'
 
   s.subspec 'Default' do |ss|
@@ -41,13 +39,14 @@ Pod::Spec.new do |s|
 
   s.subspec 'DNS' do |ss|
     ss.dependency 'ARNetwork/HTTP'
-      # sss.libraries = 'resolv'
-      # sss.frameworks = 'CoreTelephony', 'SystemConfiguration'
-      # sss.vendored_frameworks = 'ARNetwork/Frameworks/HTTPDNS/*.framework'
     ss.dependency 'AlicloudHTTPDNS'
+    ss.libraries = 'resolv'
+    # ss.vendored_frameworks = 'ARNetwork/Frameworks/HTTPDNS/*.framework'
+    # ss.frameworks = 'CoreTelephony', 'SystemConfiguration'
+
     ss.pod_target_xcconfig = {
-      'FRAMEWORK_SEARCH_PATHS' => '$(inherited) "$(PODS_ROOT)/AlicloudHTTPDNS/**"',
-      'OTHER_LDFLAGS'          => '$(inherited) -undefined dynamic_lookup'
+      'FRAMEWORK_SEARCH_PATHS' => '$(inherited) "$(PODS_ROOT)/AlicloudHTTPDNS/**" "$(PODS_ROOT)/AlicloudUtils/**" "$(PODS_ROOT)/AlicloudUTDID/**"',
+      'OTHER_LDFLAGS'          => '$(inherited) -framework AlicloudHttpDNS -framework AlicloudUtils -framework UTDID'
     }
 
     ss.source_files = 'ARNetwork/Classes/HTTP/DNS/*.{h,m}'

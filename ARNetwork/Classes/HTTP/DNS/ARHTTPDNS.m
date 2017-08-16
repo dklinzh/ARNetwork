@@ -7,7 +7,7 @@
 //
 
 #import "ARHTTPDNS.h"
-#import <AlicloudHttpDNS/AlicloudHttpDNS.h> //* https://help.aliyun.com/document_detail/30141.html
+@import AlicloudHttpDNS; //* https://help.aliyun.com/document_detail/30141.html
 
 static NSString *const kARDNSMapUserDefaultsKey = @"kARDNSMapUserDefaultsKey";
 

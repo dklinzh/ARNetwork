@@ -139,12 +139,12 @@
     
     if (cacheType & (ARCacheTypeOnlyUpdate | ARCacheTypeUpdateIfNeeded)) {
         if (oldData) {
-            [oldData updateDataCacheWithData:data];
+            [oldData updateDataCache:data];
             if (success) {
                 success(oldData, msg, NO);
             }
         } else {
-            __kindof ARDataCacheModel *newData = [[self alloc] initDataCacheWithData:data];
+            __kindof ARDataCacheModel *newData = [[self alloc] initDataCache:data];
             [newData addDataCacheWithUrl:urlStr params:params];
             if (success) {
                 success(newData, msg, NO);
@@ -152,7 +152,7 @@
         }
     } else {
         if (success) {
-            __kindof ARDataCacheModel *newData = [[self alloc] initDataCacheWithData:data];
+            __kindof ARDataCacheModel *newData = [[self alloc] initDataCache:data];
             success(newData, msg, NO);
         }
     }

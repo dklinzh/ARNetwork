@@ -11,14 +11,14 @@
 #import <objc/runtime.h>
 
 @interface ARHTTPManager ()
-- (NSString *)delegateUrlIfNeeded:(NSString *)urlStr;
+- (NSString *)_delegateUrlIfNeeded:(NSString *)urlStr;
 @end
 
 @implementation ARHTTPManager (HTTPDNS)
 + (void)load {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        method_exchangeImplementations(class_getInstanceMethod(self, @selector(delegateUrlIfNeeded:)), class_getInstanceMethod(self, @selector(ar_delegateUrlIfNeeded:)));
+        method_exchangeImplementations(class_getInstanceMethod(self, @selector(_delegateUrlIfNeeded:)), class_getInstanceMethod(self, @selector(ar_delegateUrlIfNeeded:)));
     });
 }
 

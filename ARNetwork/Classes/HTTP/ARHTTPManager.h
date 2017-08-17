@@ -15,6 +15,8 @@ typedef NS_ENUM(NSUInteger, ARRequestEncodedType) {
     ARRequestEncodedTypePlist,
 };
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  A basic session manager whit some HTTP operations.
  */
@@ -49,35 +51,46 @@ typedef NS_ENUM(NSUInteger, ARRequestEncodedType) {
  */
 - (void)setHTTPHeaders:(NSDictionary *)headers;
 
-+ (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure;
++ (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(nullable NSDictionary *)params success:(nullable ARHTTPResponseSuccess)success failure:(nullable ARHTTPResponseFailure)failure;
 
-- (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure;
+- (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(nullable NSDictionary *)params success:(nullable ARHTTPResponseSuccess)success failure:(nullable ARHTTPResponseFailure)failure;
 
-+ (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure;
++ (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(nullable NSDictionary *)params success:(nullable ARHTTPResponseSuccess)success failure:(nullable ARHTTPResponseFailure)failure;
 
-- (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure;
+- (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(nullable NSDictionary *)params success:(nullable ARHTTPResponseSuccess)success failure:(nullable ARHTTPResponseFailure)failure;
 
-+ (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params filePath:(NSString *)filePath formName:(NSString *)formName progress:(void (^)(NSProgress *uploadProgress))uploadProgress success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure;
++ (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(nullable NSDictionary *)params filePath:(NSString *)filePath formName:(NSString *)formName progress:(nullable void (^)(NSProgress *uploadProgress))uploadProgress success:(nullable ARHTTPResponseSuccess)success failure:(nullable ARHTTPResponseFailure)failure;
 
-- (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params filePath:(NSString *)filePath formName:(NSString *)formName progress:(void (^)(NSProgress *uploadProgress))uploadProgress success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure;
+- (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(nullable NSDictionary *)params filePath:(NSString *)filePath formName:(NSString *)formName progress:(nullable void (^)(NSProgress *uploadProgress))uploadProgress success:(nullable ARHTTPResponseSuccess)success failure:(nullable ARHTTPResponseFailure)failure;
 
-+ (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params filePaths:(NSArray<NSString *> *)filePaths formName:(NSString *)formName progress:(void (^)(NSProgress *uploadProgress))uploadProgress success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure;
++ (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(nullable NSDictionary *)params filePaths:(NSArray<NSString *> *)filePaths formName:(NSString *)formName progress:(nullable void (^)(NSProgress *uploadProgress))uploadProgress success:(nullable ARHTTPResponseSuccess)success failure:(nullable ARHTTPResponseFailure)failure;
 
-- (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params filePaths:(NSArray<NSString *> *)filePaths formName:(NSString *)formName progress:(void (^)(NSProgress *uploadProgress))uploadProgress success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure;
+- (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(nullable NSDictionary *)params filePaths:(NSArray<NSString *> *)filePaths formName:(NSString *)formName progress:(nullable void (^)(NSProgress *uploadProgress))uploadProgress success:(nullable ARHTTPResponseSuccess)success failure:(nullable ARHTTPResponseFailure)failure;
 
-+ (NSURLSessionDataTask *)putURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure;
++ (NSURLSessionDataTask *)putURL:(NSString *)urlStr params:(nullable NSDictionary *)params success:(nullable ARHTTPResponseSuccess)success failure:(nullable ARHTTPResponseFailure)failure;
 
-- (NSURLSessionDataTask *)putURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure;
+- (NSURLSessionDataTask *)putURL:(NSString *)urlStr params:(nullable NSDictionary *)params success:(nullable ARHTTPResponseSuccess)success failure:(nullable ARHTTPResponseFailure)failure;
 
-+ (NSURLSessionDataTask *)patchURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure;
++ (NSURLSessionDataTask *)patchURL:(NSString *)urlStr params:(nullable NSDictionary *)params success:(nullable ARHTTPResponseSuccess)success failure:(nullable ARHTTPResponseFailure)failure;
 
-- (NSURLSessionDataTask *)patchURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure;
+- (NSURLSessionDataTask *)patchURL:(NSString *)urlStr params:(nullable NSDictionary *)params success:(nullable ARHTTPResponseSuccess)success failure:(nullable ARHTTPResponseFailure)failure;
 
-+ (NSURLSessionDataTask *)deleteURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure;
++ (NSURLSessionDataTask *)deleteURL:(NSString *)urlStr params:(nullable NSDictionary *)params success:(nullable ARHTTPResponseSuccess)success failure:(nullable ARHTTPResponseFailure)failure;
 
-- (NSURLSessionDataTask *)deleteURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure;
+- (NSURLSessionDataTask *)deleteURL:(NSString *)urlStr params:(nullable NSDictionary *)params success:(nullable ARHTTPResponseSuccess)success failure:(nullable ARHTTPResponseFailure)failure;
 
-+ (NSURLSessionDataTask *)headURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseHead)success failure:(ARHTTPResponseFailure)failure;
++ (NSURLSessionDataTask *)headURL:(NSString *)urlStr params:(nullable NSDictionary *)params success:(nullable ARHTTPResponseHead)success failure:(nullable ARHTTPResponseFailure)failure;
 
-- (NSURLSessionDataTask *)headURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseHead)success failure:(ARHTTPResponseFailure)failure;
+- (NSURLSessionDataTask *)headURL:(NSString *)urlStr params:(nullable NSDictionary *)params success:(nullable ARHTTPResponseHead)success failure:(nullable ARHTTPResponseFailure)failure;
+
 @end
+
+@interface ARHTTPManager (Session)
+
+- (nullable NSString *)getJSESSIONIDForURL:(NSString *)urlString;
+
+- (void)restoreSession:(NSString *)JSESSIONID forURL:(NSString *)urlString;
+
+@end
+
+NS_ASSUME_NONNULL_END

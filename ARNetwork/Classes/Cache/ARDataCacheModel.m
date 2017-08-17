@@ -93,14 +93,14 @@
     return caches.count > 0 ? caches.lastObject : nil;
 }
 
-- (instancetype)initDataCacheWithData:(NSDictionary *)data {
+- (instancetype)initDataCache:(NSDictionary *)data {
     if (self = [self init]) {
         [data enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, id  _Nonnull value, BOOL * _Nonnull stop) {
             if ([self respondsToSelector:NSSelectorFromString(key)]) {
                 if ([value isKindOfClass:NSDictionary.class]) {
                     id obj = [[self ar_classOfPropertyNamed:key] alloc];
                     if ([obj isKindOfClass:ARDataCacheModel.class]) {
-                        [self setValue:[obj initDataCacheWithData:value] forKey:key];
+                        [self setValue:[obj initDataCache:value] forKey:key];
                     }
                 } else if ([value isKindOfClass:NSArray.class]) {
                     id obj = [self valueForKey:key];
@@ -118,7 +118,7 @@
                             NSArray *values = (NSArray *)value;
                             for (id item in values) {
                                 if ([item isKindOfClass:NSDictionary.class]) {
-                                    [objs addObject:[[clazz alloc] initDataCacheWithData:item]];
+                                    [objs addObject:[[clazz alloc] initDataCache:item]];
                                 }
                             }
                         }
@@ -148,7 +148,7 @@
     }
 }
 
-- (void)updateDataCacheWithData:(NSDictionary *)data {
+- (void)updateDataCache:(NSDictionary *)data {
     if (!self.isInvalidated) {
         [[self.class ar_defaultRealm] transactionWithBlock:^{
             [self updateDataCacheWithDataPartInTransaction:data];
@@ -180,7 +180,7 @@
                     if (obj) {
                         [obj updateDataCacheWithDataPartInTransaction:value];
                     } else {
-                        [self setValue:[[clazz alloc] initDataCacheWithData:value] forKey:key];
+                        [self setValue:[[clazz alloc] initDataCache:value] forKey:key];
                     }
                 }
             } else if ([value isKindOfClass:NSArray.class]) {
@@ -212,7 +212,7 @@
                                         [primaryObj updateDataCacheWithDataPartInTransaction:item];
                                         [map removeObjectForKey:primaryValue];
                                     } else {
-                                        [objs addObject:[[clazz alloc] initDataCacheWithData:item]];
+                                        [objs addObject:[[clazz alloc] initDataCache:item]];
                                     }
                                 }
                             }
@@ -221,7 +221,7 @@
                             [objs removeAllObjects];
                             for (id item in values) {
                                 if ([item isKindOfClass:NSDictionary.class]) {
-                                    [objs addObject:[[clazz alloc] initDataCacheWithData:item]];
+                                    [objs addObject:[[clazz alloc] initDataCache:item]];
                                 }
                             }
                         }

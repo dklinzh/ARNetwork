@@ -90,7 +90,7 @@ static ARHTTPManager *sharedInstance = nil;
 }
 
 - (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
-    urlStr = [self delegateUrlIfNeeded:urlStr];
+    urlStr = [self _delegateUrlIfNeeded:urlStr];
     if (!urlStr) {
         ARLogError(@"%@", @"HTTP URL IS NULL.");
         if (failure) {
@@ -124,7 +124,7 @@ static ARHTTPManager *sharedInstance = nil;
 }
 
 - (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
-    urlStr = [self delegateUrlIfNeeded:urlStr];
+    urlStr = [self _delegateUrlIfNeeded:urlStr];
     if (!urlStr) {
         ARLogError(@"%@", @"HTTP URL IS NULL.");
         if (failure) {
@@ -167,7 +167,7 @@ static ARHTTPManager *sharedInstance = nil;
 }
 
 - (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params filePaths:(NSArray<NSString *> *)filePaths formName:(NSString *)formName progress:(void (^)(NSProgress *uploadProgress))uploadProgress success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
-    urlStr = [self delegateUrlIfNeeded:urlStr];
+    urlStr = [self _delegateUrlIfNeeded:urlStr];
     if (!urlStr) {
         ARLogError(@"%@", @"HTTP URL IS NULL.");
         if (failure) {
@@ -210,7 +210,7 @@ static ARHTTPManager *sharedInstance = nil;
 }
 
 - (NSURLSessionDataTask *)putURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
-    urlStr = [self delegateUrlIfNeeded:urlStr];
+    urlStr = [self _delegateUrlIfNeeded:urlStr];
     if (!urlStr) {
         ARLogError(@"%@", @"HTTP URL IS NULL.");
         if (failure) {
@@ -244,7 +244,7 @@ static ARHTTPManager *sharedInstance = nil;
 }
 
 - (NSURLSessionDataTask *)patchURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
-    urlStr = [self delegateUrlIfNeeded:urlStr];
+    urlStr = [self _delegateUrlIfNeeded:urlStr];
     if (!urlStr) {
         ARLogError(@"%@", @"HTTP URL IS NULL.");
         if (failure) {
@@ -278,7 +278,7 @@ static ARHTTPManager *sharedInstance = nil;
 }
 
 - (NSURLSessionDataTask *)deleteURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
-    urlStr = [self delegateUrlIfNeeded:urlStr];
+    urlStr = [self _delegateUrlIfNeeded:urlStr];
     if (!urlStr) {
         ARLogError(@"%@", @"HTTP URL IS NULL.");
         if (failure) {
@@ -312,7 +312,7 @@ static ARHTTPManager *sharedInstance = nil;
 }
 
 - (NSURLSessionDataTask *)headURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseHead)success failure:(ARHTTPResponseFailure)failure {
-    urlStr = [self delegateUrlIfNeeded:urlStr];
+    urlStr = [self _delegateUrlIfNeeded:urlStr];
     if (!urlStr) {
         ARLogError(@"%@", @"HTTP URL IS NULL.");
         if (failure) {
@@ -335,7 +335,7 @@ static ARHTTPManager *sharedInstance = nil;
 }
 
 #pragma mark - Private
-- (NSString *)delegateUrlIfNeeded:(NSString *)urlStr {
+- (NSString *)_delegateUrlIfNeeded:(NSString *)urlStr {
     return urlStr;
 }
 
@@ -412,7 +412,7 @@ static ARHTTPManager *sharedInstance = nil;
         _allowRequestRedirection = allowRequestRedirection;
         if (_allowRequestRedirection) {
             [self setTaskWillPerformHTTPRedirectionBlock:^NSURLRequest * _Nonnull(NSURLSession * _Nonnull session, NSURLSessionTask * _Nonnull task, NSURLResponse * _Nonnull response, NSURLRequest * _Nonnull request) {
-                request = [NSURLRequest requestWithURL:[NSURL URLWithString:[self delegateUrlIfNeeded:request.URL.absoluteString]]];
+                request = [NSURLRequest requestWithURL:[NSURL URLWithString:[self _delegateUrlIfNeeded:request.URL.absoluteString]]];
                 ARLogInfo(@"HTTPRedirection: %@ >->-> %@", response.URL, request.URL);
                 return request;
             }];
@@ -437,6 +437,40 @@ static ARHTTPManager *sharedInstance = nil;
             break;
     }
     self.requestSerializer.timeoutInterval = self.timeoutInterval;
+}
+
+@end
+
+@implementation ARHTTPManager (Session)
+
+- (NSString *)getJSESSIONIDForURL:(NSString *)urlString {
+    ARLogInfo(@"cookies: %@", NSHTTPCookieStorage.sharedHTTPCookieStorage.cookies);
+    
+    NSURL *url = [NSURL URLWithString:[self _delegateUrlIfNeeded:urlString]];
+    NSString *urlStr = [NSString stringWithFormat:@"%@://%@%@/", url.scheme, url.host, url.path];
+    NSArray *cookies = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL: [NSURL URLWithString:urlStr]];
+    for (NSHTTPCookie *cookie in cookies) {
+        if ([cookie.name isEqualToString:@"JSESSIONID"]) {
+            return cookie.value;
+        }
+    }
+    
+    return nil;
+}
+
+- (void)restoreSession:(NSString *)JSESSIONID forURL:(NSString *)urlString {
+    NSURL *url = [NSURL URLWithString:[self _delegateUrlIfNeeded:urlString]];
+    NSString *host = url.host;
+    NSString *path = [NSString stringWithFormat:@"%@/", url.path];
+    NSMutableDictionary *cookieProperties = [NSMutableDictionary dictionary];
+    [cookieProperties setValue:@"JSESSIONID" forKey:NSHTTPCookieName];
+    [cookieProperties setValue:JSESSIONID forKey:NSHTTPCookieValue];
+    [cookieProperties setValue:host forKey:NSHTTPCookieDomain];
+    [cookieProperties setValue:path forKey:NSHTTPCookiePath];
+    NSHTTPCookie *cookie = [NSHTTPCookie cookieWithProperties:cookieProperties];
+    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookie:cookie];
+    
+    ARLogInfo(@"cookies: %@", NSHTTPCookieStorage.sharedHTTPCookieStorage.cookies);
 }
 
 @end

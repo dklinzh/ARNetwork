@@ -126,14 +126,14 @@ NS_ASSUME_NONNULL_BEGIN
  @param data A given dictionary to modeling.
  @return An instance of this kind of object.
  */
-- (instancetype)initDataCacheWithData:(NSDictionary *)data;
+- (instancetype)initDataCache:(NSDictionary *)data;
 
 /**
  Update the cache data of this object type in the default Realm database.
 
  @param data A given dictionary to update the cache data in the default Realm database.
  */
-- (void)updateDataCacheWithData:(NSDictionary *)data;
+- (void)updateDataCache:(NSDictionary *)data;
 
 /**
  Override this method to set value for any additional properties on this kind of object.

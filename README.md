@@ -12,8 +12,9 @@ An iOS network framework in combination with HTTP and data cache which based on 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
 ## Requirements
-- iOS 7+
-- Xcode 8+
+
+* Xcode 8+
+* iOS 7+
 
 ## Installation
 
@@ -21,12 +22,15 @@ ARNetwork is available through [CocoaPods](http://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod "ARNetwork", :git => 'https://github.com/dklinzh/ARNetwork.git'
+pod 'ARNetwork', :git => 'https://github.com/dklinzh/ARNetwork.git'
+
+# Add the line below if needs optional module `HTTPDNS`
+pod 'ARNetwork/DNS', :git => 'https://github.com/dklinzh/ARNetwork.git'
 ```
 
 ## Author
 
-Daniel, linzhdk@gmail.com
+Daniel Lin, linzhdk@gmail.com
 
 ## License
 

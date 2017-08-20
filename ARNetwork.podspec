@@ -26,11 +26,10 @@ Pod::Spec.new do |s|
 
   s.subspec 'Default' do |ss|
     ss.dependency 'ARNetwork/HTTP'
-    ss.dependency 'ARNetwork/DNS'
     ss.dependency 'ARNetwork/Cache'
     ss.dependency 'ARNetwork/Detector'
   end
-
+  
   s.subspec 'HTTP' do |ss|
     ss.dependency 'AFNetworking', '~> 3.1'
 
@@ -39,7 +38,7 @@ Pod::Spec.new do |s|
 
   s.subspec 'DNS' do |ss|
     ss.dependency 'ARNetwork/HTTP'
-    ss.dependency 'AlicloudHTTPDNS'
+    ss.dependency 'AlicloudHTTPDNS', '~> 1.5'
     ss.libraries = 'resolv'
     # ss.vendored_frameworks = 'ARNetwork/Frameworks/HTTPDNS/*.framework'
     # ss.frameworks = 'CoreTelephony', 'SystemConfiguration'

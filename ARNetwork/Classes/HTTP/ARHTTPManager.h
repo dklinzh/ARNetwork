@@ -91,6 +91,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)restoreSession:(NSString *)JSESSIONID forURL:(NSString *)urlString;
 
+- (void)setHTTPHeaderWithAuthorization:(NSString *)value;
+
 @end
 
 NS_ASSUME_NONNULL_END

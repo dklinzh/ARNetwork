@@ -473,4 +473,8 @@ static ARHTTPManager *sharedInstance = nil;
     ARLogInfo(@"cookies: %@", NSHTTPCookieStorage.sharedHTTPCookieStorage.cookies);
 }
 
+- (void)setHTTPHeaderWithAuthorization:(NSString *)value {
+    [self.requestSerializer setValue:value forHTTPHeaderField:@"Authorization"];
+}
+
 @end

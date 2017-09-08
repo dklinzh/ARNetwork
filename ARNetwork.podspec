@@ -24,44 +24,53 @@ Pod::Spec.new do |s|
   s.prefix_header_file = 'ARNetwork/Classes/ARNetwork-Prefix.pch'
   s.default_subspecs = 'Default'
 
-  s.subspec 'Default' do |ss|
-    ss.dependency 'ARNetwork/HTTP'
-    ss.dependency 'ARNetwork/Cache'
-    ss.dependency 'ARNetwork/Detector'
+  s.subspec 'Default' do |default|
+    default.dependency 'ARNetwork/HTTP'
+    default.dependency 'ARNetwork/Cache/Core'
+    default.dependency 'ARNetwork/Detector'
   end
   
-  s.subspec 'HTTP' do |ss|
-    ss.dependency 'AFNetworking', '~> 3.1'
+  s.subspec 'HTTP' do |http|
+    http.dependency 'AFNetworking', '~> 3.1'
 
-    ss.source_files = 'ARNetwork/Classes/HTTP/*.{h,m}'
+    http.source_files = 'ARNetwork/Classes/HTTP/*.{h,m}'
   end
 
-  s.subspec 'DNS' do |ss|
-    ss.dependency 'ARNetwork/HTTP'
-    ss.dependency 'AlicloudHTTPDNS', '~> 1.5'
-    ss.libraries = 'resolv'
-    # ss.vendored_frameworks = 'ARNetwork/Frameworks/HTTPDNS/*.framework'
-    # ss.frameworks = 'CoreTelephony', 'SystemConfiguration'
+  s.subspec 'DNS' do |dns|
+    dns.dependency 'ARNetwork/HTTP'
+    dns.dependency 'AlicloudHTTPDNS', '~> 1.5'
+    dns.libraries = 'resolv'
+    # dns.vendored_frameworks = 'ARNetwork/Frameworks/HTTPDNS/*.framework'
+    # dns.frameworks = 'CoreTelephony', 'SystemConfiguration'
 
-    ss.pod_target_xcconfig = {
+    dns.pod_target_xcconfig = {
       'FRAMEWORK_SEARCH_PATHS' => '$(inherited) "$(PODS_ROOT)/AlicloudHTTPDNS/**" "$(PODS_ROOT)/AlicloudUtils/**" "$(PODS_ROOT)/AlicloudUTDID/**"',
       'OTHER_LDFLAGS'          => '$(inherited) -framework AlicloudHttpDNS -framework AlicloudUtils -framework UTDID'
     }
 
-    ss.source_files = 'ARNetwork/Classes/HTTP/DNS/*.{h,m}'
+    dns.source_files = 'ARNetwork/Classes/HTTP/DNS/*.{h,m}'
   end
 
-  s.subspec 'Cache' do |ss|
-    ss.dependency 'ARNetwork/HTTP'
-    ss.dependency 'Realm', '~> 2.9'
+  s.subspec 'Cache' do |cache|
 
-    ss.source_files = 'ARNetwork/Classes/Cache/*.{h,m}'
+    cache.subspec 'Core' do |core|
+      core.dependency 'ARNetwork/HTTP'
+      core.dependency 'Realm', '~> 2.10'
+
+      core.source_files = 'ARNetwork/Classes/Cache/*.{h,m}'
+    end
+    
+    cache.subspec 'Swift' do |swift|
+      swift.dependency 'ARNetwork/Cache/Core'
+
+      swift.source_files = 'ARNetwork/Classes/Cache/*.swift'
+    end
   end
 
-  s.subspec 'Detector' do |ss|
-    ss.dependency 'AFNetworking/UIKit', '~> 3.1'
+  s.subspec 'Detector' do |detector|
+    detector.dependency 'AFNetworking/UIKit', '~> 3.1'
 
-    ss.source_files = 'ARNetwork/Classes/Detector/*.{h,m}'
+    detector.source_files = 'ARNetwork/Classes/Detector/*.{h,m}'
   end
 
 end

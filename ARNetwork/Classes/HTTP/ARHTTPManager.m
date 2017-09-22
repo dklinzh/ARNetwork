@@ -68,9 +68,9 @@ static NSMutableOrderedSet<Class> *arProtocolClasses;
 }
 
 #pragma mark - HTTP
-static ARHTTPManager *sharedInstance = nil;
 
 + (instancetype)sharedInstance {
+    static ARHTTPManager *sharedInstance = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         sharedInstance = [[self alloc] init];

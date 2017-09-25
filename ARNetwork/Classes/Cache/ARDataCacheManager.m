@@ -57,6 +57,7 @@ static NSString *const kDefaultSchemaName = @"default";
     NSError *error = nil;
     RLMRealm *realm = [RLMRealm realmWithConfiguration:self.defaultConfig error:&error];
     if (error) {
+        ARLogWarn(@"defaultRealm: %@", error);
         NSFileManager *fm = [NSFileManager defaultManager];
         NSArray<NSString *> *paths = [fm contentsOfDirectoryAtPath:self.defaultConfig.fileURL.URLByDeletingLastPathComponent.path error:nil];
         for (NSString *path in paths) {
@@ -66,6 +67,20 @@ static NSString *const kDefaultSchemaName = @"default";
         realm = [RLMRealm realmWithConfiguration:self.defaultConfig error:&error];
     }
     return realm;
+}
+
+- (RLMRealmConfiguration *)defaultConfig {
+    if (_defaultConfig) {
+        return _defaultConfig;
+    }
+    
+    _defaultConfig = [RLMRealmConfiguration defaultConfiguration];
+    _defaultConfig.fileURL = [_defaultConfig.fileURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:[ARNetworkDomain stringByAppendingPathComponent:[NSString stringWithFormat:@"DataCache/%@.schema", self.schemaName]]];
+    NSError *error = nil;
+    [[NSFileManager defaultManager] createDirectoryAtURL:_defaultConfig.fileURL withIntermediateDirectories:YES attributes:nil error:&error];
+    NSAssert(!error, @"[ARNetwork] ⚠️ Failed to create default directory of data cache\n%@", error);
+    _defaultConfig.fileURL = [_defaultConfig.fileURL URLByAppendingPathComponent:@"data.ar.realm"];
+    return _defaultConfig;
 }
 
 #pragma mark - Schema Register
@@ -116,64 +131,70 @@ static NSString *const kDefaultSchemaName = @"default";
 #pragma mark -
 
 - (void)configureWithSchemaVersion:(uint64_t)version dataEncryption:(BOOL)enabled {
-    @autoreleasepool {
-        RLMRealmConfiguration *config = self.defaultConfig;
-        config.schemaVersion = version;
-        config.migrationBlock = ^(RLMMigration *migration, uint64_t oldSchemaVersion) {
-            if (oldSchemaVersion < version) {
-                
-            }
-        };
-        
-        // Encryption Switch
-        if (enabled) {
-            NSData *key = [self searchEncryptionKey];
-            if (key) {
-                config.encryptionKey = key;
-                [self defaultRealm];
-            } else {
-                key = [self addEncryptionKey];
-                NSURL *tempUrl = [self tempFileURL];
-                BOOL res;
-                @autoreleasepool {
-                    res = [[self defaultRealm] writeCopyToURL:tempUrl encryptionKey:key error:nil];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        @autoreleasepool {
+            RLMRealmConfiguration *config = self.defaultConfig;
+            config.schemaVersion = version;
+            config.migrationBlock = ^(RLMMigration *migration, uint64_t oldSchemaVersion) {
+                if (oldSchemaVersion < version) {
+                    // Migrations
                 }
-                if (res) {
-                    if ([[NSFileManager defaultManager] removeItemAtURL:config.fileURL error:nil]) {
-                        config.encryptionKey = key;
-                        
-                        if ([[NSFileManager defaultManager] copyItemAtURL:tempUrl toURL:config.fileURL error:nil]) {
-                            [[NSFileManager defaultManager] removeItemAtURL:tempUrl error:nil];
-                        }
-                    }
-                }
-            }
-        } else {
-            NSData *key = [self searchEncryptionKey];
-            if (key) {
-                [self deleteEncryptionKey];
-                NSURL *tempUrl = [self tempFileURL];
-                BOOL res;
-                @autoreleasepool {
+            };
+            
+            // Encryption Switch
+            if (enabled) {
+                NSData *key = [self searchEncryptionKey];
+                if (key) {
                     config.encryptionKey = key;
-                    res = [[self defaultRealm] writeCopyToURL:tempUrl encryptionKey:nil error:nil];
-                }
-                if (res) {
-                    if ([[NSFileManager defaultManager] removeItemAtURL:config.fileURL error:nil]) {
-                        config.encryptionKey = nil;
-                        
-                        if ([[NSFileManager defaultManager] copyItemAtURL:tempUrl toURL:config.fileURL error:nil]) {
-                            [[NSFileManager defaultManager] removeItemAtURL:tempUrl error:nil];
+                    [self defaultRealm];
+                } else {
+                    key = [self addEncryptionKey];
+                    NSURL *tempUrl = [self tempFileURL];
+                    BOOL result;
+                    @autoreleasepool {
+                        result = [[self defaultRealm] writeCopyToURL:tempUrl encryptionKey:key error:nil];
+                    }
+                    if (result) {
+                        if ([[NSFileManager defaultManager] removeItemAtURL:config.fileURL error:nil]) {
+                            config.encryptionKey = key;
+                            
+                            if ([[NSFileManager defaultManager] copyItemAtURL:tempUrl toURL:config.fileURL error:nil]) {
+                                [[NSFileManager defaultManager] removeItemAtURL:tempUrl error:nil];
+                            }
                         }
                     }
                 }
             } else {
-                [self defaultRealm];
+                NSData *key = [self searchEncryptionKey];
+                if (key) {
+                    [self deleteEncryptionKey];
+                    NSURL *tempUrl = [self tempFileURL];
+                    BOOL result;
+                    @autoreleasepool {
+                        config.encryptionKey = key;
+                        result = [[self defaultRealm] writeCopyToURL:tempUrl encryptionKey:nil error:nil];
+                    }
+                    if (result) {
+                        if ([[NSFileManager defaultManager] removeItemAtURL:config.fileURL error:nil]) {
+                            config.encryptionKey = nil;
+                            
+                            if ([[NSFileManager defaultManager] copyItemAtURL:tempUrl toURL:config.fileURL error:nil]) {
+                                [[NSFileManager defaultManager] removeItemAtURL:tempUrl error:nil];
+                            }
+                        }
+                    }
+                } else {
+                    [self defaultRealm];
+                }
             }
+            
+            ARLogInfo(@"Realm: %@", [self defaultRealm].configuration.fileURL);
         }
-        
-        ARLogInfo(@"Realm: %@", [self defaultRealm].configuration.fileURL);
-    }
+    });
+}
+
+- (NSURL *)tempFileURL {
+    return [self.defaultConfig.fileURL.URLByDeletingPathExtension URLByAppendingPathExtension:@".temp.realm"];
 }
 
 - (NSData *)searchEncryptionKey {
@@ -196,7 +217,7 @@ static NSString *const kDefaultSchemaName = @"default";
 - (NSData *)addEncryptionKey {
     uint8_t buffer[64];
     OSStatus status = SecRandomCopyBytes(kSecRandomDefault, 64, buffer);
-    NSAssert(status == errSecSuccess, @"[ARNetwork] Failed to generate random bytes for key");
+    NSAssert(status == errSecSuccess, @"[ARNetwork] ⚠️ Failed to generate random bytes for key");
     NSData *keyData = [[NSData alloc] initWithBytes:buffer length:sizeof(buffer)];
     NSData *tag = [[self keychainID] dataUsingEncoding:NSUTF8StringEncoding];
     NSDictionary *query = @{(__bridge id)kSecClass: (__bridge id)kSecClassKey,
@@ -221,22 +242,7 @@ static NSString *const kDefaultSchemaName = @"default";
     return [NSString stringWithFormat:@"%@.arnetwork.datacache.%@", [[NSBundle mainBundle] bundleIdentifier], self.schemaName];
 }
 
-- (RLMRealmConfiguration *)defaultConfig {
-    if (_defaultConfig) {
-        return _defaultConfig;
-    }
-    _defaultConfig = [RLMRealmConfiguration defaultConfiguration];
-    _defaultConfig.fileURL = [_defaultConfig.fileURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:[ARNetworkDomain stringByAppendingPathComponent:[NSString stringWithFormat:@"DataCache/%@.schema", self.schemaName]]];
-    NSError *error = nil;
-    [[NSFileManager defaultManager] createDirectoryAtURL:_defaultConfig.fileURL withIntermediateDirectories:YES attributes:nil error:&error];
-    NSAssert(!error, @"[ARNetwork] ⚠️ Failed to create default directory of data cache\n%@", error);
-    _defaultConfig.fileURL = [_defaultConfig.fileURL URLByAppendingPathComponent:@"data.ar.realm"];
-    return _defaultConfig;
-}
-
-- (NSURL *)tempFileURL {
-    return [self.defaultConfig.fileURL.URLByDeletingPathExtension URLByAppendingPathExtension:@".temp.realm"];
-}
+#pragma mark -
 
 - (void)setOnlyAccessibleWhenUnlocked:(BOOL)onlyAccessibleWhenUnlocked {
     _onlyAccessibleWhenUnlocked = onlyAccessibleWhenUnlocked;
@@ -244,6 +250,12 @@ static NSString *const kDefaultSchemaName = @"default";
     NSFileProtectionType protection = onlyAccessibleWhenUnlocked ? NSFileProtectionComplete : NSFileProtectionCompleteUntilFirstUserAuthentication;
     NSString *folderPath = self.defaultConfig.fileURL.URLByDeletingLastPathComponent.path;
     [[NSFileManager defaultManager] setAttributes:@{NSFileProtectionKey: protection} ofItemAtPath:folderPath error:nil];
+}
+
+- (void)setReadOnly:(BOOL)readOnly {
+    _readOnly = readOnly;
+    
+    self.defaultConfig.readOnly = readOnly;
 }
 
 @end

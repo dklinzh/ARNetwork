@@ -10,13 +10,97 @@
 
 @implementation ARHTTPOperation
 
-#pragma mark - ARHTTPRequestDelegate
-- (NSString *)ar_taskKeyForRequestURL:(NSString *)urlStr params:(NSDictionary *)params {
++ (instancetype)sharedInstance {
+    static ARHTTPOperation *sharedInstance;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedInstance = [[self alloc] init];
+    });
+    return sharedInstance;
+}
+
++ (instancetype)defaultOperation {
+    return [[self alloc] init];
+}
+
+@end
+
+@implementation ARHTTPOperation (Request)
+
+- (NSTimeInterval)timeoutInterval {
+    if ([self.requestOperation respondsToSelector:@selector(timeoutInterval)]) {
+        return self.requestOperation.timeoutInterval;
+    }
+    
+    return 30;
+}
+
+- (BOOL)allowRequestRedirection {
+    if ([self.requestOperation respondsToSelector:@selector(allowRequestRedirection)]) {
+        return self.requestOperation.allowRequestRedirection;
+    }
+    
+    return NO;
+}
+
+- (ARRequestEncodedType)requestEncodedType {
+    if ([self.requestOperation respondsToSelector:@selector(requestEncodedType)]) {
+        return self.requestOperation.requestEncodedType;
+    }
+    
+    return ARRequestEncodedTypeDefault;
+}
+
+- (NSOrderedSet<Class> *)protocolClasses {
+    if ([self.requestOperation respondsToSelector:@selector(protocolClasses)]) {
+        return self.requestOperation.protocolClasses;
+    }
+    
+    return nil;
+}
+
+- (NSDictionary<NSString *,id> *)extraHTTPHeaders {
+    if ([self.requestOperation respondsToSelector:@selector(extraHTTPHeaders)]) {
+        return self.requestOperation.extraHTTPHeaders;
+    }
+    
+    return nil;
+}
+
+- (NSString *)processedRequestURL:(NSString *)urlStr {
+    if ([self.requestOperation respondsToSelector:@selector(processedRequestURL:)]) {
+        return [self.requestOperation processedRequestURL:urlStr];
+    }
+    
     return urlStr;
 }
 
-#pragma mark - ARHTTPResponseDelegate
-- (void)ar_onSuccess:(ARHTTPResponseSuccess)success onFailure:(ARHTTPResponseFailure)failure withData:(id)data {
+- (NSString *)taskKeyForRequestURL:(NSString *)urlStr params:(NSDictionary *)params {
+    if ([self.requestOperation respondsToSelector:@selector(taskKeyForRequestURL:params:)]) {
+        return [self.requestOperation taskKeyForRequestURL:urlStr params:params];
+    }
+    
+    return urlStr;
+}
+
+@end
+
+@implementation ARHTTPOperation (Response)
+
+- (NSSet<NSString *> *)extraContentTypes {
+    if ([self.responseOperation respondsToSelector:@selector(extraContentTypes)]) {
+        return self.responseOperation.extraContentTypes;
+    }
+    
+    return nil;
+}
+
+- (void)responseSuccess:(ARHTTPResponseSuccess)success orFailure:(ARHTTPResponseFailure)failure withData:(id)data {
+    if ([self.responseOperation respondsToSelector:@selector(responseSuccess:orFailure:withData:)]) {
+        [self.responseOperation responseSuccess:success orFailure:failure withData:data];
+        return;
+    }
+    
     if (data) {
         if (success) {
             success(data, @"操作成功"); // FIXME: localization
@@ -28,7 +112,12 @@
     }
 }
 
-- (void)ar_onFailure:(ARHTTPResponseFailure)failure withError:(NSError *)error {
+- (void)responseFailure:(ARHTTPResponseFailure)failure withError:(NSError *)error {
+    if ([self.responseOperation respondsToSelector:@selector(responseFailure:withError:)]) {
+        [self.responseOperation responseFailure:failure withError:error];
+        return;
+    }
+    
     if (failure) {
         switch (error.code) {
             case -999: // request operation be canceled.
@@ -45,4 +134,5 @@
         }
     }
 }
+
 @end

@@ -8,8 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-@class RLMRealm;
-
 NS_ASSUME_NONNULL_BEGIN
 
 /**
@@ -27,10 +25,14 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, assign) BOOL onlyAccessibleWhenUnlocked;
 
+@property (nonatomic, assign) BOOL readOnly;
+
 // FIXME: ARResponseCacheModel
 + (instancetype)sharedInstance;
 
 - (instancetype)init NS_UNAVAILABLE;
+
+- (instancetype)new NS_UNAVAILABLE;
 
 - (instancetype)initDefaultSchemaWithVersion:(NSUInteger)version;
 

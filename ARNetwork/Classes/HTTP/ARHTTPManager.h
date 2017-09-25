@@ -9,12 +9,6 @@
 #import <AFNetworking/AFNetworking.h>
 #import "ARHTTPOperation.h"
 
-typedef NS_ENUM(NSUInteger, ARRequestEncodedType) {
-    ARRequestEncodedTypeDefault,
-    ARRequestEncodedTypeJSON,
-    ARRequestEncodedTypePlist,
-};
-
 NS_ASSUME_NONNULL_BEGIN
 
 /**
@@ -22,34 +16,14 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface ARHTTPManager : AFHTTPSessionManager
 
-/**
- The timeout interval for creating request, in seconds. Defaults to 30 s.
- */
-@property (nonatomic, assign) NSTimeInterval timeoutInterval;
+@property (nonatomic, strong, readonly) ARHTTPOperation *operation;
 
-/**
- The extra acceptable MIME types for responses. When non-`nil`, responses with a `Content-Type` with MIME types that do not intersect with the set will result in an error during validation.
- */
-@property (nonatomic, copy) NSSet<NSString *> *extraContentTypes;
+- (instancetype)initWithHTTPOperation:(ARHTTPOperation *)operation;
 
-@property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, NSURLSessionDataTask *> *taskCollections;
-@property (nonatomic, strong) ARHTTPOperation *httpOperation;
-@property (nonatomic, assign) BOOL allowRequestRedirection;
-
-@property (nonatomic, assign) ARRequestEncodedType requestEncodedType;
-
-+ (void)registerProtocolClass:(Class)protocolClass;
-
-+ (void)unregisterProtocolClass:(Class)protocolClass;
+- (instancetype)initWithBaseURL:(nullable NSURL *)url
+           sessionConfiguration:(nullable NSURLSessionConfiguration *)configuration httpOperation:(ARHTTPOperation *)operation NS_DESIGNATED_INITIALIZER;
 
 + (instancetype)sharedInstance;
-
-/**
- Set HTTP header fields for the HTTP manager
-
- @param headers The dictionary of header fields
- */
-- (void)setHTTPHeaders:(NSDictionary *)headers;
 
 + (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(nullable NSDictionary *)params success:(nullable ARHTTPResponseSuccess)success failure:(nullable ARHTTPResponseFailure)failure;
 
@@ -87,7 +61,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ARHTTPManager (Session)
 
-- (nullable NSString *)getJSESSIONIDForURL:(NSString *)urlString;
+- (nullable NSString *)JSESSIONIDForURL:(NSString *)urlString;
 
 - (void)restoreSession:(NSString *)JSESSIONID forURL:(NSString *)urlString;
 

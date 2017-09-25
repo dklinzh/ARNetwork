@@ -18,7 +18,7 @@
 @implementation ARDataCacheModel (HTTP)
 
 + (void)setHTTPHeaders:(NSDictionary *)headers {
-    [[ARHTTPManager sharedInstance] setHTTPHeaders:headers];
+    
 }
 
 #pragma mark - HTTP

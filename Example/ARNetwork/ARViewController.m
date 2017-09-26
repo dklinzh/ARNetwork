@@ -7,6 +7,8 @@
 //
 
 #import "ARViewController.h"
+#import "ARExampleResultModel.h"
+
 @import ARNetwork;
 
 @interface ARViewController ()
@@ -21,6 +23,12 @@
 	// Do any additional setup after loading the view, typically from a nib.
     
     [[ARHTTPManager sharedInstance] getURL:@"http://httpbin.org/get" params:nil success:^(id data, NSString *msg) {
+        
+    } failure:^(NSInteger code, NSString *msg) {
+        
+    }];
+    
+    [ARExampleResultModel getURL:@"http://httpbin.org/get" params:nil dataCache:ARCacheTypeLoadAndUpdate success:^(ARExampleResultModel *data, NSString *msg, BOOL isCached) {
         
     } failure:^(NSInteger code, NSString *msg) {
         

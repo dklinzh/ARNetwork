@@ -7,17 +7,8 @@
 //
 
 #import "ARHTTPManager+Cache.h"
-#import "ARResponseCacheModel.h"
-
-@interface ARResponseCacheModel ()
-+ (instancetype)dataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params;
-
-- (instancetype)initAndAddDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params responseObject:(id)responseObject;
-
-- (void)updateDataCacheWithResponseObject:(id)responseObject;
-
-- (id)responseObject;
-@end
+#import "_ARResponseCacheModel.h"
+#import "_ARDataCacheModel_Private.h"
 
 @implementation ARHTTPManager (Cache)
 
@@ -28,7 +19,7 @@
 }
 
 - (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure {
-    ARResponseCacheModel *oldData = [self oldDataCache:&cacheType url:urlStr params:params success:success failure:failure];
+    _ARResponseCacheModel *oldData = [self oldDataCache:&cacheType url:urlStr params:params success:success failure:failure];
     if (cacheType == ARCacheTypeOnlyLoad) {
         return nil;
     }
@@ -49,7 +40,7 @@
 }
 
 - (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure {
-    ARResponseCacheModel *oldData = [self oldDataCache:&cacheType url:urlStr params:params success:success failure:failure];
+    _ARResponseCacheModel *oldData = [self oldDataCache:&cacheType url:urlStr params:params success:success failure:failure];
     if (cacheType == ARCacheTypeOnlyLoad) {
         return nil;
     }
@@ -70,7 +61,7 @@
 }
 
 - (NSURLSessionDataTask *)putURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure {
-    ARResponseCacheModel *oldData = [self oldDataCache:&cacheType url:urlStr params:params success:success failure:failure];
+    _ARResponseCacheModel *oldData = [self oldDataCache:&cacheType url:urlStr params:params success:success failure:failure];
     if (cacheType == ARCacheTypeOnlyLoad) {
         return nil;
     }
@@ -91,7 +82,7 @@
 }
 
 - (NSURLSessionDataTask *)patchURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure {
-    ARResponseCacheModel *oldData = [self oldDataCache:&cacheType url:urlStr params:params success:success failure:failure];
+    _ARResponseCacheModel *oldData = [self oldDataCache:&cacheType url:urlStr params:params success:success failure:failure];
     if (cacheType == ARCacheTypeOnlyLoad) {
         return nil;
     }
@@ -112,7 +103,7 @@
 }
 
 - (NSURLSessionDataTask *)deleteURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure {
-    ARResponseCacheModel *oldData = [self oldDataCache:&cacheType url:urlStr params:params success:success failure:failure];
+    _ARResponseCacheModel *oldData = [self oldDataCache:&cacheType url:urlStr params:params success:success failure:failure];
     if (cacheType == ARCacheTypeOnlyLoad) {
         return nil;
     }
@@ -128,17 +119,17 @@
 }
 
 #pragma mark - Private
-- (ARResponseCacheModel *)oldDataCache:(ARCacheType *)cacheType url:(NSString *)urlStr params:(NSDictionary *)params success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure {
-    ARResponseCacheModel *oldData;
+- (_ARResponseCacheModel *)oldDataCache:(ARCacheType *)cacheType url:(NSString *)urlStr params:(NSDictionary *)params success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure {
+    _ARResponseCacheModel *oldData;
     if (*cacheType & (ARCacheTypeOnlyLoad | ARCacheTypeUpdateIfNeeded)) {
-        oldData = [ARResponseCacheModel dataCacheWithUrl:urlStr params:params];
+        oldData = [_ARResponseCacheModel _dataCacheWithUrl:urlStr params:params];
         if (oldData) {
             ARLogDebug(@"Cache<%@>: %@", NSStringFromClass(self.class), oldData.responseObject);
             
             if ((*cacheType & ARCacheTypeOnlyLoad) && success) {
                 success(oldData.responseObject, nil, YES);
             }
-            if ((*cacheType & ARCacheTypeUpdateIfNeeded) && (oldData._arExpiredTime.timeIntervalSinceNow > 0)) {
+            if ((*cacheType & ARCacheTypeUpdateIfNeeded) && (oldData._AR_EXPIRED_TIME.timeIntervalSinceNow > 0)) {
                 *cacheType = ARCacheTypeOnlyLoad;
             }
         } else {
@@ -152,7 +143,7 @@
     return oldData;
 }
 
-- (void)newDataCache:(ARCacheType)cacheType url:(NSString *)urlStr params:(NSDictionary *)params oldData:(ARResponseCacheModel *)oldData dataSource:(id)data msg:(NSString *)msg success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure {
+- (void)newDataCache:(ARCacheType)cacheType url:(NSString *)urlStr params:(NSDictionary *)params oldData:(_ARResponseCacheModel *)oldData dataSource:(id)data msg:(NSString *)msg success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure {
     if (cacheType & (ARCacheTypeOnlyUpdate | ARCacheTypeUpdateIfNeeded)) {
         if (oldData) {
             [oldData updateDataCacheWithResponseObject:data];
@@ -161,7 +152,7 @@
             }
         } else {
             __attribute__((unused))
-            id unused = [[ARResponseCacheModel alloc] initAndAddDataCacheWithUrl:urlStr params:params responseObject:data];
+            id unused = [[_ARResponseCacheModel alloc] initAndAddDataCacheWithUrl:urlStr params:params responseObject:data];
             if (success) {
                 success(data, msg, NO);
             }

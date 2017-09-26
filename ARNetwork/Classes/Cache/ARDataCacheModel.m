@@ -7,21 +7,14 @@
 //
 
 #import "ARDataCacheModel.h"
-#import "ARDataCacheManager.h"
-#import "NSObject+ARInspect.h"
-
-@interface ARDataCacheManager ()
-+ (NSString *)ar_primaryKeyWithUrl:(NSString *)urlStr params:(NSDictionary *)params;
-+ (RLMRealm *)ar_realmWithModelClass:(Class)clazz;
-+ (instancetype)ar_managerWithModelClass:(Class)clazz;
-@end
+#import "_NSObject+ARInspect.h"
+#import "_ARDataCacheManager_Private.h"
+#import "_ARDataCacheModel_Private.h"
 
 @implementation ARDataCacheModel
 
-#pragma mark -
-
 + (RLMRealm *)ar_defaultRealm {
-    return [ARDataCacheManager ar_realmWithModelClass:self.class];
+    return [ARDataCacheManager _realmWithModelClass:self.class];
 }
 
 + (instancetype)ar_createInDefaultRealmWithValue:(id)value {
@@ -58,7 +51,7 @@
 
 #pragma mark -
 + (NSTimeInterval)expiredInterval {
-    return [ARDataCacheManager ar_managerWithModelClass:self.class].expiredInterval;
+    return [ARDataCacheManager _managerWithModelClass:self.class].expiredInterval;
 }
 
 + (NSArray *)equalValueSkippedProperties {
@@ -82,13 +75,13 @@
     return results.count;
 }
 
-+ (instancetype)dataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params {
++ (instancetype)_dataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params {
     if (!urlStr) {
         return nil;
     }
     
-    NSString *arPrimaryKey = [ARDataCacheManager ar_primaryKeyWithUrl:urlStr params:params];
-    NSPredicate *pred = [NSPredicate predicateWithFormat:@"_arPrimaryKey = %@", arPrimaryKey];
+    NSString *arPrimaryKey = ar_cacheKey(urlStr, params);
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@"_AR_CACHE_KEY = %@", arPrimaryKey];
     RLMResults<__kindof ARDataCacheModel *> *caches = [self ar_objectsWithPredicate:pred];
     return caches.count > 0 ? caches.lastObject : nil;
 }
@@ -128,15 +121,18 @@
                 }
             }
         }];
-        [self setValueForExtraProperties];
+        
+        if ([self respondsToSelector:@selector(setValueForExtraProperties)]) {
+            [self setValueForExtraProperties];
+        }
     }
     return self;
 }
 
-- (void)addDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params {
+- (void)_addDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params {
     if (!self.realm) {
-        self._arPrimaryKey = [ARDataCacheManager ar_primaryKeyWithUrl:urlStr params:params];
-        self._arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[self.class expiredInterval]];
+        self._AR_CACHE_KEY = ar_cacheKey(urlStr, params);
+        self._AR_EXPIRED_TIME = [NSDate dateWithTimeIntervalSinceNow:[self.class expiredInterval]];
         RLMRealm *realm = [self.class ar_defaultRealm];
         [realm transactionWithBlock:^{
             if ([self.class primaryKey]) {
@@ -152,7 +148,7 @@
     if (!self.isInvalidated) {
         [[self.class ar_defaultRealm] transactionWithBlock:^{
             [self updateDataCacheWithDataPartInTransaction:data];
-            self._arExpiredTime = [NSDate dateWithTimeIntervalSinceNow:[self.class expiredInterval]];
+            self._AR_EXPIRED_TIME = [NSDate dateWithTimeIntervalSinceNow:[self.class expiredInterval]];
         }];
     }
 }
@@ -232,12 +228,27 @@
             }
         }
     }];
-    [self setValueForExtraProperties];
+    
+    if ([self respondsToSelector:@selector(setValueForExtraProperties)]) {
+        [self setValueForExtraProperties];
+    }
 }
 
-- (void)setValueForExtraProperties {
-    // Set value for any additional properties on the subclass of 'ARDataCacheModel'
+@end
+
+@implementation ARDataCacheModel (ThreadSafe)
+
+- (instancetype)ar_resolveThreadSafeReference:(RLMThreadSafeReference *)reference {
+    return [[self.class ar_defaultRealm] resolveThreadSafeReference:reference];
 }
+
+- (instancetype)ar_resolveMainThreadSafeReference {
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        RLMThreadSafeReference *reference = [RLMThreadSafeReference referenceWithThreadConfined:self];
+    });
+}
+
 @end
 
 @implementation ARWrapedString

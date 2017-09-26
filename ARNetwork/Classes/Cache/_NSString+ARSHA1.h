@@ -1,5 +1,5 @@
 //
-//  NSString+ARSHA1.h
+//  _NSString+ARSHA1.h
 //  ARNetwork
 //
 //  Created by Linzh on 2/10/17.

@@ -14,8 +14,6 @@ typedef void(^ARDataCacheFailure)(NSInteger code, NSString *msg);
 
 @interface ARDataCacheModel (HTTP)
 
-+ (void)setHTTPHeaders:(NSDictionary *)headers;
-
 + (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure;
 
 + (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure;

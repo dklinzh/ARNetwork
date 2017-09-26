@@ -7,12 +7,17 @@
 //
 
 #import "ARAppDelegate.h"
+#import "ARExampleResultModel.h"
+
+@import ARNetwork;
 
 @implementation ARAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    // Override point for customization after application launch.
+    ARDataCacheManager *manager = [[ARDataCacheManager alloc] initSchemaWithName:@"dklinzh.arnetwork" version:0 dataEncryption:YES];
+    [manager registerDataCacheModels:@[ARExampleResultModel.class]];
+    
     return YES;
 }
 

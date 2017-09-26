@@ -23,9 +23,14 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Determine whether the data from local database can only be accessed when the device is on unlocked status. Defaults to FALSE.
  */
-@property (nonatomic, assign) BOOL onlyAccessibleWhenUnlocked;
+@property (nonatomic, assign, getter=isOnlyAccessibleWhenUnlocked) BOOL onlyAccessibleWhenUnlocked;
 
-@property (nonatomic, assign) BOOL readOnly;
+@property (nonatomic, assign, getter=isReadOnly) BOOL readOnly;
+
+/**
+ When all in-memory Realm instances with a particular identifier go out of scope with no references, all data in that Realm is deleted. We recommend holding onto a strong reference to any in-memory Realms during your app’s lifetime. (This is not necessary for on-disk Realms.)
+ */
+@property (nonatomic, assign, getter=isMemoryOnly) BOOL memoryOnly;
 
 // FIXME: ARResponseCacheModel
 + (instancetype)sharedInstance;

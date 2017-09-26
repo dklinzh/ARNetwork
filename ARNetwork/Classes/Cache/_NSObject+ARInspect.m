@@ -1,12 +1,12 @@
 //
-//  NSObject+ARInspect.m
+//  _NSObject+ARInspect.m
 //  ARNetwork
 //
 //  Created by Linzh on 12/28/16.
 //  Copyright © 2016 Daniel. All rights reserved.
 //
 
-#import "NSObject+ARInspect.h"
+#import "_NSObject+ARInspect.h"
 #import <objc/runtime.h>
 
 @implementation NSObject (ARInspect)

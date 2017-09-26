@@ -1,12 +1,12 @@
 //
-//  NSString+ARSHA1.m
+//  _NSString+ARSHA1.m
 //  ARNetwork
 //
 //  Created by Linzh on 2/10/17.
 //  Copyright © 2017 Daniel. All rights reserved.
 //
 
-#import "NSString+ARSHA1.h"
+#import "_NSString+ARSHA1.h"
 #import <CommonCrypto/CommonDigest.h>
 
 @implementation NSString (ARSHA1)

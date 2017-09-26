@@ -8,22 +8,18 @@
 
 #import <Realm/Realm.h>
 
+@protocol ARDataCacheModelTransaction <NSObject>
+@optional
+- (void)setValueForExtraProperties;
+
+@end
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**
  The base class of object modeling from reponse data with cache.
  */
-@interface ARDataCacheModel : RLMObject
-
-/**
- The primary key for a specific cache data with the kind of class `ARDataCacheModel`. (Read only)
- */
-@property NSString * _arPrimaryKey;
-
-/**
- The expired time for a specific cache data with the kind of class `ARDataCacheModel`. (Read only)
- */
-@property NSDate * _Nullable _arExpiredTime;
+@interface ARDataCacheModel : RLMObject <ARDataCacheModelTransaction>
 
 + (RLMRealm *)ar_defaultRealm;
 
@@ -135,13 +131,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)updateDataCache:(NSDictionary *)data;
 
-/**
- Override this method to set value for any additional properties on this kind of object.
- */
-- (void)setValueForExtraProperties NS_REQUIRES_SUPER;
-
 @end
 RLM_ARRAY_TYPE(ARDataCacheModel)
+
+@interface ARDataCacheModel (ThreadSafe)
+
+@end
 
 /**
  Wraped string object for storing flat arrays of strings on a Realm model

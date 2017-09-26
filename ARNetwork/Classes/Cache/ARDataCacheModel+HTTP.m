@@ -8,20 +8,10 @@
 
 #import "ARDataCacheModel+HTTP.h"
 #import "ARHTTPManager.h"
-
-@interface ARDataCacheModel ()
-+ (instancetype)dataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params;
-
-- (void)addDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params;
-@end
+#import "_ARDataCacheModel_Private.h"
 
 @implementation ARDataCacheModel (HTTP)
 
-+ (void)setHTTPHeaders:(NSDictionary *)headers {
-    
-}
-
-#pragma mark - HTTP
 + (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure {
     id oldData = [self oldDataCache:&cacheType url:urlStr params:params success:success failure:failure];
     if (cacheType == ARCacheTypeOnlyLoad) {
@@ -106,14 +96,14 @@
 + (__kindof ARDataCacheModel *)oldDataCache:(ARCacheType *)cacheType url:(NSString *)urlStr params:(NSDictionary *)params success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure {
     __kindof ARDataCacheModel *oldData;
     if (*cacheType != ARCacheTypeNone) {
-        oldData = [self dataCacheWithUrl:urlStr params:params];
+        oldData = [self _dataCacheWithUrl:urlStr params:params];
         if (oldData) {
             ARLogDebug(@"Cache<%@>: %@", NSStringFromClass(self.class), oldData);
             
             if ((*cacheType & ARCacheTypeOnlyLoad) && success) {
                 success(oldData, nil, YES);
             }
-            if ((*cacheType & ARCacheTypeUpdateIfNeeded) && (oldData._arExpiredTime.timeIntervalSinceNow > 0)) {
+            if ((*cacheType & ARCacheTypeUpdateIfNeeded) && (oldData._AR_EXPIRED_TIME.timeIntervalSinceNow > 0)) {
                 *cacheType = ARCacheTypeOnlyLoad;
             }
         } else {
@@ -145,7 +135,7 @@
             }
         } else {
             __kindof ARDataCacheModel *newData = [[self alloc] initDataCache:data];
-            [newData addDataCacheWithUrl:urlStr params:params];
+            [newData _addDataCacheWithUrl:urlStr params:params];
             if (success) {
                 success(newData, msg, NO);
             }

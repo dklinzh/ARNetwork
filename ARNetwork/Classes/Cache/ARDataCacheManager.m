@@ -140,7 +140,9 @@ static NSMutableDictionary<NSString *, ARDataCacheManager *> * ar_schemaManagers
 }
 
 - (void)registerDataCacheModels:(NSArray<Class> *)classes {
-    self.defaultConfig.objectClasses = classes;
+    NSMutableArray *objectClasses = [NSMutableArray arrayWithArray:classes];
+    [objectClasses addObject:ARWrapedString.class];
+    self.defaultConfig.objectClasses = objectClasses;
     
     for (Class clazz in classes) {
         if ([clazz isSubclassOfClass:ARDataCacheModel.class]) {

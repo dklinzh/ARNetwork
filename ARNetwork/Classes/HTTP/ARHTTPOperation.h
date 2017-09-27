@@ -26,9 +26,9 @@ typedef NS_ENUM(NSUInteger, ARRequestEncodedType) {
 
 @property (nonatomic, assign, readonly) ARRequestEncodedType requestEncodedType;
 
-@property (nonatomic, strong, readonly, nullable) NSOrderedSet<Class> *protocolClasses;
+@property (nonatomic, copy, readonly, nullable) NSOrderedSet<Class> *protocolClasses;
 
-@property (nonatomic, strong, readonly, nullable) NSDictionary<NSString *, id> *extraHTTPHeaders;
+@property (nonatomic, copy, readonly, nullable) NSDictionary<NSString *, id> *extraHTTPHeaders;
 
 - (NSString *)processedRequestURL:(NSString *)urlStr;
 
@@ -44,7 +44,7 @@ typedef void(^ARHTTPResponseHead)(NSURLSessionDataTask *task);
 
 @optional
 
-@property (nonatomic, strong, readonly, nullable) NSSet<NSString *> *extraContentTypes;
+@property (nonatomic, copy, readonly, nullable) NSSet<NSString *> *extraContentTypes;
 
 - (void)responseSuccess:(ARHTTPResponseSuccess)success orFailure:(ARHTTPResponseFailure)failure withData:(id)data;
 

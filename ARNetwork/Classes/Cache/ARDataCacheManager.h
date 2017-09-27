@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class ARHTTPManager;
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**
@@ -32,8 +34,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, assign, getter=isMemoryOnly) BOOL memoryOnly;
 
+@property (nonatomic, strong) ARHTTPManager *httpManager;
+
 // FIXME: ARResponseCacheModel
-+ (instancetype)sharedInstance;
++ (instancetype)sharedInstance __attribute__ ((deprecated));
 
 - (instancetype)init NS_UNAVAILABLE;
 

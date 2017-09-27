@@ -8,6 +8,8 @@
 
 #import <Realm/Realm.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface RLMArray<RLMObjectType: RLMObject *> (ARFlat)
 
 - (NSArray *)ar_flatArray;
@@ -19,3 +21,5 @@
 - (NSArray *)ar_flatArray;
 
 @end
+
+NS_ASSUME_NONNULL_END

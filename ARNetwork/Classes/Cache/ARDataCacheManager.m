@@ -9,6 +9,7 @@
 #import "ARDataCacheManager.h"
 #import "ARDataCacheModel.h"
 #import "_ARResponseCacheModel.h"
+#import "ARHTTPManager.h"
 
 static NSString *const kDefaultSchemaName = @"default";
 
@@ -117,6 +118,14 @@ static NSString *const kDefaultSchemaName = @"default";
     } else {
         self.defaultConfig.fileURL = self.defaultFileURL;
     }
+}
+
+- (ARHTTPManager *)httpManager {
+    if (_httpManager) {
+        return _httpManager;
+    }
+    
+    return _httpManager = [ARHTTPManager manager];
 }
 
 #pragma mark - Schema Register

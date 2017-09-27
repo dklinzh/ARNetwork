@@ -8,13 +8,14 @@
 
 #import <Realm/Realm.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol ARDataCacheModelTransaction <NSObject>
+
 @optional
 - (void)setValueForExtraProperties;
 
 @end
-
-NS_ASSUME_NONNULL_BEGIN
 
 /**
  The base class of object modeling from reponse data with cache.
@@ -135,6 +136,10 @@ NS_ASSUME_NONNULL_BEGIN
 RLM_ARRAY_TYPE(ARDataCacheModel)
 
 @interface ARDataCacheModel (ThreadSafe)
+
+- (instancetype)ar_resolveThreadSafeReference:(RLMThreadSafeReference *)reference;
+
+- (instancetype)ar_resolveMainThreadSafeReference;
 
 @end
 

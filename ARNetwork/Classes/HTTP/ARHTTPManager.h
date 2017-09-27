@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithBaseURL:(nullable NSURL *)url
            sessionConfiguration:(nullable NSURLSessionConfiguration *)configuration httpOperation:(ARHTTPOperation *)operation NS_DESIGNATED_INITIALIZER;
 
-+ (instancetype)sharedInstance;
++ (instancetype)sharedInstance __attribute__ ((deprecated));
 
 + (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(nullable NSDictionary *)params success:(nullable ARHTTPResponseSuccess)success failure:(nullable ARHTTPResponseFailure)failure;
 

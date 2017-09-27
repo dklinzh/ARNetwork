@@ -243,10 +243,16 @@
 }
 
 - (instancetype)ar_resolveMainThreadSafeReference {
-    
+    NSLock *lock = [[NSLock alloc] init];
+    [lock lock];
+    __block RLMThreadSafeReference *reference = nil;
     dispatch_async(dispatch_get_main_queue(), ^{
-        RLMThreadSafeReference *reference = [RLMThreadSafeReference referenceWithThreadConfined:self];
+        reference = [RLMThreadSafeReference referenceWithThreadConfined:self];
+        [lock unlock];
     });
+    [lock lock];
+    [lock unlock];
+    return [self ar_resolveThreadSafeReference:reference];
 }
 
 @end

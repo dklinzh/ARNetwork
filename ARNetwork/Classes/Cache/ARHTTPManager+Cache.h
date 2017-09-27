@@ -9,27 +9,31 @@
 #import "ARHTTPManager.h"
 #import "ARDataCache.h"
 
-typedef void(^ARResponseCacheSuccess)(id data, NSString *msg, BOOL isCached);
-typedef void(^ARResponseCacheFailure)(NSInteger code, NSString *msg);
+NS_ASSUME_NONNULL_BEGIN
+
+typedef void(^ARResponseCacheSuccess)(id data, NSString * _Nullable msg, BOOL isCached);
+typedef void(^ARResponseCacheFailure)(NSInteger code, NSString * _Nullable msg);
 
 @interface ARHTTPManager (Cache)
-+ (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
++ (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(nullable NSDictionary *)params dataCache:(ARCacheType)cacheType success:(nullable ARResponseCacheSuccess)success failure:(nullable ARResponseCacheFailure)failure;
 
-- (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
+- (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(nullable NSDictionary *)params dataCache:(ARCacheType)cacheType success:(nullable ARResponseCacheSuccess)success failure:(nullable ARResponseCacheFailure)failure;
 
-+ (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
++ (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(nullable NSDictionary *)params dataCache:(ARCacheType)cacheType success:(nullable ARResponseCacheSuccess)success failure:(nullable ARResponseCacheFailure)failure;
 
-- (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
+- (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(nullable NSDictionary *)params dataCache:(ARCacheType)cacheType success:(nullable ARResponseCacheSuccess)success failure:(nullable ARResponseCacheFailure)failure;
 
-+ (NSURLSessionDataTask *)putURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
++ (NSURLSessionDataTask *)putURL:(NSString *)urlStr params:(nullable NSDictionary *)params dataCache:(ARCacheType)cacheType success:(nullable ARResponseCacheSuccess)success failure:(nullable ARResponseCacheFailure)failure;
 
-- (NSURLSessionDataTask *)putURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
+- (NSURLSessionDataTask *)putURL:(NSString *)urlStr params:(nullable NSDictionary *)params dataCache:(ARCacheType)cacheType success:(nullable ARResponseCacheSuccess)success failure:(nullable ARResponseCacheFailure)failure;
 
-+ (NSURLSessionDataTask *)patchURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
++ (NSURLSessionDataTask *)patchURL:(NSString *)urlStr params:(nullable NSDictionary *)params dataCache:(ARCacheType)cacheType success:(nullable ARResponseCacheSuccess)success failure:(nullable ARResponseCacheFailure)failure;
 
-- (NSURLSessionDataTask *)patchURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
+- (NSURLSessionDataTask *)patchURL:(NSString *)urlStr params:(nullable NSDictionary *)params dataCache:(ARCacheType)cacheType success:(nullable ARResponseCacheSuccess)success failure:(nullable ARResponseCacheFailure)failure;
 
-+ (NSURLSessionDataTask *)deleteURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
++ (NSURLSessionDataTask *)deleteURL:(NSString *)urlStr params:(nullable NSDictionary *)params dataCache:(ARCacheType)cacheType success:(nullable ARResponseCacheSuccess)success failure:(nullable ARResponseCacheFailure)failure;
 
-- (NSURLSessionDataTask *)deleteURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure;
+- (NSURLSessionDataTask *)deleteURL:(NSString *)urlStr params:(nullable NSDictionary *)params dataCache:(ARCacheType)cacheType success:(nullable ARResponseCacheSuccess)success failure:(nullable ARResponseCacheFailure)failure;
 @end
+
+NS_ASSUME_NONNULL_END

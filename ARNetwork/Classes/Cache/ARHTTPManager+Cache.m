@@ -12,9 +12,8 @@
 
 @implementation ARHTTPManager (Cache)
 
-#pragma mark - HTTP
 + (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure {
-    NSURLSessionDataTask *task = [[self sharedInstance] getURL:urlStr params:params dataCache:cacheType success:success failure:failure];
+    NSURLSessionDataTask *task = [[self manager] getURL:urlStr params:params dataCache:cacheType success:success failure:failure];
     return task;
 }
 
@@ -35,7 +34,7 @@
 }
 
 + (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure {
-    NSURLSessionDataTask *task = [[self sharedInstance] postURL:urlStr params:params dataCache:cacheType success:success failure:failure];
+    NSURLSessionDataTask *task = [[self manager] postURL:urlStr params:params dataCache:cacheType success:success failure:failure];
     return task;
 }
 
@@ -56,7 +55,7 @@
 }
 
 + (NSURLSessionDataTask *)putURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure {
-    NSURLSessionDataTask *task = [[self sharedInstance] putURL:urlStr params:params dataCache:cacheType success:success failure:failure];
+    NSURLSessionDataTask *task = [[self manager] putURL:urlStr params:params dataCache:cacheType success:success failure:failure];
     return task;
 }
 
@@ -77,7 +76,7 @@
 }
 
 + (NSURLSessionDataTask *)patchURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure {
-    NSURLSessionDataTask *task = [[self sharedInstance] patchURL:urlStr params:params dataCache:cacheType success:success failure:failure];
+    NSURLSessionDataTask *task = [[self manager] patchURL:urlStr params:params dataCache:cacheType success:success failure:failure];
     return task;
 }
 
@@ -98,7 +97,7 @@
 }
 
 + (NSURLSessionDataTask *)deleteURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure {
-    NSURLSessionDataTask *task = [[self sharedInstance] deleteURL:urlStr params:params dataCache:cacheType success:success failure:failure];
+    NSURLSessionDataTask *task = [[self manager] deleteURL:urlStr params:params dataCache:cacheType success:success failure:failure];
     return task;
 }
 
@@ -119,6 +118,7 @@
 }
 
 #pragma mark - Private
+
 - (_ARResponseCacheModel *)oldDataCache:(ARCacheType *)cacheType url:(NSString *)urlStr params:(NSDictionary *)params success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure {
     _ARResponseCacheModel *oldData;
     if (*cacheType & (ARCacheTypeOnlyLoad | ARCacheTypeUpdateIfNeeded)) {

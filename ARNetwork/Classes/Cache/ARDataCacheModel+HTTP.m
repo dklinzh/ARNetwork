@@ -8,9 +8,14 @@
 
 #import "ARDataCacheModel+HTTP.h"
 #import "ARHTTPManager.h"
+#import "_ARDataCacheManager_Private.h"
 #import "_ARDataCacheModel_Private.h"
 
 @implementation ARDataCacheModel (HTTP)
+
++ (ARHTTPManager *)httpManager {
+    return [ARDataCacheManager _managerWithModelClass:self].httpManager;
+}
 
 + (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure {
     id oldData = [self oldDataCache:&cacheType url:urlStr params:params success:success failure:failure];
@@ -18,7 +23,7 @@
         return nil;
     }
     
-    NSURLSessionDataTask *task = [[ARHTTPManager sharedInstance] getURL:urlStr params:params success:^(id data, NSString *msg) {
+    NSURLSessionDataTask *task = [[self httpManager] getURL:urlStr params:params success:^(id data, NSString *msg) {
         [self newDataCache:cacheType url:urlStr params:params oldData:oldData dataSource:data msg:msg success:success failure:failure];
     } failure:^(NSInteger code, NSString *msg) {
         if (failure) {
@@ -34,7 +39,7 @@
         return nil;
     }
     
-    NSURLSessionDataTask *task = [[ARHTTPManager sharedInstance] postURL:urlStr params:params success:^(id data, NSString *msg) {
+    NSURLSessionDataTask *task = [[self httpManager] postURL:urlStr params:params success:^(id data, NSString *msg) {
         [self newDataCache:cacheType url:urlStr params:params oldData:oldData dataSource:data msg:msg success:success failure:failure];
     } failure:^(NSInteger code, NSString *msg) {
         if (failure) {
@@ -50,7 +55,7 @@
         return nil;
     }
     
-    NSURLSessionDataTask *task = [[ARHTTPManager sharedInstance] putURL:urlStr params:params success:^(id data, NSString *msg) {
+    NSURLSessionDataTask *task = [[self httpManager] putURL:urlStr params:params success:^(id data, NSString *msg) {
         [self newDataCache:cacheType url:urlStr params:params oldData:oldData dataSource:data msg:msg success:success failure:failure];
     } failure:^(NSInteger code, NSString *msg) {
         if (failure) {
@@ -66,7 +71,7 @@
         return nil;
     }
     
-    NSURLSessionDataTask *task = [[ARHTTPManager sharedInstance] patchURL:urlStr params:params success:^(id data, NSString *msg) {
+    NSURLSessionDataTask *task = [[self httpManager] patchURL:urlStr params:params success:^(id data, NSString *msg) {
         [self newDataCache:cacheType url:urlStr params:params oldData:oldData dataSource:data msg:msg success:success failure:failure];
     } failure:^(NSInteger code, NSString *msg) {
         if (failure) {
@@ -82,7 +87,7 @@
         return nil;
     }
     
-    NSURLSessionDataTask *task = [[ARHTTPManager sharedInstance] deleteURL:urlStr params:params success:^(id data, NSString *msg) {
+    NSURLSessionDataTask *task = [[self httpManager] deleteURL:urlStr params:params success:^(id data, NSString *msg) {
         [self newDataCache:cacheType url:urlStr params:params oldData:oldData dataSource:data msg:msg success:success failure:failure];
     } failure:^(NSInteger code, NSString *msg) {
         if (failure) {
@@ -93,6 +98,7 @@
 }
 
 #pragma mark - Private
+
 + (__kindof ARDataCacheModel *)oldDataCache:(ARCacheType *)cacheType url:(NSString *)urlStr params:(NSDictionary *)params success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure {
     __kindof ARDataCacheModel *oldData;
     if (*cacheType != ARCacheTypeNone) {

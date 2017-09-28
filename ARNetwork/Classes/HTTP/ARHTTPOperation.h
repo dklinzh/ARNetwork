@@ -32,7 +32,7 @@ typedef NS_ENUM(NSUInteger, ARRequestEncodedType) {
 
 - (NSString *)processedRequestURL:(NSString *)urlStr;
 
-- (NSString *)taskKeyForRequestURL:(NSString *)urlStr params:(NSDictionary *)params;
+- (NSString *)taskKeyForRequestURL:(NSString *)urlStr params:(nullable NSDictionary *)params;
 
 @end
 
@@ -54,9 +54,9 @@ typedef void(^ARHTTPResponseHead)(NSURLSessionDataTask *task);
 
 @interface ARHTTPOperation : NSObject
 
-@property (nonatomic, weak, nullable) id<ARHTTPRequestOperation> requestOperation;
+@property (nonatomic, strong, nullable) id<ARHTTPRequestOperation> requestOperation;
 
-@property (nonatomic, weak, nullable) id<ARHTTPResponseOperation> responseOperation;
+@property (nonatomic, strong, nullable) id<ARHTTPResponseOperation> responseOperation;
 
 + (instancetype)sharedInstance;
 

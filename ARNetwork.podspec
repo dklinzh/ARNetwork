@@ -33,6 +33,7 @@ Pod::Spec.new do |s|
   s.subspec 'HTTP' do |http|
     http.dependency 'AFNetworking', '~> 3.1'
 
+    http.private_header_files = 'ARNetwork/Classes/HTTP/_*.h'
     http.source_files = 'ARNetwork/Classes/HTTP/*.{h,m}'
   end
 
@@ -56,7 +57,7 @@ Pod::Spec.new do |s|
     cache.subspec 'Core' do |core|
       core.dependency 'ARNetwork/HTTP'
       core.dependency 'Realm', '~> 2.10'
-      
+
       core.private_header_files = 'ARNetwork/Classes/Cache/_*.h'
       core.source_files = 'ARNetwork/Classes/Cache/*.{h,m}'
     end

@@ -27,6 +27,5 @@
 @end
 
 static inline NSString * ar_cacheKey(NSString *urlStr, NSDictionary *params) {
-    NSURL *url = [NSURL URLWithString:urlStr];
-    return [[NSString stringWithFormat:@"%@|%@|%@", url.host, url.path, params.description] ar_SHA1];
+    return ar_sessionTaskKey(urlStr, params);
 }

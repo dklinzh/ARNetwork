@@ -7,6 +7,7 @@
 //
 
 #import "ARHTTPOperation.h"
+#import "_NSString+ARSHA1.h"
 
 @implementation ARHTTPOperation
 
@@ -80,7 +81,7 @@
         return [self.requestOperation taskKeyForRequestURL:urlStr params:params];
     }
     
-    return urlStr;
+    return ar_sessionTaskKey(urlStr, params);
 }
 
 @end

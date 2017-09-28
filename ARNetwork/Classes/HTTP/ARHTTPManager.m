@@ -10,13 +10,19 @@
 
 #ifdef DEBUG
 
-#define AR_TASK_TIMING_BEGIN \
+#define AR_TASK_TIMING_BEGIN(method) \
     CFTimeInterval startTime = CACurrentMediaTime(); \
-    NSString *taskKey = [self taskKeyForUrl:urlStr params:params];
+    NSURL *url = [NSURL URLWithString:urlStr]; \
+    NSString *key = [NSString stringWithFormat:@"%@<%@>", method, url.relativePath]; \
+    ARLogDebug(@"Request %@:\n%@", key, params);
 
 #define AR_TASK_TIMING_END(info) \
     CFTimeInterval endTime = CACurrentMediaTime(); \
-    ARLogFailure(@"Response<%@>: %.f ms\n%@", taskKey, (endTime - startTime) * 1000, info);
+    if ([info isMemberOfClass:NSError.class]) { \
+        ARLogFailure(@"Response %@: %.f ms\n%@", key, (endTime - startTime) * 1000, info); \
+    } else { \
+        ARLogSuccess(@"Response %@: %.f ms\n%@", key, (endTime - startTime) * 1000, info); \
+    }
 
 #else
 
@@ -27,6 +33,7 @@
 
 @interface ARHTTPManager ()
 @property (nonatomic, strong) ARHTTPOperation *operation;
+@property (nonatomic, strong) NSMutableDictionary<NSString *, NSURLSessionTask *> *sessionTasks;
 @end
 
 @implementation ARHTTPManager
@@ -118,8 +125,10 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
 
 - (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
     urlStr = [self.operation processedRequestURL:urlStr];
+    NSString *taskKey = [self.operation taskKeyForRequestURL:urlStr params:params];
+    [self cancelSessionTaskForKey:taskKey];
     
-    AR_TASK_TIMING_BEGIN
+    AR_TASK_TIMING_BEGIN(@"GET")
     NSURLSessionDataTask *task = [self GET:urlStr parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         [self.operation responseSuccess:success orFailure:failure withData:responseObject];
         AR_TASK_TIMING_END(responseObject)
@@ -127,6 +136,8 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
         [self.operation responseFailure:failure withError:error];
         AR_TASK_TIMING_END(error)
     }];
+    
+    [self.sessionTasks setValue:task forKey:taskKey];
     return task;
 }
 
@@ -137,8 +148,10 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
 
 - (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
     urlStr = [self.operation processedRequestURL:urlStr];
+    NSString *taskKey = [self.operation taskKeyForRequestURL:urlStr params:params];
+    [self cancelSessionTaskForKey:taskKey];
 
-    AR_TASK_TIMING_BEGIN
+    AR_TASK_TIMING_BEGIN(@"POST")
     NSURLSessionDataTask *task = [self POST:urlStr parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         [self.operation responseSuccess:success orFailure:failure withData:responseObject];
         AR_TASK_TIMING_END(responseObject)
@@ -146,6 +159,8 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
         [self.operation responseFailure:failure withError:error];
         AR_TASK_TIMING_END(error)
     }];
+    
+    [self.sessionTasks setValue:task forKey:taskKey];
     return task;
 }
 
@@ -165,8 +180,10 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
 
 - (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params filePaths:(NSArray<NSString *> *)filePaths formName:(NSString *)formName progress:(void (^)(NSProgress *uploadProgress))uploadProgress success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
     urlStr = [self.operation processedRequestURL:urlStr];
+    NSString *taskKey = [self.operation taskKeyForRequestURL:urlStr params:params];
+    [self cancelSessionTaskForKey:taskKey];
 
-    AR_TASK_TIMING_BEGIN
+    AR_TASK_TIMING_BEGIN(@"POST")
     NSURLSessionDataTask *task = [self POST:urlStr parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
         for (NSString *path in filePaths) {
             [formData appendPartWithFileURL:[NSURL fileURLWithPath:path] name:formName error:nil];
@@ -183,6 +200,8 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
         [self.operation responseFailure:failure withError:error];
         AR_TASK_TIMING_END(error)
     }];
+    
+    [self.sessionTasks setValue:task forKey:taskKey];
     return task;
 }
 
@@ -193,8 +212,10 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
 
 - (NSURLSessionDataTask *)putURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
     urlStr = [self.operation processedRequestURL:urlStr];
+    NSString *taskKey = [self.operation taskKeyForRequestURL:urlStr params:params];
+    [self cancelSessionTaskForKey:taskKey];
 
-    AR_TASK_TIMING_BEGIN
+    AR_TASK_TIMING_BEGIN(@"PUT")
     NSURLSessionDataTask *task = [self PUT:urlStr parameters:params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         [self.operation responseSuccess:success orFailure:failure withData:responseObject];
         AR_TASK_TIMING_END(responseObject)
@@ -202,6 +223,8 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
         [self.operation responseFailure:failure withError:error];
         AR_TASK_TIMING_END(error)
     }];
+    
+    [self.sessionTasks setValue:task forKey:taskKey];
     return task;
 }
 
@@ -212,8 +235,10 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
 
 - (NSURLSessionDataTask *)patchURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
     urlStr = [self.operation processedRequestURL:urlStr];
+    NSString *taskKey = [self.operation taskKeyForRequestURL:urlStr params:params];
+    [self cancelSessionTaskForKey:taskKey];
 
-    AR_TASK_TIMING_BEGIN
+    AR_TASK_TIMING_BEGIN(@"PATCH")
     NSURLSessionDataTask *task = [self PATCH:urlStr parameters:params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         [self.operation responseSuccess:success orFailure:failure withData:responseObject];
         AR_TASK_TIMING_END(responseObject)
@@ -221,6 +246,8 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
         [self.operation responseFailure:failure withError:error];
         AR_TASK_TIMING_END(error)
     }];
+    
+    [self.sessionTasks setValue:task forKey:taskKey];
     return task;
 }
 
@@ -231,8 +258,10 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
 
 - (NSURLSessionDataTask *)deleteURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
     urlStr = [self.operation processedRequestURL:urlStr];
+    NSString *taskKey = [self.operation taskKeyForRequestURL:urlStr params:params];
+    [self cancelSessionTaskForKey:taskKey];
 
-    AR_TASK_TIMING_BEGIN
+    AR_TASK_TIMING_BEGIN(@"DELETE")
     NSURLSessionDataTask *task = [self DELETE:urlStr parameters:params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         [self.operation responseSuccess:success orFailure:failure withData:responseObject];
         AR_TASK_TIMING_END(responseObject)
@@ -240,6 +269,8 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
         [self.operation responseFailure:failure withError:error];
         AR_TASK_TIMING_END(error)
     }];
+    
+    [self.sessionTasks setValue:task forKey:taskKey];
     return task;
 }
 
@@ -250,27 +281,39 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
 
 - (NSURLSessionDataTask *)headURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseHead)success failure:(ARHTTPResponseFailure)failure {
     urlStr = [self.operation processedRequestURL:urlStr];
+    NSString *taskKey = [self.operation taskKeyForRequestURL:urlStr params:params];
+    [self cancelSessionTaskForKey:taskKey];
 
-    AR_TASK_TIMING_BEGIN
+    AR_TASK_TIMING_BEGIN(@"HEAD")
     NSURLSessionDataTask *task = [self HEAD:urlStr parameters:params success:^(NSURLSessionDataTask * _Nonnull task) {
         if (success) {
             success(task);
         }
-        AR_TASK_TIMING_END("")
+        AR_TASK_TIMING_END(@"")
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         [self.operation responseFailure:failure withError:error];
         AR_TASK_TIMING_END(error)
     }];
+    
+    [self.sessionTasks setValue:task forKey:taskKey];
     return task;
 }
 
 #pragma mark - Private
 
-- (NSString *)taskKeyForUrl:(NSString *)urlStr params:(NSDictionary *)params {
-    NSString *taskKey = [self.operation taskKeyForRequestURL:urlStr params:params];
+- (void)cancelSessionTaskForKey:(NSString *)taskKey {
+    NSURLSessionTask *task = [self.sessionTasks valueForKey:taskKey];
+    if (task) {
+        [task cancel];
+    }
+}
+
+- (NSMutableDictionary<NSString *, NSURLSessionTask *> *)sessionTasks {
+    if (_sessionTasks) {
+        return _sessionTasks;
+    }
     
-    ARLogDebug(@"Request<%@>:\n%@", taskKey, urlStr);
-    return taskKey;
+    return _sessionTasks = [NSMutableDictionary dictionary];
 }
 
 @end

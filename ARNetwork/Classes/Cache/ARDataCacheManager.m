@@ -187,8 +187,15 @@ static NSMutableDictionary<NSString *, ARDataCacheManager *> * ar_schemaManagers
             config.shouldCompactOnLaunch = ^BOOL(NSUInteger totalBytes, NSUInteger bytesUsed) {
                 NSUInteger compatingSize = 100 * 1024 * 1024;
                 double usedPercent = (double)bytesUsed / totalBytes;
-                ARLogInfo(@"Schema: `%@` - Total: %f MB, Used: %f %%", self.schemaName, (double)totalBytes / (1024 * 1024), usedPercent * 100);
-                return (totalBytes > compatingSize) && usedPercent < 0.5;
+                BOOL shouldCompactOnLaunch = (totalBytes > compatingSize) && usedPercent < 0.5;
+                #ifdef DEBUG
+                if (shouldCompactOnLaunch) {
+                    ARLogWarn(@"Schema: `%@` - Total: %f MB, Used: %f %%", self.schemaName, (double)totalBytes / (1024 * 1024), usedPercent * 100);
+                } else {
+                    ARLogInfo(@"Schema: `%@` - Total: %f MB, Used: %f %%", self.schemaName, (double)totalBytes / (1024 * 1024), usedPercent * 100);
+                }
+                #endif
+                return shouldCompactOnLaunch;
             };
             
             // Encryption Switch

@@ -57,6 +57,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSURLSessionDataTask *)headURL:(NSString *)urlStr params:(nullable NSDictionary *)params success:(nullable ARHTTPResponseHead)success failure:(nullable ARHTTPResponseFailure)failure;
 
+- (void)setValue:(NSString *)value forHTTPHeaderField:(NSString *)field;
+
 @end
 
 @interface ARHTTPManager (Session)

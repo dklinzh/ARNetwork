@@ -243,16 +243,18 @@
 }
 
 - (instancetype)ar_resolveMainThreadSafeReference {
-    NSLock *lock = [[NSLock alloc] init];
-    [lock lock];
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(1);
     __block RLMThreadSafeReference *reference = nil;
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
     dispatch_async(dispatch_get_main_queue(), ^{
         reference = [RLMThreadSafeReference referenceWithThreadConfined:self];
-        [lock unlock];
+        dispatch_semaphore_signal(semaphore);
     });
-    [lock lock];
-    [lock unlock];
-    return [self ar_resolveThreadSafeReference:reference];
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    id data = [self ar_resolveThreadSafeReference:reference];
+    reference = nil;
+    dispatch_semaphore_signal(semaphore);
+    return data;
 }
 
 @end

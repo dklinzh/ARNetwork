@@ -138,7 +138,7 @@
             if ([self.class primaryKey]) {
                 [realm addOrUpdateObject:self];
             } else {
-                [realm addObject:self];
+                [realm addObject:self]; // FIXME: properties with primary key
             }
         }];
     }
@@ -238,8 +238,8 @@
 
 @implementation ARDataCacheModel (ThreadSafe)
 
-- (instancetype)ar_resolveThreadSafeReference:(RLMThreadSafeReference *)reference {
-    return [[self.class ar_defaultRealm] resolveThreadSafeReference:reference];
++ (instancetype)ar_resolveThreadSafeReference:(RLMThreadSafeReference *)reference {
+    return [[self ar_defaultRealm] resolveThreadSafeReference:reference];
 }
 
 - (instancetype)ar_resolveMainThreadSafeReference {
@@ -251,7 +251,7 @@
         dispatch_semaphore_signal(semaphore);
     });
     dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-    id data = [self ar_resolveThreadSafeReference:reference];
+    id data = [self.class ar_resolveThreadSafeReference:reference];
     reference = nil;
     dispatch_semaphore_signal(semaphore);
     return data;

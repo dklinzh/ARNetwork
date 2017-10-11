@@ -137,7 +137,7 @@ RLM_ARRAY_TYPE(ARDataCacheModel)
 
 @interface ARDataCacheModel (ThreadSafe)
 
-- (instancetype)ar_resolveThreadSafeReference:(RLMThreadSafeReference *)reference;
++ (instancetype)ar_resolveThreadSafeReference:(RLMThreadSafeReference *)reference;
 
 - (instancetype)ar_resolveMainThreadSafeReference;
 

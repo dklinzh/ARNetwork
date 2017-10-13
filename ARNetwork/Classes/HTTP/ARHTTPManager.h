@@ -57,7 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSURLSessionDataTask *)headURL:(NSString *)urlStr params:(nullable NSDictionary *)params success:(nullable ARHTTPResponseHead)success failure:(nullable ARHTTPResponseFailure)failure;
 
-- (void)setValue:(NSString *)value forHTTPHeaderField:(NSString *)field;
+- (void)setValue:(nullable NSString *)value forHTTPHeaderField:(NSString *)field;
 
 @end
 
@@ -67,7 +67,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)restoreSession:(NSString *)JSESSIONID forURL:(NSString *)urlString;
 
-- (void)setHTTPHeaderWithAuthorization:(NSString *)value;
+- (void)setHTTPHeaderWithAuthorization:(nullable NSString *)value;
 
 @end
 

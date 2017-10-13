@@ -100,8 +100,12 @@
                     if ([obj isKindOfClass:RLMArray.class]) {
                         RLMArray *objs = (RLMArray *)obj;
                         Class clazz = NSClassFromString(objs.objectClassName);
+                        NSString *primaryKey = [clazz primaryKey];
                         if ([clazz isSubclassOfClass:ARWrapedString.class]) {
                             NSArray *values = (NSArray *)value;
+                            if (primaryKey) {
+                                values = [NSOrderedSet orderedSetWithArray:values].array;
+                            }
                             for (id item in values) {
                                 if ([item isKindOfClass:NSString.class]) {
                                     [objs addObject:[[ARWrapedString alloc] initWithString:item]];
@@ -109,9 +113,23 @@
                             }
                         } else if ([clazz isSubclassOfClass:ARDataCacheModel.class]) {
                             NSArray *values = (NSArray *)value;
+                            NSMutableOrderedSet *primarySet = [NSMutableOrderedSet orderedSet];
                             for (id item in values) {
                                 if ([item isKindOfClass:NSDictionary.class]) {
-                                    [objs addObject:[[clazz alloc] initDataCache:item]];
+                                    if (primaryKey) {
+                                        id primaryValue = [item valueForKey:primaryKey];
+                                        if (primaryValue) {
+                                            NSUInteger primaryIndex = [primarySet indexOfObject:primaryValue];
+                                            if (primaryIndex == NSNotFound) {
+                                                [primarySet addObject:primaryValue];
+                                                [objs addObject:[[clazz alloc] initDataCache:item]];
+                                            } else {
+                                                [objs replaceObjectAtIndex:primaryIndex withObject:[[clazz alloc] initDataCache:item]];
+                                            }
+                                        }
+                                    } else {
+                                        [objs addObject:[[clazz alloc] initDataCache:item]];
+                                    }
                                 }
                             }
                         }

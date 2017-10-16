@@ -118,7 +118,7 @@
                                 if ([item isKindOfClass:NSDictionary.class]) {
                                     if (primaryKey) {
                                         id primaryValue = [item valueForKey:primaryKey];
-                                        if (primaryValue) {
+                                        if (primaryValue && ![clazz ar_objectForPrimaryKey:primaryValue]) {
                                             NSUInteger primaryIndex = [primarySet indexOfObject:primaryValue];
                                             if (primaryIndex == NSNotFound) {
                                                 [primarySet addObject:primaryValue];

@@ -20,15 +20,15 @@ typedef void(^ARDataCacheFailure)(NSInteger code, NSString * _Nullable msg);
     
 + (ARHTTPManager *)httpManager;
 
-+ (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(nullable NSDictionary *)params dataCache:(ARCacheType)cacheType success:(nullable ARDataCacheSuccess)success failure:(nullable ARDataCacheFailure)failure;
++ (nullable NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(nullable NSDictionary *)params dataCache:(ARCacheType)cacheType success:(nullable ARDataCacheSuccess)success failure:(nullable ARDataCacheFailure)failure;
 
-+ (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(nullable NSDictionary *)params dataCache:(ARCacheType)cacheType success:(nullable ARDataCacheSuccess)success failure:(nullable ARDataCacheFailure)failure;
++ (nullable NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(nullable NSDictionary *)params dataCache:(ARCacheType)cacheType success:(nullable ARDataCacheSuccess)success failure:(nullable ARDataCacheFailure)failure;
 
-+ (NSURLSessionDataTask *)putURL:(NSString *)urlStr params:(nullable NSDictionary *)params dataCache:(ARCacheType)cacheType success:(nullable ARDataCacheSuccess)success failure:(nullable ARDataCacheFailure)failure;
++ (nullable NSURLSessionDataTask *)putURL:(NSString *)urlStr params:(nullable NSDictionary *)params dataCache:(ARCacheType)cacheType success:(nullable ARDataCacheSuccess)success failure:(nullable ARDataCacheFailure)failure;
 
-+ (NSURLSessionDataTask *)patchURL:(NSString *)urlStr params:(nullable NSDictionary *)params dataCache:(ARCacheType)cacheType success:(nullable ARDataCacheSuccess)success failure:(nullable ARDataCacheFailure)failure;
++ (nullable NSURLSessionDataTask *)patchURL:(NSString *)urlStr params:(nullable NSDictionary *)params dataCache:(ARCacheType)cacheType success:(nullable ARDataCacheSuccess)success failure:(nullable ARDataCacheFailure)failure;
 
-+ (NSURLSessionDataTask *)deleteURL:(NSString *)urlStr params:(nullable NSDictionary *)params dataCache:(ARCacheType)cacheType success:(nullable ARDataCacheSuccess)success failure:(nullable ARDataCacheFailure)failure;
++ (nullable NSURLSessionDataTask *)deleteURL:(NSString *)urlStr params:(nullable NSDictionary *)params dataCache:(ARCacheType)cacheType success:(nullable ARDataCacheSuccess)success failure:(nullable ARDataCacheFailure)failure;
 @end
 
 NS_ASSUME_NONNULL_END

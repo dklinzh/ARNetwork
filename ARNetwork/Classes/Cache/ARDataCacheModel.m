@@ -226,7 +226,7 @@
                                         [primaryObj updateDataCacheWithDataPartInTransaction:item];
                                         [map removeObjectForKey:primaryValue];
                                     } else {
-                                        [objs addObject:[[clazz alloc] initDataCache:item]];
+                                        [objs addObject:[[clazz alloc] initDataCache:item]]; // FIXME: Attempting to create an object of type '%1' with an existing primary key value '%2'.
                                     }
                                 }
                             }

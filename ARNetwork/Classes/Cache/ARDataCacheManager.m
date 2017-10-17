@@ -175,7 +175,7 @@ static NSMutableDictionary<NSString *, ARDataCacheManager *> * ar_schemaManagers
 #pragma mark -
 
 - (void)configureWithSchemaVersion:(uint64_t)version dataEncryption:(BOOL)enabled {
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         @autoreleasepool {
             RLMRealmConfiguration *config = self.defaultConfig;
             config.schemaVersion = version;
@@ -207,11 +207,13 @@ static NSMutableDictionary<NSString *, ARDataCacheManager *> * ar_schemaManagers
                 } else {
                     key = [self addEncryptionKey];
                     NSURL *tempUrl = ar_realmTempFileURL(self.defaultConfig.fileURL);
-                    BOOL result = [[self defaultRealm] writeCopyToURL:tempUrl encryptionKey:key error:nil];
-                    if (result) {
-                        if ([[NSFileManager defaultManager] removeItemAtURL:config.fileURL error:nil]) {
-                            if ([[NSFileManager defaultManager] copyItemAtURL:tempUrl toURL:config.fileURL error:nil]) {
-                                [[NSFileManager defaultManager] removeItemAtURL:tempUrl error:nil];
+                    @autoreleasepool {
+                        BOOL result = [[self defaultRealm] writeCopyToURL:tempUrl encryptionKey:key error:nil];
+                        if (result) {
+                            if ([[NSFileManager defaultManager] removeItemAtURL:config.fileURL error:nil]) {
+                                if ([[NSFileManager defaultManager] copyItemAtURL:tempUrl toURL:config.fileURL error:nil]) {
+                                    [[NSFileManager defaultManager] removeItemAtURL:tempUrl error:nil];
+                                }
                             }
                         }
                     }
@@ -224,11 +226,13 @@ static NSMutableDictionary<NSString *, ARDataCacheManager *> * ar_schemaManagers
                     [self deleteEncryptionKey];
                     NSURL *tempUrl = ar_realmTempFileURL(self.defaultConfig.fileURL);
                     config.encryptionKey = key;
-                    BOOL result = [[self defaultRealm] writeCopyToURL:tempUrl encryptionKey:nil error:nil];
-                    if (result) {
-                        if ([[NSFileManager defaultManager] removeItemAtURL:config.fileURL error:nil]) {
-                            if ([[NSFileManager defaultManager] copyItemAtURL:tempUrl toURL:config.fileURL error:nil]) {
-                                [[NSFileManager defaultManager] removeItemAtURL:tempUrl error:nil];
+                    @autoreleasepool {
+                        BOOL result = [[self defaultRealm] writeCopyToURL:tempUrl encryptionKey:nil error:nil];
+                        if (result) {
+                            if ([[NSFileManager defaultManager] removeItemAtURL:config.fileURL error:nil]) {
+                                if ([[NSFileManager defaultManager] copyItemAtURL:tempUrl toURL:config.fileURL error:nil]) {
+                                    [[NSFileManager defaultManager] removeItemAtURL:tempUrl error:nil];
+                                }
                             }
                         }
                     }
@@ -241,7 +245,7 @@ static NSMutableDictionary<NSString *, ARDataCacheManager *> * ar_schemaManagers
             
             ARLogInfo(@"Realm: %@", [self defaultRealm].configuration.fileURL);
         }
-//    });
+    });
 }
 
 - (NSData *)searchEncryptionKey {

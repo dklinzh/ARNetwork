@@ -28,10 +28,10 @@ PODS:
   - ARNetwork/HTTP (0.4.0):
     - AFNetworking (~> 3.1)
   - Expecta (1.0.6)
-  - Realm (2.10.1):
-    - Realm/Headers (= 2.10.1)
-  - Realm/Headers (2.10.1)
-  - Specta (1.0.6)
+  - Realm (2.10.2):
+    - Realm/Headers (= 2.10.2)
+  - Realm/Headers (2.10.2)
+  - Specta (1.0.7)
 
 DEPENDENCIES:
   - ARNetwork (from `../`)
@@ -44,10 +44,10 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
-  ARNetwork: 0daec8d7b2b844223cd53277d22dc5a50302789e
+  ARNetwork: 99b6f08aee55248727c74650084f4bcba9d53173
   Expecta: 3b6bd90a64b9a1dcb0b70aa0e10a7f8f631667d5
-  Realm: fc7a317a5c2c9ba91f5f235ede4e2ea76e9eba0c
-  Specta: f506f3a8361de16bc0dcf3b17b75e269072ba465
+  Realm: 0ef72b837fb67e9f4b098bac771ddd72c7fdbb69
+  Specta: 3e1bd89c3517421982dc4d1c992503e48bd5fe66
 
 PODFILE CHECKSUM: 2012d82169e0d4290c44d6e6505ccc6438804000
 

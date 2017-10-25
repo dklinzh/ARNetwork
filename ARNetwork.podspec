@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'ARNetwork'
-  s.version          = '0.4.0'
+  s.version          = '0.5.0'
   s.summary          = 'An iOS network framework in combination with HTTP/HTTPS task and data cache. (AFNetworking+Realm)'
   s.description      = <<-DESC
                         An iOS network framework in combination with HTTP/HTTPS task and data cache. (AFNetworking+Realm)
@@ -37,20 +37,20 @@ Pod::Spec.new do |s|
     http.source_files = 'ARNetwork/Classes/HTTP/*.{h,m}'
   end
 
-  s.subspec 'DNS' do |dns|
-    dns.dependency 'ARNetwork/HTTP'
-    dns.dependency 'AlicloudHTTPDNS', '~> 1.5'
-    dns.libraries = 'resolv'
-    # dns.vendored_frameworks = 'ARNetwork/Frameworks/HTTPDNS/*.framework'
-    # dns.frameworks = 'CoreTelephony', 'SystemConfiguration'
+  # s.subspec 'DNS' do |dns|
+  #   dns.dependency 'ARNetwork/HTTP'
+  #   dns.dependency 'AlicloudHTTPDNS', '~> 1.5'
+  #   dns.libraries = 'resolv'
+  #   # dns.vendored_frameworks = 'ARNetwork/Frameworks/HTTPDNS/*.framework'
+  #   # dns.frameworks = 'CoreTelephony', 'SystemConfiguration'
 
-    dns.pod_target_xcconfig = {
-      'FRAMEWORK_SEARCH_PATHS' => '$(inherited) "$(PODS_ROOT)/AlicloudHTTPDNS/**" "$(PODS_ROOT)/AlicloudUtils/**" "$(PODS_ROOT)/AlicloudUTDID/**"',
-      'OTHER_LDFLAGS'          => '$(inherited) -framework AlicloudHttpDNS -framework AlicloudUtils -framework UTDID'
-    }
+  #   dns.pod_target_xcconfig = {
+  #     'FRAMEWORK_SEARCH_PATHS' => '$(inherited) "$(PODS_ROOT)/AlicloudHTTPDNS/**" "$(PODS_ROOT)/AlicloudUtils/**" "$(PODS_ROOT)/AlicloudUTDID/**"',
+  #     'OTHER_LDFLAGS'          => '$(inherited) -framework AlicloudHttpDNS -framework AlicloudUtils -framework UTDID'
+  #   }
 
-    dns.source_files = 'ARNetwork/Classes/HTTP/DNS/*.{h,m}'
-  end
+  #   dns.source_files = 'ARNetwork/Classes/HTTP/DNS/*.{h,m}'
+  # end
 
   s.subspec 'Cache' do |cache|
 

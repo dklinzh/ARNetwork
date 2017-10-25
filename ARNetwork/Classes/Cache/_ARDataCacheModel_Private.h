@@ -16,9 +16,14 @@
 @property NSString * _AR_CACHE_KEY;
 
 /**
- The expired time for a specific cache data with the kind of class `ARDataCacheModel`. (Read only)
+ The modified date of a specific cache data with the kind of class `ARDataCacheModel`. (Read only)
  */
-@property NSDate * _AR_EXPIRED_TIME;
+@property NSDate * _AR_DATE_MODIFIED;
+
+/**
+ The expired date for a specific cache data with the kind of class `ARDataCacheModel`. (Read only)
+ */
+@property NSDate * _AR_DATE_EXPIRED;
 
 + (instancetype)_dataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params;
 

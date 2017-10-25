@@ -150,7 +150,8 @@
 - (void)_addDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params {
     if (!self.realm) {
         self._AR_CACHE_KEY = ar_cacheKey(urlStr, params);
-        self._AR_EXPIRED_TIME = [NSDate dateWithTimeIntervalSinceNow:[self.class expiredInterval]];
+        self._AR_DATE_MODIFIED = [NSDate date];
+        self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[self.class expiredInterval] sinceDate:self._AR_DATE_MODIFIED];
         RLMRealm *realm = [self.class ar_defaultRealm];
         [realm transactionWithBlock:^{
             if ([self.class primaryKey]) {
@@ -166,7 +167,8 @@
     if (!self.isInvalidated) {
         [[self.class ar_defaultRealm] transactionWithBlock:^{
             [self updateDataCacheWithDataPartInTransaction:data];
-            self._AR_EXPIRED_TIME = [NSDate dateWithTimeIntervalSinceNow:[self.class expiredInterval]];
+            self._AR_DATE_MODIFIED = [NSDate date];
+            self._AR_DATE_EXPIRED = self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[self.class expiredInterval] sinceDate:self._AR_DATE_MODIFIED];
         }];
     }
 }

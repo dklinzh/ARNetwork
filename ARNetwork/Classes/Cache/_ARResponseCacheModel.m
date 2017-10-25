@@ -17,7 +17,8 @@
         if (!self.isInvalidated && responseObject) {
             self._AR_CACHE_KEY = ar_cacheKey(urlStr, params);
             self._AR_RESPONSE_DATA = [NSJSONSerialization dataWithJSONObject:responseObject options:NSJSONWritingPrettyPrinted error:nil];
-            self._AR_EXPIRED_TIME = [NSDate dateWithTimeIntervalSinceNow:[ARDataCacheManager _managerWithModelClass:self.class].expiredInterval];
+            self._AR_DATE_MODIFIED = [NSDate date];
+            self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[ARDataCacheManager _managerWithModelClass:self.class].expiredInterval sinceDate:self._AR_DATE_MODIFIED];
             RLMRealm *realm = [ARDataCacheManager _realmWithModelClass:self.class];
             [realm transactionWithBlock:^{
                 [realm addObject:self];
@@ -31,7 +32,8 @@
     if (!self.isInvalidated) {
         [[ARDataCacheManager _realmWithModelClass:self.class] transactionWithBlock:^{
             self._AR_RESPONSE_DATA = responseObject ? [NSJSONSerialization dataWithJSONObject:responseObject options:NSJSONWritingPrettyPrinted error:nil] : nil;
-            self._AR_EXPIRED_TIME = [NSDate dateWithTimeIntervalSinceNow:[ARDataCacheManager _managerWithModelClass:self.class].expiredInterval];
+            self._AR_DATE_MODIFIED = [NSDate date];
+            self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[ARDataCacheManager _managerWithModelClass:self.class].expiredInterval sinceDate:self._AR_DATE_MODIFIED];
         }];
     }
 }

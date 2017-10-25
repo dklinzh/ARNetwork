@@ -109,7 +109,7 @@
             if ((*cacheType & ARCacheTypeOnlyLoad) && success) {
                 success(oldData, nil, YES);
             }
-            if ((*cacheType & ARCacheTypeUpdateIfNeeded) && (oldData._AR_EXPIRED_TIME.timeIntervalSinceNow > 0)) {
+            if ((*cacheType & ARCacheTypeUpdateIfNeeded) && (oldData._AR_DATE_MODIFIED.timeIntervalSinceNow <= 0) && (oldData._AR_DATE_EXPIRED.timeIntervalSinceNow > 0)) {
                 *cacheType = ARCacheTypeOnlyLoad;
             }
         } else {

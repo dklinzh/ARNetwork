@@ -1,6 +1,5 @@
-#
-General
-*.DS_Store
+# General
+.DS_Store
 .AppleDouble
 .LSOverride
 
@@ -31,11 +30,17 @@ Temporary Items
 #
 # gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
 
-## Build generated
+## User settings
+xcuserdata/
+
+## compatibility with Xcode 8 and earlier (ignoring not required starting Xcode 9)
+*.xcscmblueprint
+*.xccheckout
+
+## compatibility with Xcode 3 and earlier (ignoring not required starting Xcode 4)
 build/
 DerivedData/
-
-## Various settings
+*.moved-aside
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -50,6 +55,9 @@ xcuserdata/
 *.moved-aside
 *.xccheckout
 *.xcscmblueprint
+*.log
+cert/
+export/
 
 ## Obj-C/Swift specific
 *.hmap
@@ -66,6 +74,7 @@ playground.xcworkspace
 # Add this line if you want to avoid checking in source code from Swift Package Manager dependencies.
 # Packages/
 # Package.pins
+# Package.resolved
 .build/
 
 # CocoaPods

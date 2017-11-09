@@ -118,7 +118,7 @@
                                 if ([item isKindOfClass:NSDictionary.class]) {
                                     if (primaryKey) {
                                         id primaryValue = [item valueForKey:primaryKey];
-                                        if (primaryValue && ![clazz ar_objectForPrimaryKey:primaryValue]) {
+                                        if (primaryValue && ![clazz ar_objectForPrimaryKey:primaryValue]) { // FIXME: properties with primary key
                                             NSUInteger primaryIndex = [primarySet indexOfObject:primaryValue];
                                             if (primaryIndex == NSNotFound) {
                                                 [primarySet addObject:primaryValue];
@@ -227,8 +227,13 @@
                                     if (primaryObj) {
                                         [primaryObj updateDataCacheWithDataPartInTransaction:item];
                                         [map removeObjectForKey:primaryValue];
-                                    } else {
-                                        [objs addObject:[[clazz alloc] initDataCache:item]]; // FIXME: Attempting to create an object of type '%1' with an existing primary key value '%2'.
+                                    } else { // FIXME: Attempting to create an object of type '%1' with an existing primary key value '%2'.
+                                        primaryObj = [clazz ar_objectForPrimaryKey:primaryValue];
+                                        if (primaryObj) {
+                                            [primaryObj updateDataCacheWithDataPartInTransaction:item];
+                                        } else {
+                                            [objs addObject:[[clazz alloc] initDataCache:item]];
+                                        }
                                     }
                                 }
                             }

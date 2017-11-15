@@ -99,23 +99,13 @@
                     id obj = [self valueForKey:key];
                     if ([obj isKindOfClass:RLMArray.class]) {
                         RLMArray *objs = (RLMArray *)obj;
-                        Class clazz = NSClassFromString(objs.objectClassName);
-                        NSString *primaryKey = [clazz primaryKey];
-                        if ([clazz isSubclassOfClass:ARWrapedString.class]) {
-                            NSArray *values = (NSArray *)value;
-                            if (primaryKey) {
-                                values = [NSOrderedSet orderedSetWithArray:values].array;
-                            }
-                            for (id item in values) {
-                                if ([item isKindOfClass:NSString.class]) {
-                                    [objs addObject:[[ARWrapedString alloc] initWithString:item]];
-                                }
-                            }
-                        } else if ([clazz isSubclassOfClass:ARDataCacheModel.class]) {
+                        if (objs.type == RLMPropertyTypeObject) {
+                            Class clazz = NSClassFromString(objs.objectClassName);
                             NSArray *values = (NSArray *)value;
                             NSMutableOrderedSet *primarySet = [NSMutableOrderedSet orderedSet];
                             for (id item in values) {
                                 if ([item isKindOfClass:NSDictionary.class]) {
+                                    NSString *primaryKey = [clazz primaryKey];
                                     if (primaryKey) {
                                         id primaryValue = [item valueForKey:primaryKey];
                                         if (primaryValue && ![clazz ar_objectForPrimaryKey:primaryValue]) { // FIXME: properties with primary key
@@ -132,7 +122,16 @@
                                     }
                                 }
                             }
+                        } else if (objs.type == RLMPropertyTypeString ||
+                                   objs.type == RLMPropertyTypeBool ||
+                                   objs.type == RLMPropertyTypeInt ||
+                                   objs.type == RLMPropertyTypeFloat ||
+                                   objs.type == RLMPropertyTypeDouble ||
+                                   objs.type == RLMPropertyTypeDate ||
+                                   objs.type == RLMPropertyTypeData) {
+                            [objs addObjects:value];
                         }
+                        [obj isMemberOfClass:[RLMArray<RLMString> class]];
                     }
                 } else {
                     [self setValue:value forKey:key];
@@ -203,17 +202,9 @@
                 id obj = [self valueForKey:key];
                 if ([obj isKindOfClass:RLMArray.class]) {
                     RLMArray *objs = (RLMArray *)obj;
-                    Class clazz = NSClassFromString(objs.objectClassName);
-                    if ([clazz isSubclassOfClass:ARWrapedString.class]) {
-                        [objs removeAllObjects];
+                    if (objs.type == RLMPropertyTypeObject) {
                         NSArray *values = (NSArray *)value;
-                        for (id item in values) {
-                            if ([item isKindOfClass:NSString.class]) {
-                                [objs addObject:[[ARWrapedString alloc] initWithString:item]];
-                            }
-                        }
-                    } else if ([clazz isSubclassOfClass:ARDataCacheModel.class]) {
-                        NSArray *values = (NSArray *)value;
+                        Class clazz = NSClassFromString(objs.objectClassName);
                         NSString *primaryKey = [clazz primaryKey];
                         if (primaryKey) {
                             NSMutableDictionary *map = [NSMutableDictionary dictionary];
@@ -246,6 +237,15 @@
                                 }
                             }
                         }
+                    } else if (objs.type == RLMPropertyTypeString ||
+                               objs.type == RLMPropertyTypeBool ||
+                               objs.type == RLMPropertyTypeInt ||
+                               objs.type == RLMPropertyTypeFloat ||
+                               objs.type == RLMPropertyTypeDouble ||
+                               objs.type == RLMPropertyTypeDate ||
+                               objs.type == RLMPropertyTypeData) {
+                        [objs removeAllObjects];
+                        [objs addObjects:value];
                     }
                 }
             } else {
@@ -284,13 +284,3 @@
 
 @end
 
-@implementation ARWrapedString
-
-- (instancetype)initWithString:(NSString *)string {
-    if (self = [super init]) {
-        self.value = string;
-    }
-    return self;
-}
-
-@end

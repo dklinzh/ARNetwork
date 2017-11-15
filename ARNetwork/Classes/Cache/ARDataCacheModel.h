@@ -143,21 +143,4 @@ RLM_ARRAY_TYPE(ARDataCacheModel)
 
 @end
 
-/**
- Wraped string object for storing flat arrays of strings on a Realm model
- */
-@interface ARWrapedString : ARDataCacheModel
-@property NSString *value;
-
-/**
- Creates an unmanaged instance of a wraped string Realm object.
-
- @param string The value of string
- @return ARCacheString instance
- */
-- (instancetype)initWithString:(NSString *)string;
-
-@end
-RLM_ARRAY_TYPE(ARWrapedString)
-
 NS_ASSUME_NONNULL_END

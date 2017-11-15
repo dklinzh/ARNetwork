@@ -1,33 +1,33 @@
 //
-//  RLMCollection+ARFlat.m
+//  RLMCollection+ARBridge.m
 //  ARNetwork
 //
 //  Created by Daniel Lin on 04/08/2017.
 //  Copyright © 2017 Daniel. All rights reserved.
 //
 
-#import "RLMCollection+ARFlat.h"
+#import "RLMCollection+ARBridge.h"
 
-@implementation RLMArray (ARFlat)
+@implementation RLMArray (ARBridge)
 
-- (NSArray *)ar_flatArray {
+- (NSArray *)ar_primitiveArray {
     NSMutableArray *array = [NSMutableArray array];
     for (RLMObject *item in self) {
         [array addObject:item];
     }
-    return array;
+    return [array copy];
 }
 
 @end
 
-@implementation RLMResults (ARFlat)
+@implementation RLMResults (ARBridge)
 
-- (NSArray *)ar_flatArray {
+- (NSArray *)ar_primitiveArray {
     NSMutableArray *array = [NSMutableArray array];
     for (RLMObject *item in self) {
         [array addObject:item];
     }
-    return array;
+    return [array copy];
 }
 
 @end

@@ -11,10 +11,6 @@
 @implementation RLMArray (ARFlat)
 
 - (NSArray *)ar_flatArray {
-    if ([self.objectClassName isEqualToString:@"ARWrapedString"]) {
-        return [self valueForKey:@"value"];
-    }
-    
     NSMutableArray *array = [NSMutableArray array];
     for (RLMObject *item in self) {
         [array addObject:item];
@@ -27,10 +23,6 @@
 @implementation RLMResults (ARFlat)
 
 - (NSArray *)ar_flatArray {
-    if ([self.objectClassName isEqualToString:@"ARWrapedString"]) {
-        return [self valueForKey:@"value"];
-    }
-    
     NSMutableArray *array = [NSMutableArray array];
     for (RLMObject *item in self) {
         [array addObject:item];

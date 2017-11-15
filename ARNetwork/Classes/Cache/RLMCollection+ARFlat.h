@@ -10,15 +10,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RLMArray<RLMObjectType: RLMObject *> (ARFlat)
+@interface RLMArray<RLMObjectType> (ARFlat)
 
-- (NSArray *)ar_flatArray;
+- (NSArray<RLMObjectType> *)ar_flatArray;
 
 @end
 
-@interface RLMResults<RLMObjectType: RLMObject *> (ARFlat)
+@interface RLMResults<RLMObjectType> (ARFlat)
 
-- (NSArray *)ar_flatArray;
+- (NSArray<RLMObjectType> *)ar_flatArray;
 
 @end
 

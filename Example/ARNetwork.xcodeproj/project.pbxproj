@@ -10,6 +10,8 @@
 		0E6D61232789F09CE4EF09D0 /* Pods_ARNetwork_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C1669146C7F6C8F6B1CA1A4 /* Pods_ARNetwork_Example.framework */; };
 		37CBB6BB025E4CB751B095B0 /* Pods_ARNetwork_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7932155579FA8FA8751DDB06 /* Pods_ARNetwork_Tests.framework */; };
 		496916C01F7A2CE1007B4115 /* ARExampleResultModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 496916BF1F7A2CE1007B4115 /* ARExampleResultModel.m */; };
+		49CBA6971FBD32E100478F24 /* ARSwiftExampleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49CBA6961FBD32E100478F24 /* ARSwiftExampleModel.swift */; };
+		49CBA6A51FBD6B1300478F24 /* ARExampleResultModel.json in Resources */ = {isa = PBXBuildFile; fileRef = 49CBA6A41FBD6B1300478F24 /* ARExampleResultModel.json */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58F195388D20070C39A /* CoreGraphics.framework */; };
 		6003F592195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
@@ -43,6 +45,9 @@
 		2C1669146C7F6C8F6B1CA1A4 /* Pods_ARNetwork_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ARNetwork_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		496916BE1F7A2CE1007B4115 /* ARExampleResultModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARExampleResultModel.h; sourceTree = "<group>"; };
 		496916BF1F7A2CE1007B4115 /* ARExampleResultModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARExampleResultModel.m; sourceTree = "<group>"; };
+		49CBA6951FBD32E000478F24 /* ARNetwork_Example-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ARNetwork_Example-Bridging-Header.h"; sourceTree = "<group>"; };
+		49CBA6961FBD32E100478F24 /* ARSwiftExampleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARSwiftExampleModel.swift; sourceTree = "<group>"; };
+		49CBA6A41FBD6B1300478F24 /* ARExampleResultModel.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ARExampleResultModel.json; sourceTree = "<group>"; };
 		4D51D8097005E065D0D0D09B /* Pods-ARNetwork_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ARNetwork_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ARNetwork_Tests/Pods-ARNetwork_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		6003F58A195388D20070C39A /* ARNetwork_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARNetwork_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F58D195388D20070C39A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -143,6 +148,9 @@
 				496916BF1F7A2CE1007B4115 /* ARExampleResultModel.m */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				6003F594195388D20070C39A /* Supporting Files */,
+				49CBA6961FBD32E100478F24 /* ARSwiftExampleModel.swift */,
+				49CBA6951FBD32E000478F24 /* ARNetwork_Example-Bridging-Header.h */,
+				49CBA6A41FBD6B1300478F24 /* ARExampleResultModel.json */,
 			);
 			name = "Example for ARNetwork";
 			path = ARNetwork;
@@ -254,6 +262,9 @@
 				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = Daniel;
 				TargetAttributes = {
+					6003F589195388D20070C39A = {
+						LastSwiftMigration = 0910;
+					};
 					6003F5AD195388D20070C39A = {
 						TestTargetID = 6003F589195388D20070C39A;
 					};
@@ -283,6 +294,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49CBA6A51FBD6B1300478F24 /* ARExampleResultModel.json in Resources */,
 				873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
@@ -329,12 +341,14 @@
 				"${SRCROOT}/Pods/Target Support Files/Pods-ARNetwork_Example/Pods-ARNetwork_Example-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/AFNetworking/AFNetworking.framework",
 				"${BUILT_PRODUCTS_DIR}/ARNetwork/ARNetwork.framework",
+				"${BUILT_PRODUCTS_DIR}/OHHTTPStubs/OHHTTPStubs.framework",
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AFNetworking.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ARNetwork.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OHHTTPStubs.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -418,6 +432,7 @@
 				496916C01F7A2CE1007B4115 /* ARExampleResultModel.m in Sources */,
 				6003F59E195388D20070C39A /* ARAppDelegate.m in Sources */,
 				6003F5A7195388D20070C39A /* ARViewController.m in Sources */,
+				49CBA6971FBD32E100478F24 /* ARSwiftExampleModel.swift in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -507,6 +522,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -550,6 +566,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -561,13 +578,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ARNetwork/ARNetwork-Prefix.pch";
 				INFOPLIST_FILE = "ARNetwork/ARNetwork-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dklinzh.demo.ARNetwork;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "ARNetwork/ARNetwork_Example-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -578,13 +599,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ARNetwork/ARNetwork-Prefix.pch";
 				INFOPLIST_FILE = "ARNetwork/ARNetwork-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dklinzh.demo.ARNetwork;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "ARNetwork/ARNetwork_Example-Bridging-Header.h";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -593,6 +617,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4D51D8097005E065D0D0D09B /* Pods-ARNetwork_Tests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -617,6 +642,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1FA03288613396E61C8C92FA /* Pods-ARNetwork_Tests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",

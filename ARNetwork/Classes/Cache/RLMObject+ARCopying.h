@@ -7,6 +7,8 @@
 
 #import <Realm/Realm.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface RLMObject (ARCopying)
 
 - (instancetype)ar_shallowCopy;
@@ -16,3 +18,5 @@
 - (void)ar_mergePropertiesFromObject:(id)object;
 
 @end
+
+NS_ASSUME_NONNULL_END

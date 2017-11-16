@@ -309,6 +309,7 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
     NSURLSessionTask *task = [self.sessionTasks valueForKey:taskKey];
     if (task) {
         [task cancel];
+        [self.sessionTasks removeObjectForKey:taskKey];
     }
 }
 

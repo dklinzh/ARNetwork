@@ -14,11 +14,11 @@ PODS:
   - AFNetworking/Serialization (3.1.0)
   - AFNetworking/UIKit (3.1.0):
     - AFNetworking/NSURLSession
-  - ARNetwork (0.5.1):
-    - ARNetwork/Default (= 0.5.1)
   - ARNetwork/Cache/Core (0.5.1):
     - ARNetwork/HTTP
     - Realm (~> 3.0)
+  - ARNetwork/Cache/Swift (0.5.1):
+    - ARNetwork/Cache/Core
   - ARNetwork/Default (0.5.1):
     - ARNetwork/Cache/Core
     - ARNetwork/Detector
@@ -27,14 +27,31 @@ PODS:
     - AFNetworking/UIKit (~> 3.1)
   - ARNetwork/HTTP (0.5.1):
     - AFNetworking (~> 3.1)
+  - ARNetwork/Mock (0.5.1):
+    - OHHTTPStubs (~> 6.0)
   - Expecta (1.0.6)
+  - OHHTTPStubs (6.0.0):
+    - OHHTTPStubs/Default (= 6.0.0)
+  - OHHTTPStubs/Core (6.0.0)
+  - OHHTTPStubs/Default (6.0.0):
+    - OHHTTPStubs/Core
+    - OHHTTPStubs/JSON
+    - OHHTTPStubs/NSURLSession
+    - OHHTTPStubs/OHPathHelpers
+  - OHHTTPStubs/JSON (6.0.0):
+    - OHHTTPStubs/Core
+  - OHHTTPStubs/NSURLSession (6.0.0):
+    - OHHTTPStubs/Core
+  - OHHTTPStubs/OHPathHelpers (6.0.0)
   - Realm (3.0.2):
     - Realm/Headers (= 3.0.2)
   - Realm/Headers (3.0.2)
   - Specta (1.0.7)
 
 DEPENDENCIES:
-  - ARNetwork (from `../`)
+  - ARNetwork/Cache/Swift (from `../`)
+  - ARNetwork/Default (from `../`)
+  - ARNetwork/Mock (from `../`)
   - Expecta
   - Specta
 
@@ -44,11 +61,12 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
-  ARNetwork: c2ab437e5080a90d56b86188e4608341a32624e3
+  ARNetwork: 90bd96b48e20932345b7ebfa824ab807c0836e68
   Expecta: 3b6bd90a64b9a1dcb0b70aa0e10a7f8f631667d5
+  OHHTTPStubs: 752f9b11fd810a15162d50f11c06ff94f8e012eb
   Realm: 6f23fd1f178a09342eac21bfa7c2bf4312a7a180
   Specta: 3e1bd89c3517421982dc4d1c992503e48bd5fe66
 
-PODFILE CHECKSUM: 2012d82169e0d4290c44d6e6505ccc6438804000
+PODFILE CHECKSUM: 08ff387ced2808c7bb5ce99cff07480baecc6d3a
 
 COCOAPODS: 1.3.1

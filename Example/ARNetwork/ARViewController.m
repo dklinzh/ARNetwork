@@ -17,26 +17,32 @@
 
 @implementation ARViewController
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+	
+    NSString *urlString = @"http://httpbin.org/get";
     
-    [[ARHTTPManager sharedInstance] getURL:@"http://httpbin.org/get" params:nil success:^(id data, NSString *msg) {
+    [ARHTTPMock getRequestURL:urlString responseByMainBundleJSONFile:@"ARExampleResultModel"];
+    [[ARHTTPManager sharedInstance] getURL:urlString params:nil success:^(id data, NSString *msg) {
         
     } failure:^(NSInteger code, NSString *msg) {
         
     }];
     
-    [ARExampleResultModel getURL:@"http://httpbin.org/get" params:nil dataCache:ARCacheTypeLoadAndUpdate success:^(ARExampleResultModel *data, NSString *msg, BOOL isCached) {
+    
+    [ARExampleResultModel getURL:urlString params:nil dataCache:ARCacheTypeLoadAndUpdate success:^(ARExampleResultModel *data, NSString *msg, BOOL isCached) {
         
     } failure:^(NSInteger code, NSString *msg) {
         
     }];
 }
 
-- (void)didReceiveMemoryWarning
-{
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+}
+
+- (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }

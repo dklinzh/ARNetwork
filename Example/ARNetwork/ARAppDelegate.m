@@ -18,6 +18,8 @@
     ARDataCacheManager *manager = [[ARDataCacheManager alloc] initSchemaWithName:@"dklinzh.arnetwork" version:0 dataEncryption:YES];
     [manager registerDataCacheModels:@[ARExampleResultModel.class]];
     
+    [ARHTTPMock setEnabled:YES];
+    
     return YES;
 }
 

@@ -52,6 +52,14 @@ Pod::Spec.new do |s|
   #   dns.source_files = 'ARNetwork/Classes/HTTP/DNS/*.{h,m}'
   # end
 
+  s.subspec 'Mock' do |mock|
+    # mock.dependency 'ARNetwork/HTTP'
+    mock.dependency 'OHHTTPStubs', '~> 6.0'
+
+    mock.private_header_files = 'ARNetwork/Classes/Mock/_*.h'
+    mock.source_files = 'ARNetwork/Classes/Mock/*.{h,m}'
+  end
+
   s.subspec 'Cache' do |cache|
 
     cache.subspec 'Core' do |core|

@@ -1,14 +1,15 @@
 source 'https://github.com/CocoaPods/Specs.git'
-#source 'https://github.com/aliyun/aliyun-specs.git'
 
 platform :ios, '8.0'
 
 use_frameworks!
 
 target 'ARNetwork_Example' do
-    pod 'ARNetwork', :path => '../'
-    #HTTPDNS
-    #pod 'ARNetwork/DNS', :path => '../'
+    pod 'ARNetwork', :subspecs => ['Default', 'Cache/Swift'], :path => '../'
+
+    #CocoaPods does not currently support subspecs across different build configurations.
+	#pod 'ARNetwork/Mock', :configurations => ['Debug'], :path => '../'
+	pod 'ARNetwork/Mock', :path => '../'
 
     target 'ARNetwork_Tests' do
         inherit! :search_paths
@@ -17,7 +18,3 @@ target 'ARNetwork_Example' do
         pod 'Expecta'
     end
 end
-
-#pre_install do |installer|
-#    def installer.verify_no_static_framework_transitive_dependencies; end
-#end

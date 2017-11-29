@@ -91,9 +91,26 @@
         [data enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, id  _Nonnull value, BOOL * _Nonnull stop) {
             if ([self respondsToSelector:NSSelectorFromString(key)]) {
                 if ([value isKindOfClass:NSDictionary.class]) {
-                    id obj = [[self ar_classOfPropertyNamed:key] alloc];
-                    if ([obj isKindOfClass:ARDataCacheModel.class]) {
-                        [self setValue:[obj initDataCache:value] forKey:key];
+                    Class clazz = [self ar_classOfPropertyNamed:key];
+                    if ([clazz isSubclassOfClass:ARDataCacheModel.class]) {
+                        NSString *primaryKey = [clazz primaryKey];
+                        if (primaryKey) {
+                            id primaryValue = [value valueForKey:primaryKey];
+                            if (primaryValue) {
+                                id primaryExist = [clazz ar_objectForPrimaryKey:primaryValue];
+                                if (primaryExist) { // FIXME: properties with primary key
+                                    RLMRealm *realm = [self.class ar_defaultRealm];
+                                    if ([realm inWriteTransaction]) {
+                                        [realm deleteObject:primaryExist];
+                                    } else {
+                                        [ar_primaryExists() setObject:primaryExist forKey:primaryValue];
+                                    }
+                                }
+                                [self setValue:[[clazz alloc] initDataCache:value] forKey:key];
+                            }
+                        } else {
+                            [self setValue:[[clazz alloc] initDataCache:value] forKey:key];
+                        }
                     }
                 } else if ([value isKindOfClass:NSArray.class]) {
                     id obj = [self valueForKey:key];
@@ -108,7 +125,17 @@
                                     NSString *primaryKey = [clazz primaryKey];
                                     if (primaryKey) {
                                         id primaryValue = [item valueForKey:primaryKey];
-                                        if (primaryValue && ![clazz ar_objectForPrimaryKey:primaryValue]) { // FIXME: properties with primary key
+                                        if (primaryValue) {
+                                            id primaryExist = [clazz ar_objectForPrimaryKey:primaryValue];
+                                            if (primaryExist) { // FIXME: properties with primary key
+                                                RLMRealm *realm = [self.class ar_defaultRealm];
+                                                if ([realm inWriteTransaction]) {
+                                                    [realm deleteObject:primaryExist];
+                                                } else {
+                                                    [ar_primaryExists() setObject:primaryExist forKey:primaryValue];
+                                                }
+                                            }
+                                            
                                             NSUInteger primaryIndex = [primarySet indexOfObject:primaryValue];
                                             if (primaryIndex == NSNotFound) {
                                                 [primarySet addObject:primaryValue];
@@ -146,6 +173,15 @@
     return self;
 }
 
+static NSMutableDictionary<id, ARDataCacheModel *> * ar_primaryExists() {
+    static NSMutableDictionary<id, ARDataCacheModel *> *ar_primaryExists;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        ar_primaryExists = [NSMutableDictionary dictionary];
+    });
+    return ar_primaryExists;
+}
+
 - (void)_addDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params {
     if (!self.realm) {
         self._AR_CACHE_KEY = ar_cacheKey(urlStr, params);
@@ -153,6 +189,9 @@
         self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[self.class expiredInterval] sinceDate:self._AR_DATE_MODIFIED];
         RLMRealm *realm = [self.class ar_defaultRealm];
         [realm transactionWithBlock:^{
+            [realm deleteObjects:ar_primaryExists().allValues];
+            [ar_primaryExists() removeAllObjects];
+            
             if ([self.class primaryKey]) {
                 [realm addOrUpdateObject:self];
             } else {
@@ -214,14 +253,14 @@
                             for (id item in values) {
                                 if ([item isKindOfClass:NSDictionary.class]) {
                                     id primaryValue = [item valueForKey:primaryKey];
-                                    id primaryObj = [map objectForKey:primaryValue];
-                                    if (primaryObj) {
-                                        [primaryObj updateDataCacheWithDataPartInTransaction:item];
+                                    id primaryExist = [map objectForKey:primaryValue];
+                                    if (primaryExist) {
+                                        [primaryExist updateDataCacheWithDataPartInTransaction:item];
                                         [map removeObjectForKey:primaryValue];
                                     } else { // FIXME: Attempting to create an object of type '%1' with an existing primary key value '%2'.
-                                        primaryObj = [clazz ar_objectForPrimaryKey:primaryValue];
-                                        if (primaryObj) {
-                                            [primaryObj updateDataCacheWithDataPartInTransaction:item];
+                                        primaryExist = [clazz ar_objectForPrimaryKey:primaryValue];
+                                        if (primaryExist) {
+                                            [primaryExist updateDataCacheWithDataPartInTransaction:item];
                                         } else {
                                             [objs addObject:[[clazz alloc] initDataCache:item]];
                                         }

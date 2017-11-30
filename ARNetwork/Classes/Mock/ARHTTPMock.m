@@ -8,9 +8,12 @@
 #import "ARHTTPMock.h"
 @import OHHTTPStubs;
 
+static BOOL MockEnabled = YES;
+
 @implementation ARHTTPMock
 
 + (void)setEnabled:(BOOL)enabled {
+    MockEnabled = enabled;
     [OHHTTPStubs setEnabled:enabled];
     if (enabled) {
         [OHHTTPStubs onStubActivation:^(NSURLRequest * _Nonnull request, id<OHHTTPStubsDescriptor>  _Nonnull stub, OHHTTPStubsResponse * _Nonnull responseStub) {
@@ -18,11 +21,13 @@
         }];
     } else {
         [OHHTTPStubs onStubActivation:nil];
+        [self removeAllMocks];
     }
 }
 
 + (void)removeAllMocks {
     [OHHTTPStubs removeAllStubs];
+    [ar_httpMocks() removeAllObjects];
 }
 
 static NSMutableDictionary<NSString *, id<OHHTTPStubsDescriptor>> * ar_httpMocks() {
@@ -39,6 +44,10 @@ static inline NSString * ar_httpMockKey(NSString *httMethod, NSURL *url) {
 }
 
 + (void)httpMethod:(NSString *)method requestURL:(NSString *)urlString responseByMainBundleFile:(NSString *)fileName {
+    if (!MockEnabled) {
+        return;
+    }
+    
     NSURL *url = [NSURL URLWithString:urlString];
     if (!url) {
         ARLogError(@"Mock url: `%@` is invalid.", urlString);

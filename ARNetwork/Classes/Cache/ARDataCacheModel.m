@@ -161,7 +161,7 @@
                         [obj isMemberOfClass:[RLMArray<RLMString> class]];
                     }
                 } else {
-                    [self setValue:value forKey:key];
+                    [self setPropertyValue:value forKey:key];
                 }
             }
         }];
@@ -171,6 +171,26 @@
         }
     }
     return self;
+}
+
+- (void)setPropertyValue:(id)value forKey:(NSString *)key {
+    Class class = [self ar_classOfPropertyNamed:key];
+    if ([class isSubclassOfClass:NSString.class]) {
+        if (![value isKindOfClass:NSString.class]) {
+            value = [NSString stringWithFormat:@"%@", value];
+        }
+    }
+//    else if (!class) {
+//        if ([value isKindOfClass:NSString.class]) {
+//            NSNumberFormatter *format = [[NSNumberFormatter alloc] init];
+//            format.numberStyle = NSNumberFormatterDecimalStyle;
+//            value = [format numberFromString:value];
+//            if (!value) {
+//                return;
+//            }
+//        }
+//    }
+    [self setValue:value forKey:key];
 }
 
 static NSMutableDictionary<id, ARDataCacheModel *> * ar_primaryExists() {
@@ -288,7 +308,7 @@ static NSMutableDictionary<id, ARDataCacheModel *> * ar_primaryExists() {
                     }
                 }
             } else {
-                [self setValue:value forKey:key];
+                [self setPropertyValue:value forKey:key];
             }
         }
     }];

@@ -156,8 +156,8 @@
     class = NSClassFromString(className);
     
     // Warning.
-    if (class == nil)
-    { ARLogError(@"No class called `%@` in runtime", className); }
+//    if (class == nil)
+//    { ARLogError(@"No class called `%@` in runtime", className); }
     
     return class;
 }

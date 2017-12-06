@@ -87,30 +87,26 @@
 }
 
 - (instancetype)initDataCache:(NSDictionary *)data {
-    if (self = [self init]) {
+    NSString *primaryKey = [self.class primaryKey];
+    id primaryValue = [data valueForKey:primaryKey];
+    id primaryExist;
+    if (primaryValue) {
+        primaryExist = [self.class ar_objectForPrimaryKey:primaryValue];
+    }
+    self = primaryExist ? primaryExist : [super init];
+    if (self) {
+        RLMRealm *realm = [self.class ar_defaultRealm];
+        BOOL inWriteTransaction = primaryExist && !realm.inWriteTransaction;
+        if (inWriteTransaction) {
+            [realm beginWriteTransaction];
+        }
+        
         [data enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, id  _Nonnull value, BOOL * _Nonnull stop) {
             if ([self respondsToSelector:NSSelectorFromString(key)]) {
                 if ([value isKindOfClass:NSDictionary.class]) {
                     Class clazz = [self ar_classOfPropertyNamed:key];
                     if ([clazz isSubclassOfClass:ARDataCacheModel.class]) {
-                        NSString *primaryKey = [clazz primaryKey];
-                        if (primaryKey) {
-                            id primaryValue = [value valueForKey:primaryKey];
-                            if (primaryValue) {
-                                id primaryExist = [clazz ar_objectForPrimaryKey:primaryValue];
-                                if (primaryExist) { // FIXME: properties with primary key
-                                    RLMRealm *realm = [self.class ar_defaultRealm];
-                                    if ([realm inWriteTransaction]) {
-                                        [realm deleteObject:primaryExist];
-                                    } else {
-                                        [ar_primaryExists() setObject:primaryExist forKey:primaryValue];
-                                    }
-                                }
-                                [self setValue:[[clazz alloc] initDataCache:value] forKey:key];
-                            }
-                        } else {
-                            [self setValue:[[clazz alloc] initDataCache:value] forKey:key];
-                        }
+                        [self setValue:[[clazz alloc] initDataCache:value] forKey:key];
                     }
                 } else if ([value isKindOfClass:NSArray.class]) {
                     id obj = [self valueForKey:key];
@@ -126,16 +122,6 @@
                                     if (primaryKey) {
                                         id primaryValue = [item valueForKey:primaryKey];
                                         if (primaryValue) {
-                                            id primaryExist = [clazz ar_objectForPrimaryKey:primaryValue];
-                                            if (primaryExist) { // FIXME: properties with primary key
-                                                RLMRealm *realm = [self.class ar_defaultRealm];
-                                                if ([realm inWriteTransaction]) {
-                                                    [realm deleteObject:primaryExist];
-                                                } else {
-                                                    [ar_primaryExists() setObject:primaryExist forKey:primaryValue];
-                                                }
-                                            }
-                                            
                                             NSUInteger primaryIndex = [primarySet indexOfObject:primaryValue];
                                             if (primaryIndex == NSNotFound) {
                                                 [primarySet addObject:primaryValue];
@@ -161,6 +147,9 @@
                         [obj isMemberOfClass:[RLMArray<RLMString> class]];
                     }
                 } else {
+                    if ([primaryKey isEqualToString:key] && primaryExist) {
+                        return;
+                    }
                     [self setPropertyValue:value forKey:key];
                 }
             }
@@ -168,6 +157,10 @@
         
         if ([self respondsToSelector:@selector(setValueForExtraProperties)]) {
             [self setValueForExtraProperties];
+        }
+        
+        if (inWriteTransaction) {
+            [realm commitWriteTransaction];
         }
     }
     return self;
@@ -208,26 +201,38 @@ static NSMutableDictionary<id, ARDataCacheModel *> * ar_primaryExists() {
         self._AR_DATE_MODIFIED = [NSDate date];
         self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[self.class expiredInterval] sinceDate:self._AR_DATE_MODIFIED];
         RLMRealm *realm = [self.class ar_defaultRealm];
-        [realm transactionWithBlock:^{
-            [realm deleteObjects:ar_primaryExists().allValues];
-            [ar_primaryExists() removeAllObjects];
+        BOOL inWriteTransaction = !realm.inWriteTransaction;
+        if (inWriteTransaction) {
+            [realm beginWriteTransaction];
+        }
             
-            if ([self.class primaryKey]) {
-                [realm addOrUpdateObject:self];
-            } else {
-                [realm addObject:self]; // FIXME: properties with primary key
-            }
-        }];
+        if ([self.class primaryKey]) {
+            [realm addOrUpdateObject:self];
+        } else {
+            [realm addObject:self]; // FIXME: properties with primary key
+        }
+        
+        if (inWriteTransaction) {
+            [realm commitWriteTransaction];
+        }
     }
 }
 
 - (void)updateDataCache:(NSDictionary *)data {
     if (!self.isInvalidated) {
-        [[self.class ar_defaultRealm] transactionWithBlock:^{
-            [self updateDataCacheWithDataPartInTransaction:data];
-            self._AR_DATE_MODIFIED = [NSDate date];
-            self._AR_DATE_EXPIRED = self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[self.class expiredInterval] sinceDate:self._AR_DATE_MODIFIED];
-        }];
+        RLMRealm *realm = [self.class ar_defaultRealm];
+        BOOL inWriteTransaction = !realm.inWriteTransaction;
+        if (inWriteTransaction) {
+            [realm beginWriteTransaction];
+        }
+        
+        [self updateDataCacheWithDataPartInTransaction:data];
+        self._AR_DATE_MODIFIED = [NSDate date];
+        self._AR_DATE_EXPIRED = self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[self.class expiredInterval] sinceDate:self._AR_DATE_MODIFIED];
+        
+        if (inWriteTransaction) {
+            [realm commitWriteTransaction];
+        }
     }
 }
 

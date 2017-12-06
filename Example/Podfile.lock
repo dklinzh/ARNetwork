@@ -14,35 +14,35 @@ PODS:
   - AFNetworking/Serialization (3.1.0)
   - AFNetworking/UIKit (3.1.0):
     - AFNetworking/NSURLSession
-  - ARNetwork/Cache/Core (0.5.1):
+  - ARNetwork/Cache/Core (0.5.2):
     - ARNetwork/HTTP
     - Realm (~> 3.0)
-  - ARNetwork/Cache/Swift (0.5.1):
+  - ARNetwork/Cache/Swift (0.5.2):
     - ARNetwork/Cache/Core
-  - ARNetwork/Default (0.5.1):
+  - ARNetwork/Default (0.5.2):
     - ARNetwork/Cache/Core
     - ARNetwork/Detector
     - ARNetwork/HTTP
-  - ARNetwork/Detector (0.5.1):
+  - ARNetwork/Detector (0.5.2):
     - AFNetworking/UIKit (~> 3.1)
-  - ARNetwork/HTTP (0.5.1):
+  - ARNetwork/HTTP (0.5.2):
     - AFNetworking (~> 3.1)
-  - ARNetwork/Mock (0.5.1):
+  - ARNetwork/Mock (0.5.2):
     - OHHTTPStubs (~> 6.0)
   - Expecta (1.0.6)
-  - OHHTTPStubs (6.0.0):
-    - OHHTTPStubs/Default (= 6.0.0)
-  - OHHTTPStubs/Core (6.0.0)
-  - OHHTTPStubs/Default (6.0.0):
+  - OHHTTPStubs (6.1.0):
+    - OHHTTPStubs/Default (= 6.1.0)
+  - OHHTTPStubs/Core (6.1.0)
+  - OHHTTPStubs/Default (6.1.0):
     - OHHTTPStubs/Core
     - OHHTTPStubs/JSON
     - OHHTTPStubs/NSURLSession
     - OHHTTPStubs/OHPathHelpers
-  - OHHTTPStubs/JSON (6.0.0):
+  - OHHTTPStubs/JSON (6.1.0):
     - OHHTTPStubs/Core
-  - OHHTTPStubs/NSURLSession (6.0.0):
+  - OHHTTPStubs/NSURLSession (6.1.0):
     - OHHTTPStubs/Core
-  - OHHTTPStubs/OHPathHelpers (6.0.0)
+  - OHHTTPStubs/OHPathHelpers (6.1.0)
   - Realm (3.0.2):
     - Realm/Headers (= 3.0.2)
   - Realm/Headers (3.0.2)
@@ -61,9 +61,9 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
-  ARNetwork: 90bd96b48e20932345b7ebfa824ab807c0836e68
+  ARNetwork: c273baf9350d23c041ae34fc8a8916e99088326b
   Expecta: 3b6bd90a64b9a1dcb0b70aa0e10a7f8f631667d5
-  OHHTTPStubs: 752f9b11fd810a15162d50f11c06ff94f8e012eb
+  OHHTTPStubs: 1e21c7d2c084b8153fc53d48400d8919d2d432d0
   Realm: 6f23fd1f178a09342eac21bfa7c2bf4312a7a180
   Specta: 3e1bd89c3517421982dc4d1c992503e48bd5fe66
 

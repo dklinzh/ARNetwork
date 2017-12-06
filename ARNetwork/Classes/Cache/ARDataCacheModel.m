@@ -186,14 +186,14 @@
     [self setValue:value forKey:key];
 }
 
-static NSMutableDictionary<id, ARDataCacheModel *> * ar_primaryExists() {
-    static NSMutableDictionary<id, ARDataCacheModel *> *ar_primaryExists;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        ar_primaryExists = [NSMutableDictionary dictionary];
-    });
-    return ar_primaryExists;
-}
+//static NSMutableDictionary<id, ARDataCacheModel *> * ar_primaryExists() {
+//    static NSMutableDictionary<id, ARDataCacheModel *> *ar_primaryExists;
+//    static dispatch_once_t onceToken;
+//    dispatch_once(&onceToken, ^{
+//        ar_primaryExists = [NSMutableDictionary dictionary];
+//    });
+//    return ar_primaryExists;
+//}
 
 - (void)_addDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params {
     if (!self.realm) {

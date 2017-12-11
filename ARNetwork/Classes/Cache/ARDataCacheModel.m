@@ -286,6 +286,7 @@
                                         primaryExist = [clazz ar_objectForPrimaryKey:primaryValue];
                                         if (primaryExist) {
                                             [primaryExist updateDataCacheWithDataPartInTransaction:item];
+                                            [objs addObject:primaryExist];
                                         } else {
                                             [objs addObject:[[clazz alloc] initDataCache:item]];
                                         }

@@ -271,17 +271,19 @@
                         Class clazz = NSClassFromString(objs.objectClassName);
                         NSString *primaryKey = [clazz primaryKey];
                         if (primaryKey) {
-                            NSMutableDictionary *map = [NSMutableDictionary dictionary];
+                            NSMutableDictionary *tempMap = [NSMutableDictionary dictionary];
                             for (id item in objs) {
-                                [map setObject:item forKey:[item valueForKey:primaryKey]];
+                                [tempMap setObject:item forKey:[item valueForKey:primaryKey]];
                             }
+                            [objs removeAllObjects];
+                            
                             for (id item in values) {
                                 if ([item isKindOfClass:NSDictionary.class]) {
                                     id primaryValue = [item valueForKey:primaryKey];
-                                    id primaryExist = [map objectForKey:primaryValue];
+                                    id primaryExist = [tempMap objectForKey:primaryValue];
                                     if (primaryExist) {
                                         [primaryExist updateDataCacheWithDataPartInTransaction:item];
-                                        [map removeObjectForKey:primaryValue];
+                                        [objs addObject:primaryExist];
                                     } else { // FIXME: Attempting to create an object of type '%1' with an existing primary key value '%2'.
                                         primaryExist = [clazz ar_objectForPrimaryKey:primaryValue];
                                         if (primaryExist) {
@@ -293,9 +295,8 @@
                                     }
                                 }
                             }
-                            [[self.class ar_defaultRealm] deleteObjects:map.allValues];
                         } else {
-                            [objs removeAllObjects];
+                            [[self.class ar_defaultRealm] deleteObjects:objs];
                             for (id item in values) {
                                 if ([item isKindOfClass:NSDictionary.class]) {
                                     [objs addObject:[[clazz alloc] initDataCache:item]];

@@ -87,13 +87,37 @@
 }
 
 - (instancetype)initDataCache:(NSDictionary *)data {
-    NSString *primaryKey = [self.class primaryKey];
-    id primaryValue = [data valueForKey:primaryKey];
     id primaryExist;
-    if (primaryValue) {
-        primaryExist = [self.class ar_objectForPrimaryKey:primaryValue];
+    id primaryValue;
+    NSString *primaryKey = [self.class primaryKey];
+    if (primaryKey) {
+        primaryValue = [data valueForKey:primaryKey];
+        if (primaryValue) {
+            primaryExist = [self.class ar_objectForPrimaryKey:primaryValue];
+        }
     }
-    self = primaryExist ? primaryExist : [super init];
+    
+    if (primaryExist) {
+        self = primaryExist;
+    } else {
+        if (primaryKey) {
+            NSString *className = NSStringFromClass(self.class);
+            NSMutableDictionary<id, ARDataCacheModel *> *tempModels = [ar_primaryExistsTemp() valueForKey:className];
+            if (!tempModels) {
+                tempModels = [NSMutableDictionary dictionary];
+                [ar_primaryExistsTemp() setValue:tempModels forKey:className];
+            }
+            id tempModel = [tempModels valueForKey:primaryValue];
+            if (tempModel) {
+                self = tempModel;
+            } else {
+                self = [super init];
+                [tempModels setValue:self forKey:primaryValue];
+            }
+        } else {
+            self = [super init];
+        }
+    }
     if (self) {
         RLMRealm *realm = [self.class ar_defaultRealm];
         BOOL inWriteTransaction = primaryExist && !realm.inWriteTransaction;
@@ -186,14 +210,14 @@
     [self setValue:value forKey:key];
 }
 
-//static NSMutableDictionary<id, ARDataCacheModel *> * ar_primaryExists() {
-//    static NSMutableDictionary<id, ARDataCacheModel *> *ar_primaryExists;
-//    static dispatch_once_t onceToken;
-//    dispatch_once(&onceToken, ^{
-//        ar_primaryExists = [NSMutableDictionary dictionary];
-//    });
-//    return ar_primaryExists;
-//}
+static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExistsTemp() {
+    static NSMutableDictionary<NSString *, NSMutableDictionary *> *ar_primaryExistsTemp;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        ar_primaryExistsTemp = [NSMutableDictionary dictionary];
+    });
+    return ar_primaryExistsTemp;
+}
 
 - (void)_addDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params {
     if (!self.realm) {
@@ -216,6 +240,8 @@
             [realm commitWriteTransaction];
         }
     }
+    
+    [ar_primaryExistsTemp() removeAllObjects];
 }
 
 - (void)updateDataCache:(NSDictionary *)data {
@@ -234,6 +260,8 @@
             [realm commitWriteTransaction];
         }
     }
+    
+    [ar_primaryExistsTemp() removeAllObjects];
 }
 
 - (void)updateDataCacheWithDataPartInTransaction:(NSDictionary *)data {

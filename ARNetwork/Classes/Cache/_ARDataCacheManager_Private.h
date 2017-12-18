@@ -14,4 +14,6 @@
 
 + (instancetype)_managerWithModelClass:(Class)clazz;
 
+- (void)_asyncCacheExecute:(void(^)(void))block;
+
 @end

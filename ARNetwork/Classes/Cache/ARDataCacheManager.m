@@ -17,6 +17,7 @@ static NSString *const kDefaultSchemaName = @"default";
 @property (nonatomic, strong) RLMRealmConfiguration *defaultConfig;
 @property (nonatomic, copy) NSString *schemaName;
 @property (nonatomic, strong) NSURL *defaultFileURL;
+@property (nonatomic, strong) dispatch_queue_t cacheSchemaQueue;
 @end
 
 @implementation ARDataCacheManager
@@ -172,9 +173,20 @@ static NSMutableDictionary<NSString *, ARDataCacheManager *> * ar_schemaManagers
 }
 
 #pragma mark -
+- (dispatch_queue_t)cacheSchemaQueue {
+    if (_cacheSchemaQueue) {
+        return _cacheSchemaQueue;
+    }
+    
+    return _cacheSchemaQueue = dispatch_queue_create([ar_dataCacheID(self.schemaName) cStringUsingEncoding:NSASCIIStringEncoding], DISPATCH_QUEUE_CONCURRENT);
+}
+
+- (void)_asyncCacheExecute:(void(^)(void))block {
+    dispatch_async(self.cacheSchemaQueue, block);
+}
 
 - (void)configureWithSchemaVersion:(uint64_t)version dataEncryption:(BOOL)enabled {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_barrier_async(self.cacheSchemaQueue, ^{
         @autoreleasepool {
             RLMRealmConfiguration *config = self.defaultConfig;
             config.schemaVersion = version;

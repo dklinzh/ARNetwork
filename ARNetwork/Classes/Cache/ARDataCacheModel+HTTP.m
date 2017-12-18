@@ -13,8 +13,12 @@
 
 @implementation ARDataCacheModel (HTTP)
 
++ (ARDataCacheManager *)cacheManager {
+    return [ARDataCacheManager _managerWithModelClass:self];
+}
+
 + (ARHTTPManager *)httpManager {
-    return [ARDataCacheManager _managerWithModelClass:self].httpManager;
+    return [self cacheManager].httpManager;
 }
 
 + (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params dataCache:(ARCacheType)cacheType success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure {

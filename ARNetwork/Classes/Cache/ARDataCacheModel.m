@@ -299,27 +299,28 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
                         Class clazz = NSClassFromString(objs.objectClassName);
                         NSString *primaryKey = [clazz primaryKey];
                         if (primaryKey) {
-                            NSMutableDictionary *tempMap = [NSMutableDictionary dictionary];
-                            for (id item in objs) {
-                                [tempMap setObject:item forKey:[item valueForKey:primaryKey]];
-                            }
-                            [objs removeAllObjects];
-                            
+                            NSMutableOrderedSet *tempKeys = [NSMutableOrderedSet orderedSet];
+                            NSMutableDictionary *tempValues = [NSMutableDictionary dictionary];
                             for (id item in values) {
+                                id key = [item valueForKey:primaryKey];
+                                [tempKeys addObject:key];
+                                [tempValues setObject:item forKey:key];
+                            }
+                            NSMutableArray *uniques = [NSMutableArray array];
+                            for (id key in tempKeys) {
+                                [uniques addObject:[tempValues objectForKey:key]];
+                            }
+                            
+                            [objs removeAllObjects];
+                            for (id item in uniques) {
                                 if ([item isKindOfClass:NSDictionary.class]) {
                                     id primaryValue = [item valueForKey:primaryKey];
-                                    id primaryExist = [tempMap objectForKey:primaryValue];
+                                    id primaryExist = [clazz ar_objectForPrimaryKey:primaryValue];
                                     if (primaryExist) {
                                         [primaryExist updateDataCacheWithDataPartInTransaction:item];
                                         [objs addObject:primaryExist];
-                                    } else { // FIXME: Attempting to create an object of type '%1' with an existing primary key value '%2'.
-                                        primaryExist = [clazz ar_objectForPrimaryKey:primaryValue];
-                                        if (primaryExist) {
-                                            [primaryExist updateDataCacheWithDataPartInTransaction:item];
-                                            [objs addObject:primaryExist];
-                                        } else {
-                                            [objs addObject:[[clazz alloc] initDataCache:item]];
-                                        }
+                                    } else {
+                                        [objs addObject:[[clazz alloc] initDataCache:item]];
                                     }
                                 }
                             }

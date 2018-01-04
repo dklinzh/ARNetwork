@@ -10,6 +10,7 @@
 #import "ARHTTPManager.h"
 #import "_ARDataCacheManager_Private.h"
 #import "_ARDataCacheModel_Private.h"
+#import "RLMObject+ARCopying.h"
 
 @implementation ARDataCacheModel (HTTP)
 
@@ -153,6 +154,7 @@
     } else {
         if (success) {
             __kindof ARDataCacheModel *newData = [[self alloc] initDataCache:data];
+            newData = [newData ar_deepCopy];
             success(newData, msg, NO);
         }
     }

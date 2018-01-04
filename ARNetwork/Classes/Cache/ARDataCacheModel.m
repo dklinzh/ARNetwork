@@ -99,6 +99,7 @@
     
     if (primaryExist) {
         self = primaryExist;
+        [self updateDataCache:data];
     } else {
         if (primaryKey) {
             NSString *className = NSStringFromClass(self.class);
@@ -116,13 +117,6 @@
             }
         } else {
             self = [super init];
-        }
-    }
-    if (self) {
-        RLMRealm *realm = [self.class ar_defaultRealm];
-        BOOL inWriteTransaction = primaryExist && !realm.inWriteTransaction;
-        if (inWriteTransaction) {
-            [realm beginWriteTransaction];
         }
         
         [data enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, id  _Nonnull value, BOOL * _Nonnull stop) {
@@ -168,12 +162,8 @@
                                    objs.type == RLMPropertyTypeData) {
                             [objs addObjects:value];
                         }
-                        [obj isMemberOfClass:[RLMArray<RLMString> class]];
                     }
                 } else {
-                    if ([primaryKey isEqualToString:key] && primaryExist) {
-                        return;
-                    }
                     [self setPropertyValue:value forKey:key];
                 }
             }
@@ -181,10 +171,6 @@
         
         if ([self respondsToSelector:@selector(setValueForExtraProperties)]) {
             [self setValueForExtraProperties];
-        }
-        
-        if (inWriteTransaction) {
-            [realm commitWriteTransaction];
         }
     }
     return self;

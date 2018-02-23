@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'ARNetwork'
-  s.version          = '0.5.2'
+  s.version          = '0.5.3'
   s.summary          = 'An iOS network framework in combination with HTTP/HTTPS task and data cache. (AFNetworking+Realm)'
   s.description      = <<-DESC
                         An iOS network framework in combination with HTTP/HTTPS task and data cache. (AFNetworking+Realm)
@@ -31,7 +31,7 @@ Pod::Spec.new do |s|
   end
   
   s.subspec 'HTTP' do |http|
-    http.dependency 'AFNetworking', '~> 3.1'
+    http.dependency 'AFNetworking', '~> 3.2'
 
     http.private_header_files = 'ARNetwork/Classes/HTTP/_*.h'
     http.source_files = 'ARNetwork/Classes/HTTP/*.{h,m}'
@@ -54,7 +54,7 @@ Pod::Spec.new do |s|
 
   s.subspec 'Mock' do |mock|
     # mock.dependency 'ARNetwork/HTTP'
-    mock.dependency 'OHHTTPStubs', '~> 6.0'
+    mock.dependency 'OHHTTPStubs', '~> 6.1'
 
     mock.private_header_files = 'ARNetwork/Classes/Mock/_*.h'
     mock.source_files = 'ARNetwork/Classes/Mock/*.{h,m}'
@@ -64,7 +64,7 @@ Pod::Spec.new do |s|
 
     cache.subspec 'Core' do |core|
       core.dependency 'ARNetwork/HTTP'
-      core.dependency 'Realm', '~> 3.0'
+      core.dependency 'Realm', '~> 3.1'
 
       core.private_header_files = 'ARNetwork/Classes/Cache/_*.h'
       core.source_files = 'ARNetwork/Classes/Cache/*.{h,m}'
@@ -78,7 +78,7 @@ Pod::Spec.new do |s|
   end
 
   s.subspec 'Detector' do |detector|
-    detector.dependency 'AFNetworking/UIKit', '~> 3.1'
+    detector.dependency 'AFNetworking/UIKit', '~> 3.2'
 
     detector.source_files = 'ARNetwork/Classes/Detector/*.{h,m}'
   end

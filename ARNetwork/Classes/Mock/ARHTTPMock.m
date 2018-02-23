@@ -5,6 +5,8 @@
 //  Created by Daniel Lin on 16/11/2017.
 //  Copyright (c) 2017 Daniel Lin. All rights reserved.
 
+#ifdef DEBUG
+
 #import "ARHTTPMock.h"
 @import OHHTTPStubs;
 
@@ -73,7 +75,6 @@ static inline NSString * ar_httpMockKey(NSString *httMethod, NSURL *url) {
             return NO;
         }
         
-        
         return [ar_httpMockKey(request.HTTPMethod, _url) isEqualToString:mockKey];
     } withStubResponse:^OHHTTPStubsResponse * _Nonnull(NSURLRequest * _Nonnull request) {
         return [OHHTTPStubsResponse responseWithFileAtPath:filePath statusCode:200 headers:@{@"Content-Type": @"application/json"}];
@@ -112,3 +113,5 @@ static inline NSString * ar_httpMockKey(NSString *httMethod, NSURL *url) {
 }
 
 @end
+
+#endif

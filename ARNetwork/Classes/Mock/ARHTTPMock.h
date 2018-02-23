@@ -5,6 +5,8 @@
 //  Created by Daniel Lin on 16/11/2017.
 //  Copyright (c) 2017 Daniel Lin. All rights reserved.
 
+#ifdef DEBUG
+
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -30,3 +32,5 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
+
+#endif

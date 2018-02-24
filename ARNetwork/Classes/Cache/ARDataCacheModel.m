@@ -138,7 +138,7 @@
                                 if ([item isKindOfClass:NSDictionary.class]) {
                                     NSString *primaryKey = [clazz primaryKey];
                                     if (primaryKey) {
-                                        id primaryValue = [self propertyForKey:primaryKey fromDatas:item];
+                                        id primaryValue = [[clazz alloc] propertyForKey:primaryKey fromDatas:item];
                                         if (primaryValue) {
                                             NSUInteger primaryIndex = [primarySet indexOfObject:primaryValue];
                                             if (primaryIndex == NSNotFound) {
@@ -303,7 +303,7 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
                             NSMutableOrderedSet *tempKeys = [NSMutableOrderedSet orderedSet];
                             NSMutableDictionary *tempValues = [NSMutableDictionary dictionary];
                             for (id item in values) {
-                                id key = [self propertyForKey:primaryKey fromDatas:item];
+                                id key = [[clazz alloc] propertyForKey:primaryKey fromDatas:item];
                                 [tempKeys addObject:key];
                                 [tempValues setObject:item forKey:key];
                             }
@@ -315,7 +315,7 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
                             [objs removeAllObjects];
                             for (id item in uniques) {
                                 if ([item isKindOfClass:NSDictionary.class]) {
-                                    id primaryValue = [self propertyForKey:primaryKey fromDatas:item];
+                                    id primaryValue = [[clazz alloc] propertyForKey:primaryKey fromDatas:item];
                                     id primaryExist = [clazz ar_objectForPrimaryKey:primaryValue];
                                     if (primaryExist) {
                                         [primaryExist updateDataCacheWithDataPartInTransaction:item];

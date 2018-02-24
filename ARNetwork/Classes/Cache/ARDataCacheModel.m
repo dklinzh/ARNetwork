@@ -91,7 +91,7 @@
     id primaryValue;
     NSString *primaryKey = [self.class primaryKey];
     if (primaryKey) {
-        primaryValue = [data valueForKey:primaryKey];
+        primaryValue = [self propertyForKey:primaryKey fromDatas:data];
         if (primaryValue) {
             primaryExist = [self.class ar_objectForPrimaryKey:primaryValue];
         }
@@ -138,7 +138,7 @@
                                 if ([item isKindOfClass:NSDictionary.class]) {
                                     NSString *primaryKey = [clazz primaryKey];
                                     if (primaryKey) {
-                                        id primaryValue = [item valueForKey:primaryKey];
+                                        id primaryValue = [self propertyForKey:primaryKey fromDatas:item];
                                         if (primaryValue) {
                                             NSUInteger primaryIndex = [primarySet indexOfObject:primaryValue];
                                             if (primaryIndex == NSNotFound) {
@@ -174,6 +174,21 @@
         }
     }
     return self;
+}
+
+- (id)propertyForKey:(NSString *)key fromDatas:(NSDictionary *)datas {
+    id value = [datas valueForKey:key];
+    if (!value) {
+        return nil;
+    }
+    
+    Class class = [self ar_classOfPropertyNamed:key];
+    if ([class isSubclassOfClass:NSString.class]) {
+        if (![value isKindOfClass:NSString.class]) {
+            value = [NSString stringWithFormat:@"%@", value];
+        }
+    }
+    return value;
 }
 
 - (void)setPropertyValue:(id)value forKey:(NSString *)key {
@@ -288,7 +303,7 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
                             NSMutableOrderedSet *tempKeys = [NSMutableOrderedSet orderedSet];
                             NSMutableDictionary *tempValues = [NSMutableDictionary dictionary];
                             for (id item in values) {
-                                id key = [item valueForKey:primaryKey];
+                                id key = [self propertyForKey:primaryKey fromDatas:item];
                                 [tempKeys addObject:key];
                                 [tempValues setObject:item forKey:key];
                             }
@@ -300,7 +315,7 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
                             [objs removeAllObjects];
                             for (id item in uniques) {
                                 if ([item isKindOfClass:NSDictionary.class]) {
-                                    id primaryValue = [item valueForKey:primaryKey];
+                                    id primaryValue = [self propertyForKey:primaryKey fromDatas:item];
                                     id primaryExist = [clazz ar_objectForPrimaryKey:primaryValue];
                                     if (primaryExist) {
                                         [primaryExist updateDataCacheWithDataPartInTransaction:item];

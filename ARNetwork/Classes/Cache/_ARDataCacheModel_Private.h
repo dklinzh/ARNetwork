@@ -29,6 +29,8 @@
 
 - (void)_addDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params;
 
+- (void)_clearPrimaryExistsTemp;
+
 @end
 
 static inline NSString * ar_cacheKey(NSString *urlStr, NSDictionary *params) {

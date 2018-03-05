@@ -130,6 +130,7 @@
                     id obj = [self valueForKey:key];
                     if ([obj isKindOfClass:RLMArray.class]) {
                         RLMArray *objs = (RLMArray *)obj;
+                        [objs removeAllObjects];
                         if (objs.type == RLMPropertyTypeObject) {
                             Class clazz = NSClassFromString(objs.objectClassName);
                             NSArray *values = (NSArray *)value;
@@ -183,10 +184,8 @@
     }
     
     Class class = [self ar_classOfPropertyNamed:key];
-    if ([class isSubclassOfClass:NSString.class]) {
-        if (![value isKindOfClass:NSString.class]) {
-            value = [NSString stringWithFormat:@"%@", value];
-        }
+    if ([class isSubclassOfClass:NSString.class] && ![value isKindOfClass:NSString.class]) {
+        value = [NSString stringWithFormat:@"%@", value];
     }
     return value;
 }
@@ -209,6 +208,10 @@
 //        }
 //    }
     [self setValue:value forKey:key];
+}
+
+- (void)_clearPrimaryExistsTemp {
+    [ar_primaryExistsTemp() removeAllObjects];
 }
 
 static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExistsTemp() {
@@ -242,7 +245,7 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
         }
     }
     
-    [ar_primaryExistsTemp() removeAllObjects];
+    [self _clearPrimaryExistsTemp];
 }
 
 - (void)updateDataCache:(NSDictionary *)data {
@@ -262,7 +265,7 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
         }
     }
     
-    [ar_primaryExistsTemp() removeAllObjects];
+    [self _clearPrimaryExistsTemp];
 }
 
 - (void)updateDataCacheWithDataPartInTransaction:(NSDictionary *)data {

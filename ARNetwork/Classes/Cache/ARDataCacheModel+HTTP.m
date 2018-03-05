@@ -154,6 +154,7 @@
     } else {
         if (success) {
             __kindof ARDataCacheModel *newData = [[self alloc] initDataCache:data];
+            [newData _clearPrimaryExistsTemp];
             newData = [newData ar_deepCopy];
             success(newData, msg, NO);
         }

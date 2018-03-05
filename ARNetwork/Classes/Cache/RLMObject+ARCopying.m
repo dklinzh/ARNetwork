@@ -68,10 +68,15 @@
             RLMArray *thisArray = [self valueForKeyPath:property.name];
             RLMArray *newArray = [object valueForKeyPath:property.name];
             
-            for (RLMObject *currentObject in thisArray) {
-                [newArray addObject:[currentObject ar_deepCopy]];
+            if (property.type == RLMPropertyTypeObject) {
+                for (RLMObject *currentObject in thisArray) {
+                    [newArray addObject:[currentObject ar_deepCopy]];
+                }
+            } else {
+                for (id currentObject in thisArray) {
+                    [newArray addObject:[currentObject copy]];
+                }
             }
-            
         }
         else if (property.type == RLMPropertyTypeObject) {
             RLMObject *value = [self valueForKeyPath:property.name];

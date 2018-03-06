@@ -101,7 +101,7 @@
         self = primaryExist;
         [self updateDataCache:data];
     } else {
-        if (primaryKey) {
+        if (primaryKey && primaryValue) {
             NSString *className = NSStringFromClass(self.class);
             NSMutableDictionary<id, ARDataCacheModel *> *tempModels = [ar_primaryExistsTemp() valueForKey:className];
             if (!tempModels) {

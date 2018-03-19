@@ -63,6 +63,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ARHTTPManager (Session)
 
++ (void)clearAllCookies;
+
 - (nullable NSString *)JSESSIONIDForURL:(NSString *)urlString;
 
 - (void)restoreSession:(NSString *)JSESSIONID forURL:(NSString *)urlString;

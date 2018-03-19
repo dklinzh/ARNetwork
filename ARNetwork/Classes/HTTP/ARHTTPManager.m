@@ -7,6 +7,7 @@
 //
 
 #import "ARHTTPManager.h"
+#import "NSURLSessionTask+ARExtension.h"
 
 #ifdef DEBUG
 
@@ -126,7 +127,7 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
 - (NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
     urlStr = [self.operation processedRequestURL:urlStr];
     NSString *taskKey = [self.operation taskKeyForRequestURL:urlStr params:params];
-    [self cancelSessionTaskForKey:taskKey];
+    [self cancelDuplicatedSessionTaskForKey:taskKey];
     
     AR_TASK_TIMING_BEGIN(@"GET");
     NSURLSessionDataTask *task = [self GET:urlStr parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
@@ -136,8 +137,11 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
         [self.operation responseFailure:failure withError:error];
         AR_TASK_TIMING_END(error);
     }];
+    task.ar_shouldCancelDuplicatedTask = YES;
+    task.ar_taskID = taskKey;
     
     [self.sessionTasks setValue:task forKey:taskKey];
+    
     return task;
 }
 
@@ -149,7 +153,7 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
 - (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
     urlStr = [self.operation processedRequestURL:urlStr];
     NSString *taskKey = [self.operation taskKeyForRequestURL:urlStr params:params];
-    [self cancelSessionTaskForKey:taskKey];
+    [self cancelDuplicatedSessionTaskForKey:taskKey];
 
     AR_TASK_TIMING_BEGIN(@"POST");
     NSURLSessionDataTask *task = [self POST:urlStr parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
@@ -159,8 +163,11 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
         [self.operation responseFailure:failure withError:error];
         AR_TASK_TIMING_END(error);
     }];
+    task.ar_shouldCancelDuplicatedTask = YES;
+    task.ar_taskID = taskKey;
     
     [self.sessionTasks setValue:task forKey:taskKey];
+    
     return task;
 }
 
@@ -181,7 +188,7 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
 - (NSURLSessionDataTask *)postURL:(NSString *)urlStr params:(NSDictionary *)params filePaths:(NSArray<NSString *> *)filePaths formName:(NSString *)formName progress:(void (^)(NSProgress *uploadProgress))uploadProgress success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
     urlStr = [self.operation processedRequestURL:urlStr];
     NSString *taskKey = [self.operation taskKeyForRequestURL:urlStr params:params];
-    [self cancelSessionTaskForKey:taskKey];
+    [self cancelDuplicatedSessionTaskForKey:taskKey];
 
     AR_TASK_TIMING_BEGIN(@"POST");
     NSURLSessionDataTask *task = [self POST:urlStr parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
@@ -200,8 +207,11 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
         [self.operation responseFailure:failure withError:error];
         AR_TASK_TIMING_END(error);
     }];
+    task.ar_shouldCancelDuplicatedTask = YES;
+    task.ar_taskID = taskKey;
     
     [self.sessionTasks setValue:task forKey:taskKey];
+    
     return task;
 }
 
@@ -213,7 +223,7 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
 - (NSURLSessionDataTask *)putURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
     urlStr = [self.operation processedRequestURL:urlStr];
     NSString *taskKey = [self.operation taskKeyForRequestURL:urlStr params:params];
-    [self cancelSessionTaskForKey:taskKey];
+    [self cancelDuplicatedSessionTaskForKey:taskKey];
 
     AR_TASK_TIMING_BEGIN(@"PUT");
     NSURLSessionDataTask *task = [self PUT:urlStr parameters:params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
@@ -223,8 +233,11 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
         [self.operation responseFailure:failure withError:error];
         AR_TASK_TIMING_END(error);
     }];
+    task.ar_shouldCancelDuplicatedTask = YES;
+    task.ar_taskID = taskKey;
     
     [self.sessionTasks setValue:task forKey:taskKey];
+    
     return task;
 }
 
@@ -236,7 +249,7 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
 - (NSURLSessionDataTask *)patchURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
     urlStr = [self.operation processedRequestURL:urlStr];
     NSString *taskKey = [self.operation taskKeyForRequestURL:urlStr params:params];
-    [self cancelSessionTaskForKey:taskKey];
+    [self cancelDuplicatedSessionTaskForKey:taskKey];
 
     AR_TASK_TIMING_BEGIN(@"PATCH");
     NSURLSessionDataTask *task = [self PATCH:urlStr parameters:params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
@@ -246,8 +259,11 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
         [self.operation responseFailure:failure withError:error];
         AR_TASK_TIMING_END(error);
     }];
+    task.ar_shouldCancelDuplicatedTask = YES;
+    task.ar_taskID = taskKey;
     
     [self.sessionTasks setValue:task forKey:taskKey];
+    
     return task;
 }
 
@@ -259,7 +275,7 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
 - (NSURLSessionDataTask *)deleteURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseSuccess)success failure:(ARHTTPResponseFailure)failure {
     urlStr = [self.operation processedRequestURL:urlStr];
     NSString *taskKey = [self.operation taskKeyForRequestURL:urlStr params:params];
-    [self cancelSessionTaskForKey:taskKey];
+    [self cancelDuplicatedSessionTaskForKey:taskKey];
 
     AR_TASK_TIMING_BEGIN(@"DELETE");
     NSURLSessionDataTask *task = [self DELETE:urlStr parameters:params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
@@ -269,8 +285,11 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
         [self.operation responseFailure:failure withError:error];
         AR_TASK_TIMING_END(error);
     }];
+    task.ar_shouldCancelDuplicatedTask = YES;
+    task.ar_taskID = taskKey;
     
     [self.sessionTasks setValue:task forKey:taskKey];
+    
     return task;
 }
 
@@ -282,7 +301,7 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
 - (NSURLSessionDataTask *)headURL:(NSString *)urlStr params:(NSDictionary *)params success:(ARHTTPResponseHead)success failure:(ARHTTPResponseFailure)failure {
     urlStr = [self.operation processedRequestURL:urlStr];
     NSString *taskKey = [self.operation taskKeyForRequestURL:urlStr params:params];
-    [self cancelSessionTaskForKey:taskKey];
+    [self cancelDuplicatedSessionTaskForKey:taskKey];
 
     AR_TASK_TIMING_BEGIN(@"HEAD");
     NSURLSessionDataTask *task = [self HEAD:urlStr parameters:params success:^(NSURLSessionDataTask * _Nonnull task) {
@@ -294,8 +313,11 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
         [self.operation responseFailure:failure withError:error];
         AR_TASK_TIMING_END(error);
     }];
+    task.ar_shouldCancelDuplicatedTask = YES;
+    task.ar_taskID = taskKey;
     
     [self.sessionTasks setValue:task forKey:taskKey];
+    
     return task;
 }
 
@@ -305,9 +327,9 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
 
 #pragma mark - Private
 
-- (void)cancelSessionTaskForKey:(NSString *)taskKey {
+- (void)cancelDuplicatedSessionTaskForKey:(NSString *)taskKey {
     NSURLSessionTask *task = [self.sessionTasks valueForKey:taskKey];
-    if (task) {
+    if (task && task.ar_shouldCancelDuplicatedTask) {
         [task cancel];
         [self.sessionTasks removeObjectForKey:taskKey];
     }
@@ -324,6 +346,13 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
 @end
 
 @implementation ARHTTPManager (Session)
+
++ (void)clearAllCookies {
+    NSArray *cookies = NSHTTPCookieStorage.sharedHTTPCookieStorage.cookies;
+    for (NSHTTPCookie *cookie in cookies) {
+        [NSHTTPCookieStorage.sharedHTTPCookieStorage deleteCookie:cookie];
+    }
+}
 
 - (NSString *)JSESSIONIDForURL:(NSString *)urlString {
     ARLogInfo(@"cookies: %@", NSHTTPCookieStorage.sharedHTTPCookieStorage.cookies);

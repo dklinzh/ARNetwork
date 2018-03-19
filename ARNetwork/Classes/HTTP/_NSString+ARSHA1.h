@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface NSString (ARSHA1)
 
 - (NSString *)ar_SHA1;
@@ -17,3 +19,5 @@ static inline NSString * ar_sessionTaskKey(NSString *urlStr, NSDictionary *param
     NSURL *url = [NSURL URLWithString:urlStr];
     return [[NSString stringWithFormat:@"%@|%@|%@", url.host, url.path, params.description] ar_SHA1];
 }
+
+NS_ASSUME_NONNULL_END

@@ -54,7 +54,11 @@
     return [ARDataCacheManager _managerWithModelClass:self.class].expiredInterval;
 }
 
-+ (NSArray *)equalValueSkippedProperties {
++ (NSArray<NSString *> *)ar_equalValueSkippedProperties {
+    return nil;
+}
+
++ (NSArray<NSString *> *)ar_reservedProperties {
     return nil;
 }
 
@@ -119,8 +123,10 @@
             self = [super init];
         }
         
-        [data enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, id  _Nonnull value, BOOL * _Nonnull stop) {
-            if ([self respondsToSelector:NSSelectorFromString(key)]) {
+        NSArray<NSString *> *propertyNames = [self propertyNames];
+        for (NSString *key in propertyNames) {
+            id value = [data valueForKey:key];
+            if (value) {
                 if ([value isKindOfClass:NSDictionary.class]) {
                     Class clazz = [self ar_classOfPropertyNamed:key];
                     if ([clazz isSubclassOfClass:ARDataCacheModel.class]) {
@@ -167,14 +173,54 @@
                 } else {
                     [self setPropertyValue:value forKey:key];
                 }
+            } else {
+                [self resetDefaultValueForKey:key];
             }
-        }];
+        }
         
-        if ([self respondsToSelector:@selector(setValueForExtraProperties)]) {
-            [self setValueForExtraProperties];
+        if ([self respondsToSelector:@selector(ar_setValueForExtraProperties)]) {
+            [self ar_setValueForExtraProperties];
         }
     }
     return self;
+}
+
+- (void)resetDefaultValueForKey:(NSString *)key {
+    NSDictionary *defaultPropertyValues = [self.class defaultPropertyValues];
+    id defaultValue = [defaultPropertyValues valueForKey:key];
+    if (defaultValue) {
+        ARLogWarn(@"Reset default value to the property '%@' of class '%@'", key, self.class);
+        [self setValue:defaultValue forKey:key];
+    } else {
+        id value = [self valueForKey:key];
+        if (value) {
+            ARLogWarn(@"Reset default value to the property '%@' of class '%@'", key, self.class);
+            if ([value isKindOfClass:NSValue.class]) {
+                [self setValue:@(0) forKey:key];
+            } else if ([value isKindOfClass:NSObject.class]) {
+                [self setValue:nil forKey:key];
+            }
+        }
+    }
+}
+
+- (NSArray<NSString *> *)propertyNames {
+    NSMutableArray<NSString *> *propertyNames = [NSMutableArray array];
+    Class superclass = self.superclass;
+    while (![superclass isEqual:ARDataCacheModel.class]) {
+        [propertyNames addObjectsFromArray:[superclass ar_propertyNamesForClassOnly]];
+        NSArray<NSString *> *ignoredProperties = [superclass ignoredProperties];
+        if (ignoredProperties) {
+            [propertyNames removeObjectsInArray:ignoredProperties];
+        }
+        ignoredProperties = [superclass ar_reservedProperties];
+        if (ignoredProperties) {
+            [propertyNames removeObjectsInArray:ignoredProperties];
+        }
+        
+        superclass = [superclass superclass];
+    }
+    return [propertyNames copy];
 }
 
 - (id)propertyForKey:(NSString *)key fromDatas:(NSDictionary *)datas {
@@ -269,21 +315,24 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
 }
 
 - (void)updateDataCacheWithDataPartInTransaction:(NSDictionary *)data {
-    NSArray *equalValueSkippedProperties = [self.class equalValueSkippedProperties];
+    NSArray *equalValueSkippedProperties = [self.class ar_equalValueSkippedProperties];
     NSString *primaryKey = [self.class primaryKey];
-    [data enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, id  _Nonnull value, BOOL * _Nonnull stop) {
+    
+    NSArray<NSString *> *propertyNames = [self propertyNames];
+    for (NSString *key in propertyNames) {
         if ([primaryKey isEqualToString:key]) {
-            return;
+            continue;
         }
         
-        if ([self respondsToSelector:NSSelectorFromString(key)]) {
-            if ([equalValueSkippedProperties containsObject:key]) {
-                id value = [self valueForKey:key];
-                if ([value isEqual:data[key]]) {
-                    return;
-                }
+        if ([equalValueSkippedProperties containsObject:key]) {
+            id value = [self valueForKey:key];
+            if ([value isEqual:data[key]]) {
+                continue;
             }
-            
+        }
+        
+        id value = [data valueForKey:key];
+        if (value) {
             if ([value isKindOfClass:NSDictionary.class]) {
                 Class clazz = [self ar_classOfPropertyNamed:key];
                 if ([clazz isSubclassOfClass:ARDataCacheModel.class]) {
@@ -350,11 +399,13 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
             } else {
                 [self setPropertyValue:value forKey:key];
             }
+        } else {
+            [self resetDefaultValueForKey:key];
         }
-    }];
+    }
     
-    if ([self respondsToSelector:@selector(setValueForExtraProperties)]) {
-        [self setValueForExtraProperties];
+    if ([self respondsToSelector:@selector(ar_setValueForExtraProperties)]) {
+        [self ar_setValueForExtraProperties];
     }
 }
 

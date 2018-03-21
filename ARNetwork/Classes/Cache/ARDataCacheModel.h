@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol ARDataCacheModelTransaction <NSObject>
 
 @optional
-- (void)setValueForExtraProperties;
+- (void)ar_setValueForExtraProperties;
 
 @end
 
@@ -108,7 +108,14 @@ NS_ASSUME_NONNULL_BEGIN
 
  @return An array of property names.
  */
-+ (nullable NSArray *)equalValueSkippedProperties;
++ (nullable NSArray<NSString *> *)ar_equalValueSkippedProperties;
+
+/**
+ Override this method to specify the name of properties that should be reserved outside the data source
+
+ @return An array of property names.
+ */
++ (nullable NSArray<NSString *> *)ar_reservedProperties;
 
 /**
  Override this method to specify the time interval of expired cache data to this kind of object. Defaults to 0 s.

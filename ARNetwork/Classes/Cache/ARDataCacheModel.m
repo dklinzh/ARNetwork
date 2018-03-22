@@ -199,7 +199,12 @@
                     ARLogWarn(@"Reset default value to the property '%@' of class '%@'", key, self.class);
                     [self setValue:@(0) forKey:key];
                 }
-            } else if ([value isKindOfClass:NSObject.class]) {
+            } else if ([value conformsToProtocol:@protocol(RLMCollection)]) {
+                if ([value count] > 0) {
+                    ARLogWarn(@"Reset default value to the property '%@' of class '%@'", key, self.class);
+                    [value removeAllObjects];
+                }
+            } else {
                 ARLogWarn(@"Reset default value to the property '%@' of class '%@'", key, self.class);
                 [self setValue:nil forKey:key];
             }

@@ -194,15 +194,22 @@
     } else {
         id value = [self valueForKey:key];
         if (value) {
-            ARLogWarn(@"Reset default value to the property '%@' of class '%@'", key, self.class);
             if ([value isKindOfClass:NSValue.class]) {
-                [self setValue:@(0) forKey:key];
+                if (![value isEqual:@(0)]) {
+                    ARLogWarn(@"Reset default value to the property '%@' of class '%@'", key, self.class);
+                    [self setValue:@(0) forKey:key];
+                }
             } else if ([value isKindOfClass:NSObject.class]) {
+                ARLogWarn(@"Reset default value to the property '%@' of class '%@'", key, self.class);
                 [self setValue:nil forKey:key];
             }
         }
     }
 }
+
+//- (void)setValue:(id)value forUndefinedKey:(NSString *)key {
+//
+//}
 
 - (NSArray<NSString *> *)propertyNames {
     NSMutableArray<NSString *> *propertyNames = [NSMutableArray array];
@@ -304,7 +311,7 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
         
         [self updateDataCacheWithDataPartInTransaction:data];
         self._AR_DATE_MODIFIED = [NSDate date];
-        self._AR_DATE_EXPIRED = self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[self.class expiredInterval] sinceDate:self._AR_DATE_MODIFIED];
+        self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[self.class expiredInterval] sinceDate:self._AR_DATE_MODIFIED];
         
         if (inWriteTransaction) {
             [realm commitWriteTransaction];

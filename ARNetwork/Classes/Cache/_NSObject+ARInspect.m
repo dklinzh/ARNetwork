@@ -10,26 +10,46 @@
 #import <objc/runtime.h>
 
 @implementation NSObject (ARInspect)
-+ (NSArray*)ar_propertyNamesForClassOnly {
-    // Collection.
-    NSMutableArray *propertyNames = [NSMutableArray new];
+
++ (NSArray<NSString *> *)ar_propertyNamesForProtocol:(Protocol *)protocol {
+    uint propertyCount;
+    objc_property_t *properties = protocol_copyPropertyList(protocol, &propertyCount);
     
+    NSMutableArray<NSString *> *propertyNames = [NSMutableArray array];
+    for (uint index = 0; index < propertyCount; index++) {
+        NSString *key = [NSString stringWithUTF8String:property_getName(properties[index])];
+        [propertyNames addObject:key];
+    }
+    
+    free(properties);
+    
+    return [propertyNames copy];
+}
+
++ (NSArray<NSString *> *)ar_propertyNamesForClassOnly {
     // Collect for this class.
     uint propertyCount;
     objc_property_t *properties = class_copyPropertyList(self, &propertyCount);
-    for (int index = 0; index < propertyCount; index++)
-    {
-        NSString *eachPropertyName = [NSString stringWithUTF8String:property_getName(properties[index])];
-        [propertyNames addObject:eachPropertyName];
+    
+    NSMutableArray<NSString *> *propertyNames = [NSMutableArray array];
+    for (uint index = 0; index < propertyCount; index++) {
+        NSString *key = [NSString stringWithUTF8String:property_getName(properties[index])];
+        [propertyNames addObject:key];
+    }
+    
+    Protocol *protocol = @protocol(NSObject);
+    if (class_conformsToProtocol(self, protocol)) {
+        NSArray<NSString *> *protocolProperties = [self ar_propertyNamesForProtocol:protocol];
+        [propertyNames removeObjectsInArray:protocolProperties];
     }
     
     free(properties); // As it is a copy
     
     // Return immutable.
-    return [NSArray arrayWithArray:propertyNames];
+    return [propertyNames copy];
 }
 
-- (NSString*)ar_typeOfPropertyNamed:(NSString*)propertyName {
+- (NSString *)ar_typeOfPropertyNamed:(NSString*)propertyName {
     NSString *propertyType = nil;
     NSString *propertyAttributes;
     
@@ -38,8 +58,7 @@
     objc_property_t property = class_getProperty(class, [propertyName UTF8String]);
     
     // Try to get getter method.
-    if (property == NULL)
-    {
+    if (property == NULL) {
         char typeCString[256];
         Method getter = class_getInstanceMethod(class, NSSelectorFromString(propertyName));
         method_getReturnType(getter, typeCString, 256);
@@ -48,39 +67,38 @@
         // Mimic type encoding for `typeNameForTypeEncoding:`.
         propertyType = [self ar_typeNameForTypeEncoding:[NSString stringWithFormat:@"T%@", propertyAttributes]];
         
-        if (getter == NULL)
-        { ARLogError(@"No property called `%@` of %@", propertyName, NSStringFromClass(self.class)); }
+        if (getter == NULL) {
+            ARLogError(@"No property called `%@` of %@", propertyName, NSStringFromClass(self.class));
+        }
     }
-    
     // Or go on with property attribute parsing.
-    else
-    {
+    else {
         // Get property attributes.
         const char *propertyAttributesCString;
         propertyAttributesCString = property_getAttributes(property);
         propertyAttributes = [NSString stringWithCString:propertyAttributesCString encoding:NSUTF8StringEncoding];
         
-        if (propertyAttributesCString == NULL)
-        { ARLogError(@"Could not get attributes for property called `%@` of <%@>", propertyName, NSStringFromClass(self.class)); }
+        if (propertyAttributesCString == NULL) {
+            ARLogError(@"Could not get attributes for property called `%@` of <%@>", propertyName, NSStringFromClass(self.class));
+        }
         
         // Parse property attributes.
         NSArray *splitPropertyAttributes = [propertyAttributes componentsSeparatedByString:@","];
-        if (splitPropertyAttributes.count > 0)
-        {
+        if (splitPropertyAttributes.count > 0) {
             // From Objective-C Runtime Programming Guide.
             // xcdoc://ios//library/prerelease/ios/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtPropertyIntrospection.html
             NSString *encodeType = splitPropertyAttributes[0];
             NSArray *splitEncodeType = [encodeType componentsSeparatedByString:@"\""];
             propertyType = (splitEncodeType.count > 1) ? splitEncodeType[1] : [self ar_typeNameForTypeEncoding:encodeType];
+        } else {
+            ARLogError(@"Could not parse attributes for property called `%@` of <%@>å", propertyName, NSStringFromClass(self.class));
         }
-        else
-        { ARLogError(@"Could not parse attributes for property called `%@` of <%@>å", propertyName, NSStringFromClass(self.class)); }
     }
     
     return propertyType;
 }
 
-- (NSString*)ar_typeNameForTypeEncoding:(NSString*)typeEncoding {
+- (NSString *)ar_typeNameForTypeEncoding:(NSString*)typeEncoding {
     // From Objective-C Runtime Programming Guide.
     // xcdoc://ios//library/prerelease/ios/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html
     NSDictionary *typeNamesForTypeEncodings = @{
@@ -126,21 +144,24 @@
                                                 };
     
     // Recognized format.
-    if ([[typeNamesForTypeEncodings allKeys] containsObject:typeEncoding])
-    { return [typeNamesForTypeEncodings objectForKey:typeEncoding]; }
+    if ([[typeNamesForTypeEncodings allKeys] containsObject:typeEncoding]) {
+        return [typeNamesForTypeEncodings objectForKey:typeEncoding];
+    }
     
     // Struct property.
-    if ([typeEncoding hasPrefix:@"T{"])
-    {
+    if ([typeEncoding hasPrefix:@"T{"]) {
         // Try to get struct name.
         NSCharacterSet *delimiters = [NSCharacterSet characterSetWithCharactersInString:@"{="];
         NSArray *components = [typeEncoding componentsSeparatedByCharactersInSet:delimiters];
         NSString *structName;
-        if (components.count > 1)
-        { structName = components[1]; }
+        if (components.count > 1) {
+            structName = components[1];
+        }
         
         // Falls back to `struct` when unknown name encountered.
-        if ([structName isEqualToString:@"?"]) structName = @"struct";
+        if ([structName isEqualToString:@"?"]) {
+            structName = @"struct";
+        }
         
         return structName;
     }
@@ -156,9 +177,10 @@
     class = NSClassFromString(className);
     
     // Warning.
-//    if (class == nil)
-//    { ARLogError(@"No class called `%@` in runtime", className); }
+    //    if (class == nil)
+    //    { ARLogError(@"No class called `%@` in runtime", className); }
     
     return class;
 }
+
 @end

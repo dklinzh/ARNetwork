@@ -9,6 +9,8 @@
 #import "ARViewController.h"
 #import "ARExampleResultModel.h"
 
+#import "ARNetwork_Example-Swift.h"
+
 @import ARNetwork;
 
 @interface ARViewController ()
@@ -31,7 +33,8 @@
     
     
     [ARExampleResultModel getURL:urlString params:nil dataCache:ARCacheTypeLoadAndUpdate success:^(ARExampleResultModel *data, NSString *msg, BOOL isCached) {
-        
+        SwiftExample *example = [[SwiftExample alloc] init];
+        example.result = data;
     } failure:^(NSInteger code, NSString *msg) {
         
     }];

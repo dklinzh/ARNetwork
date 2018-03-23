@@ -7,3 +7,10 @@
 //
 
 import Foundation
+
+class SwiftExample: NSObject {
+    
+    @objc
+    var result: ARExampleResultModel?
+    
+}

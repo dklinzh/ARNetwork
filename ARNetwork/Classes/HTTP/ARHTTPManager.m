@@ -12,18 +12,23 @@
 #ifdef DEBUG
 
 #define AR_TASK_TIMING_BEGIN(method) \
-    CFTimeInterval startTime = CACurrentMediaTime(); \
     NSURL *url = [NSURL URLWithString:urlStr]; \
     NSString *key = [NSString stringWithFormat:@"%@<%@>", method, url.relativePath]; \
-    ARLogDebug(@"Request %@:\n%@", key, params);
+    ARLogDebug(@"Request %@:\n%@", key, params); \
+    CFTimeInterval startTime = CACurrentMediaTime();
 
 #define AR_TASK_TIMING_END(info) \
     CFTimeInterval endTime = CACurrentMediaTime(); \
     if ([info isMemberOfClass:NSError.class]) { \
-        ARLogFailure(@"Response %@: %.f ms\n%@", key, (endTime - startTime) * 1000, info); \
+        ARLogFailure(@"Response %@:: %.f ms\n%@", key, (endTime - startTime) * 1000, info); \
     } else { \
-        ARLogSuccess(@"Response %@: %.f ms\n%@", key, (endTime - startTime) * 1000, info); \
-    }
+        ARLogSuccess(@"Response %@:: %.f ms\n%@", key, (endTime - startTime) * 1000, info); \
+    } \
+    CFTimeInterval startTime = CACurrentMediaTime();
+
+#define AR_RESPONSE_PROCESS_COMPLETED(result) \
+    endTime = CACurrentMediaTime(); \
+    ARLogVerbose(@"%@ Process Completed %@:: %.f ms", result ? @"✅" : @"❌", key, (endTime - startTime) * 1000);
 
 #else
 
@@ -131,11 +136,13 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
     
     AR_TASK_TIMING_BEGIN(@"GET");
     NSURLSessionDataTask *task = [self GET:urlStr parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        [self.operation responseSuccess:success orFailure:failure withData:responseObject];
         AR_TASK_TIMING_END(responseObject);
+        [self.operation responseSuccess:success orFailure:failure withData:responseObject];
+        AR_RESPONSE_PROCESS_COMPLETED(YES);
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [self.operation responseFailure:failure withError:error];
         AR_TASK_TIMING_END(error);
+        [self.operation responseFailure:failure withError:error];
+        AR_RESPONSE_PROCESS_COMPLETED(NO);
     }];
     task.ar_shouldCancelDuplicatedTask = YES;
     task.ar_taskID = taskKey;
@@ -157,11 +164,13 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
 
     AR_TASK_TIMING_BEGIN(@"POST");
     NSURLSessionDataTask *task = [self POST:urlStr parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        [self.operation responseSuccess:success orFailure:failure withData:responseObject];
         AR_TASK_TIMING_END(responseObject);
+        [self.operation responseSuccess:success orFailure:failure withData:responseObject];
+        AR_RESPONSE_PROCESS_COMPLETED(YES);
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [self.operation responseFailure:failure withError:error];
         AR_TASK_TIMING_END(error);
+        [self.operation responseFailure:failure withError:error];
+        AR_RESPONSE_PROCESS_COMPLETED(NO);
     }];
     task.ar_shouldCancelDuplicatedTask = YES;
     task.ar_taskID = taskKey;
@@ -201,11 +210,13 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
             uploadProgress(progress);
         }
     } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        [self.operation responseSuccess:success orFailure:failure withData:responseObject];
         AR_TASK_TIMING_END(responseObject);
+        [self.operation responseSuccess:success orFailure:failure withData:responseObject];
+        AR_RESPONSE_PROCESS_COMPLETED(YES);
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [self.operation responseFailure:failure withError:error];
         AR_TASK_TIMING_END(error);
+        [self.operation responseFailure:failure withError:error];
+        AR_RESPONSE_PROCESS_COMPLETED(NO);
     }];
     task.ar_shouldCancelDuplicatedTask = YES;
     task.ar_taskID = taskKey;
@@ -227,11 +238,13 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
 
     AR_TASK_TIMING_BEGIN(@"PUT");
     NSURLSessionDataTask *task = [self PUT:urlStr parameters:params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        [self.operation responseSuccess:success orFailure:failure withData:responseObject];
         AR_TASK_TIMING_END(responseObject);
+        [self.operation responseSuccess:success orFailure:failure withData:responseObject];
+        AR_RESPONSE_PROCESS_COMPLETED(YES);
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [self.operation responseFailure:failure withError:error];
         AR_TASK_TIMING_END(error);
+        [self.operation responseFailure:failure withError:error];
+        AR_RESPONSE_PROCESS_COMPLETED(NO);
     }];
     task.ar_shouldCancelDuplicatedTask = YES;
     task.ar_taskID = taskKey;
@@ -253,11 +266,13 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
 
     AR_TASK_TIMING_BEGIN(@"PATCH");
     NSURLSessionDataTask *task = [self PATCH:urlStr parameters:params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        [self.operation responseSuccess:success orFailure:failure withData:responseObject];
         AR_TASK_TIMING_END(responseObject);
+        [self.operation responseSuccess:success orFailure:failure withData:responseObject];
+        AR_RESPONSE_PROCESS_COMPLETED(YES);
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [self.operation responseFailure:failure withError:error];
         AR_TASK_TIMING_END(error);
+        [self.operation responseFailure:failure withError:error];
+        AR_RESPONSE_PROCESS_COMPLETED(NO);
     }];
     task.ar_shouldCancelDuplicatedTask = YES;
     task.ar_taskID = taskKey;
@@ -279,11 +294,13 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
 
     AR_TASK_TIMING_BEGIN(@"DELETE");
     NSURLSessionDataTask *task = [self DELETE:urlStr parameters:params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        [self.operation responseSuccess:success orFailure:failure withData:responseObject];
         AR_TASK_TIMING_END(responseObject);
+        [self.operation responseSuccess:success orFailure:failure withData:responseObject];
+        AR_RESPONSE_PROCESS_COMPLETED(YES);
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [self.operation responseFailure:failure withError:error];
         AR_TASK_TIMING_END(error);
+        [self.operation responseFailure:failure withError:error];
+        AR_RESPONSE_PROCESS_COMPLETED(NO);
     }];
     task.ar_shouldCancelDuplicatedTask = YES;
     task.ar_taskID = taskKey;
@@ -305,13 +322,15 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
 
     AR_TASK_TIMING_BEGIN(@"HEAD");
     NSURLSessionDataTask *task = [self HEAD:urlStr parameters:params success:^(NSURLSessionDataTask * _Nonnull task) {
+        AR_TASK_TIMING_END(@"");
         if (success) {
             success(task);
         }
-        AR_TASK_TIMING_END(@"");
+        AR_RESPONSE_PROCESS_COMPLETED(YES);
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [self.operation responseFailure:failure withError:error];
         AR_TASK_TIMING_END(error);
+        [self.operation responseFailure:failure withError:error];
+        AR_RESPONSE_PROCESS_COMPLETED(NO);
     }];
     task.ar_shouldCancelDuplicatedTask = YES;
     task.ar_taskID = taskKey;

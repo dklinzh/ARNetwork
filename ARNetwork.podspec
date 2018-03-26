@@ -58,6 +58,11 @@ Pod::Spec.new do |s|
 
     mock.private_header_files = 'ARNetwork/Classes/Mock/_*.h'
     mock.source_files = 'ARNetwork/Classes/Mock/*.{h,m}'
+
+    mock.xcconfig = {
+      'GCC_PREPROCESSOR_DEFINITIONS' => 'ARNETWORK_MOCK=DEBUG',
+      'OTHER_SWIFT_FLAGS' => '-D ARNETWORK_MOCK'
+    }
   end
 
   s.subspec 'Cache' do |cache|

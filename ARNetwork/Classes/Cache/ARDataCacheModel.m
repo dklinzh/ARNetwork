@@ -254,17 +254,11 @@
         if (![value isKindOfClass:NSString.class]) {
             value = [NSString stringWithFormat:@"%@", value];
         }
+    } else if ([class conformsToProtocol:@protocol(RLMThreadConfined)]) {
+        ARLogError(@"The type of key-value does not match! Key<%@> != Value<%@>", class, [value class]);
+        return;
     }
-//    else if (!class) {
-//        if ([value isKindOfClass:NSString.class]) {
-//            NSNumberFormatter *format = [[NSNumberFormatter alloc] init];
-//            format.numberStyle = NSNumberFormatterDecimalStyle;
-//            value = [format numberFromString:value];
-//            if (!value) {
-//                return;
-//            }
-//        }
-//    }
+    
     [self setValue:value forKey:key];
 }
 

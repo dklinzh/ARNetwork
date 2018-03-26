@@ -28,12 +28,18 @@
 
 #define AR_RESPONSE_PROCESS_COMPLETED(result) \
     endTime = CACurrentMediaTime(); \
-    ARLogVerbose(@"%@ Process Completed %@:: %.f ms", result ? @"✅" : @"❌", key, (endTime - startTime) * 1000);
+    CFTimeInterval duration = (endTime - startTime) * 1000; \
+    if (duration > 100) { \
+        ARLogWarn(@"%@ Process Completed %@:: %.f ms", result ? @"✅" : @"❌", key, duration); \
+    } else { \
+        ARLogVerbose(@"%@ Process Completed %@:: %.f ms", result ? @"✅" : @"❌", key, duration); \
+    }
 
 #else
 
 #define AR_TASK_TIMING_BEGIN
 #define AR_TASK_TIMING_END(info)
+#define AR_RESPONSE_PROCESS_COMPLETED(result)
 
 #endif
 

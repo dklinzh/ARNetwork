@@ -43,9 +43,9 @@ PODS:
   - OHHTTPStubs/NSURLSession (6.1.0):
     - OHHTTPStubs/Core
   - OHHTTPStubs/OHPathHelpers (6.1.0)
-  - Realm (3.3.0):
-    - Realm/Headers (= 3.3.0)
-  - Realm/Headers (3.3.0)
+  - Realm (3.3.2):
+    - Realm/Headers (= 3.3.2)
+  - Realm/Headers (3.3.2)
   - Specta (1.0.7)
 
 DEPENDENCIES:
@@ -55,18 +55,26 @@ DEPENDENCIES:
   - Expecta
   - Specta
 
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - AFNetworking
+    - Expecta
+    - OHHTTPStubs
+    - Realm
+    - Specta
+
 EXTERNAL SOURCES:
   ARNetwork:
-    :path: ../
+    :path: "../"
 
 SPEC CHECKSUMS:
   AFNetworking: 8ac6017b94ea105479f7776e5288e48ae9c59bb4
   ARNetwork: f798e6e150b47bc3b47875db618545c4a5d6614f
   Expecta: 3b6bd90a64b9a1dcb0b70aa0e10a7f8f631667d5
   OHHTTPStubs: 1e21c7d2c084b8153fc53d48400d8919d2d432d0
-  Realm: 7d74ad6c5020432f58fe5e1df90bb6d97b2c7fef
+  Realm: d927fbf66df5532cfafc08afb5f7e53ded37b894
   Specta: 3e1bd89c3517421982dc4d1c992503e48bd5fe66
 
 PODFILE CHECKSUM: 08ff387ced2808c7bb5ce99cff07480baecc6d3a
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.5.0

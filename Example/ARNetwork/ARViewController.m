@@ -24,19 +24,18 @@
 	
     NSString *urlString = @"http://httpbin.org/get";
     
-    [ARHTTPMock getRequestURL:urlString responseByMainBundleJSONFile:@"ARExampleResultModel"];
     [[ARHTTPManager sharedInstance] getURL:urlString params:nil success:^(id data, NSString *msg) {
-        
+
     } failure:^(NSInteger code, NSString *msg) {
-        
+
     }];
     
-    
+    [ARHTTPMock getRequestURL:urlString responseByMainBundleJSONFile:@"ARExampleResultModel"];
     [ARExampleResultModel getURL:urlString params:nil dataCache:ARCacheTypeLoadAndUpdate success:^(ARExampleResultModel *data, NSString *msg, BOOL isCached) {
         SwiftExample *example = [[SwiftExample alloc] init];
         example.result = data;
     } failure:^(NSInteger code, NSString *msg) {
-        
+
     }];
 }
 

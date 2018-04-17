@@ -120,17 +120,26 @@
     }
     
     if (failure) {
-        switch (error.code) {
-            case -999: // request operation be canceled.
-                failure(error.code, nil);
+        NSInteger errorCode = error.code;
+        switch (errorCode) {
+            case NSURLErrorAppTransportSecurityRequiresSecureConnection: // ATS
+                failure(errorCode, @"ATS_ERROR");
                 break;
-            case -1001:
-            case -1005:
-            case -1009: // network unreachable
-                failure(error.code, @"网络异常，请稍后尝试。"); // FIXME: localization
+            case NSURLErrorCancelled: // request operation be canceled.
+                failure(errorCode, nil);
+                break;
+            case NSURLErrorTimedOut:
+            case NSURLErrorNetworkConnectionLost:
+            case NSURLErrorDNSLookupFailed:
+            case NSURLErrorNotConnectedToInternet:
+            case NSURLErrorInternationalRoamingOff:
+            case NSURLErrorCallIsActive:
+            case NSURLErrorDataNotAllowed:
+                // network unreachable
+                failure(errorCode, @"网络异常，请稍后尝试。"); // FIXME: localization
                 break;
             default:
-                failure(error.code, @"系统繁忙，请稍后尝试。"); // FIXME: localization
+                failure(errorCode, @"系统繁忙，请稍后尝试。"); // FIXME: localization
                 break;
         }
     }

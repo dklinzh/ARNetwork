@@ -45,7 +45,7 @@
 
 @interface ARHTTPManager ()
 @property (nonatomic, strong) ARHTTPOperation *operation;
-@property (nonatomic, strong) NSMutableDictionary<NSString *, NSURLSessionTask *> *sessionTasks;
+@property (nonatomic, strong) NSMutableDictionary<NSString *, NSNumber *> *sessionTaskIDs;
 @end
 
 @implementation ARHTTPManager
@@ -60,9 +60,8 @@
 
 - (instancetype)initWithBaseURL:(NSURL *)url
            sessionConfiguration:(NSURLSessionConfiguration *)configuration httpOperation:(ARHTTPOperation *)operation {
-    _operation = operation;
-    
     if (self = [super initWithBaseURL:url sessionConfiguration:ar_urlSessionConfigurationWithProtocolClasses(configuration, operation.protocolClasses)]) {
+        _operation = operation;
         
         switch (operation.requestEncodedType) {
             case ARRequestEncodedTypeJSON:
@@ -102,6 +101,7 @@
             [self setTaskWillPerformHTTPRedirectionBlock:nil];
         }
     }
+    
     return self;
 }
 
@@ -141,19 +141,22 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
     [self cancelDuplicatedSessionTaskForKey:taskKey];
     
     AR_TASK_TIMING_BEGIN(@"GET");
+    __weak __typeof(self)weakSelf = self;
     NSURLSessionDataTask *task = [self GET:urlStr parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         AR_TASK_TIMING_END(responseObject);
-        [self.operation responseSuccess:success orFailure:failure withData:responseObject];
+        __strong __typeof(weakSelf)strongSelf = weakSelf;
+        [strongSelf.operation responseSuccess:success orFailure:failure withData:responseObject];
         AR_RESPONSE_PROCESS_COMPLETED(YES);
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         AR_TASK_TIMING_END(error);
-        [self.operation responseFailure:failure withError:error];
+        __strong __typeof(weakSelf)strongSelf = weakSelf;
+        [strongSelf.operation responseFailure:failure withError:error];
         AR_RESPONSE_PROCESS_COMPLETED(NO);
     }];
     task.ar_shouldCancelDuplicatedTask = YES;
     task.ar_taskID = taskKey;
     
-    [self.sessionTasks setValue:task forKey:taskKey];
+    [self.sessionTaskIDs setValue:@(task.taskIdentifier) forKey:taskKey];
     
     return task;
 }
@@ -169,19 +172,22 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
     [self cancelDuplicatedSessionTaskForKey:taskKey];
 
     AR_TASK_TIMING_BEGIN(@"POST");
+    __weak __typeof(self)weakSelf = self;
     NSURLSessionDataTask *task = [self POST:urlStr parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         AR_TASK_TIMING_END(responseObject);
-        [self.operation responseSuccess:success orFailure:failure withData:responseObject];
+        __strong __typeof(weakSelf)strongSelf = weakSelf;
+        [strongSelf.operation responseSuccess:success orFailure:failure withData:responseObject];
         AR_RESPONSE_PROCESS_COMPLETED(YES);
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         AR_TASK_TIMING_END(error);
-        [self.operation responseFailure:failure withError:error];
+        __strong __typeof(weakSelf)strongSelf = weakSelf;
+        [strongSelf.operation responseFailure:failure withError:error];
         AR_RESPONSE_PROCESS_COMPLETED(NO);
     }];
     task.ar_shouldCancelDuplicatedTask = YES;
     task.ar_taskID = taskKey;
     
-    [self.sessionTasks setValue:task forKey:taskKey];
+    [self.sessionTaskIDs setValue:@(task.taskIdentifier) forKey:taskKey];
     
     return task;
 }
@@ -206,6 +212,7 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
     [self cancelDuplicatedSessionTaskForKey:taskKey];
 
     AR_TASK_TIMING_BEGIN(@"POST");
+    __weak __typeof(self)weakSelf = self;
     NSURLSessionDataTask *task = [self POST:urlStr parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
         for (NSString *path in filePaths) {
             [formData appendPartWithFileURL:[NSURL fileURLWithPath:path] name:formName error:nil];
@@ -217,17 +224,19 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
         }
     } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         AR_TASK_TIMING_END(responseObject);
-        [self.operation responseSuccess:success orFailure:failure withData:responseObject];
+        __strong __typeof(weakSelf)strongSelf = weakSelf;
+        [strongSelf.operation responseSuccess:success orFailure:failure withData:responseObject];
         AR_RESPONSE_PROCESS_COMPLETED(YES);
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         AR_TASK_TIMING_END(error);
-        [self.operation responseFailure:failure withError:error];
+        __strong __typeof(weakSelf)strongSelf = weakSelf;
+        [strongSelf.operation responseFailure:failure withError:error];
         AR_RESPONSE_PROCESS_COMPLETED(NO);
     }];
     task.ar_shouldCancelDuplicatedTask = YES;
     task.ar_taskID = taskKey;
     
-    [self.sessionTasks setValue:task forKey:taskKey];
+    [self.sessionTaskIDs setValue:@(task.taskIdentifier) forKey:taskKey];
     
     return task;
 }
@@ -243,19 +252,22 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
     [self cancelDuplicatedSessionTaskForKey:taskKey];
 
     AR_TASK_TIMING_BEGIN(@"PUT");
+    __weak __typeof(self)weakSelf = self;
     NSURLSessionDataTask *task = [self PUT:urlStr parameters:params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         AR_TASK_TIMING_END(responseObject);
-        [self.operation responseSuccess:success orFailure:failure withData:responseObject];
+        __strong __typeof(weakSelf)strongSelf = weakSelf;
+        [strongSelf.operation responseSuccess:success orFailure:failure withData:responseObject];
         AR_RESPONSE_PROCESS_COMPLETED(YES);
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         AR_TASK_TIMING_END(error);
-        [self.operation responseFailure:failure withError:error];
+        __strong __typeof(weakSelf)strongSelf = weakSelf;
+        [strongSelf.operation responseFailure:failure withError:error];
         AR_RESPONSE_PROCESS_COMPLETED(NO);
     }];
     task.ar_shouldCancelDuplicatedTask = YES;
     task.ar_taskID = taskKey;
     
-    [self.sessionTasks setValue:task forKey:taskKey];
+    [self.sessionTaskIDs setValue:@(task.taskIdentifier) forKey:taskKey];
     
     return task;
 }
@@ -271,19 +283,22 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
     [self cancelDuplicatedSessionTaskForKey:taskKey];
 
     AR_TASK_TIMING_BEGIN(@"PATCH");
+    __weak __typeof(self)weakSelf = self;
     NSURLSessionDataTask *task = [self PATCH:urlStr parameters:params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         AR_TASK_TIMING_END(responseObject);
-        [self.operation responseSuccess:success orFailure:failure withData:responseObject];
+        __strong __typeof(weakSelf)strongSelf = weakSelf;
+        [strongSelf.operation responseSuccess:success orFailure:failure withData:responseObject];
         AR_RESPONSE_PROCESS_COMPLETED(YES);
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         AR_TASK_TIMING_END(error);
-        [self.operation responseFailure:failure withError:error];
+        __strong __typeof(weakSelf)strongSelf = weakSelf;
+        [strongSelf.operation responseFailure:failure withError:error];
         AR_RESPONSE_PROCESS_COMPLETED(NO);
     }];
     task.ar_shouldCancelDuplicatedTask = YES;
     task.ar_taskID = taskKey;
     
-    [self.sessionTasks setValue:task forKey:taskKey];
+    [self.sessionTaskIDs setValue:@(task.taskIdentifier) forKey:taskKey];
     
     return task;
 }
@@ -299,19 +314,22 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
     [self cancelDuplicatedSessionTaskForKey:taskKey];
 
     AR_TASK_TIMING_BEGIN(@"DELETE");
+    __weak __typeof(self)weakSelf = self;
     NSURLSessionDataTask *task = [self DELETE:urlStr parameters:params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         AR_TASK_TIMING_END(responseObject);
-        [self.operation responseSuccess:success orFailure:failure withData:responseObject];
+        __strong __typeof(weakSelf)strongSelf = weakSelf;
+        [strongSelf.operation responseSuccess:success orFailure:failure withData:responseObject];
         AR_RESPONSE_PROCESS_COMPLETED(YES);
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         AR_TASK_TIMING_END(error);
-        [self.operation responseFailure:failure withError:error];
+        __strong __typeof(weakSelf)strongSelf = weakSelf;
+        [strongSelf.operation responseFailure:failure withError:error];
         AR_RESPONSE_PROCESS_COMPLETED(NO);
     }];
     task.ar_shouldCancelDuplicatedTask = YES;
     task.ar_taskID = taskKey;
     
-    [self.sessionTasks setValue:task forKey:taskKey];
+    [self.sessionTaskIDs setValue:@(task.taskIdentifier) forKey:taskKey];
     
     return task;
 }
@@ -327,6 +345,7 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
     [self cancelDuplicatedSessionTaskForKey:taskKey];
 
     AR_TASK_TIMING_BEGIN(@"HEAD");
+    __weak __typeof(self)weakSelf = self;
     NSURLSessionDataTask *task = [self HEAD:urlStr parameters:params success:^(NSURLSessionDataTask * _Nonnull task) {
         AR_TASK_TIMING_END(@"");
         if (success) {
@@ -335,13 +354,14 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
         AR_RESPONSE_PROCESS_COMPLETED(YES);
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         AR_TASK_TIMING_END(error);
-        [self.operation responseFailure:failure withError:error];
+        __strong __typeof(weakSelf)strongSelf = weakSelf;
+        [strongSelf.operation responseFailure:failure withError:error];
         AR_RESPONSE_PROCESS_COMPLETED(NO);
     }];
     task.ar_shouldCancelDuplicatedTask = YES;
     task.ar_taskID = taskKey;
     
-    [self.sessionTasks setValue:task forKey:taskKey];
+    [self.sessionTaskIDs setValue:@(task.taskIdentifier) forKey:taskKey];
     
     return task;
 }
@@ -353,19 +373,28 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
 #pragma mark - Private
 
 - (void)cancelDuplicatedSessionTaskForKey:(NSString *)taskKey {
-    NSURLSessionTask *task = [self.sessionTasks valueForKey:taskKey];
-    if (task && task.ar_shouldCancelDuplicatedTask) {
-        [task cancel];
-        [self.sessionTasks removeObjectForKey:taskKey];
+    NSNumber *sessionTaskID = self.sessionTaskIDs[taskKey];
+    if (sessionTaskID) {
+        NSUInteger taskID = sessionTaskID.unsignedIntegerValue;
+        for (NSURLSessionTask* task in self.tasks) {
+            if (task.taskIdentifier == taskID) {
+                if (task.ar_shouldCancelDuplicatedTask) {
+                    [task cancel];
+                }
+                break;
+            }
+        }
+        
+        [self.sessionTaskIDs removeObjectForKey:taskKey];
     }
 }
 
-- (NSMutableDictionary<NSString *, NSURLSessionTask *> *)sessionTasks {
-    if (_sessionTasks) {
-        return _sessionTasks;
+- (NSMutableDictionary<NSString *,NSNumber *> *)sessionTaskIDs {
+    if (_sessionTaskIDs) {
+        return _sessionTaskIDs;
     }
     
-    return _sessionTasks = [NSMutableDictionary dictionary];
+    return _sessionTaskIDs = [NSMutableDictionary dictionary];
 }
 
 @end

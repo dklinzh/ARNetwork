@@ -140,20 +140,19 @@
                         if (objs.type == RLMPropertyTypeObject) {
                             Class clazz = NSClassFromString(objs.objectClassName);
                             NSArray *values = (NSArray *)value;
-                            NSMutableOrderedSet *primarySet = [NSMutableOrderedSet orderedSet];
+                            NSMutableSet *primarySet = [NSMutableSet set];
                             for (id item in values) {
                                 if ([item isKindOfClass:NSDictionary.class]) {
                                     NSString *primaryKey = [clazz primaryKey];
                                     if (primaryKey) {
                                         id primaryValue = [[clazz alloc] propertyForKey:primaryKey fromDatas:item];
                                         if (primaryValue) {
-                                            NSUInteger primaryIndex = [primarySet indexOfObject:primaryValue];
-                                            if (primaryIndex == NSNotFound) {
-                                                [primarySet addObject:primaryValue];
-                                                [objs addObject:[[clazz alloc] initDataCache:item]];
-                                            } else {
-                                                [objs replaceObjectAtIndex:primaryIndex withObject:[[clazz alloc] initDataCache:item]];
+                                            if ([primarySet containsObject:primaryValue]) {
+                                                continue;
                                             }
+                                            
+                                            [primarySet addObject:primaryValue];
+                                            [objs addObject:[[clazz alloc] initDataCache:item]];
                                         }
                                     } else {
                                         [objs addObject:[[clazz alloc] initDataCache:item]];
@@ -285,7 +284,7 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
         if (inWriteTransaction) {
             [realm beginWriteTransaction];
         }
-            
+        
         if ([self.class primaryKey]) {
             [realm addOrUpdateObject:self];
         } else {
@@ -358,29 +357,40 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
                         Class clazz = NSClassFromString(objs.objectClassName);
                         NSString *primaryKey = [clazz primaryKey];
                         if (primaryKey) {
-                            NSMutableOrderedSet *tempKeys = [NSMutableOrderedSet orderedSet];
-                            NSMutableDictionary *tempValues = [NSMutableDictionary dictionary];
+                            NSMutableSet *primarySet = [NSMutableSet set];
+                            NSMutableArray *uniqueValues = [NSMutableArray array];
                             for (id item in values) {
-                                id key = [[clazz alloc] propertyForKey:primaryKey fromDatas:item];
-                                [tempKeys addObject:key];
-                                [tempValues setObject:item forKey:key];
-                            }
-                            NSMutableArray *uniques = [NSMutableArray array];
-                            for (id key in tempKeys) {
-                                [uniques addObject:[tempValues objectForKey:key]];
+                                if ([item isKindOfClass:NSDictionary.class]) {
+                                    id key = [[clazz alloc] propertyForKey:primaryKey fromDatas:item];
+                                    if ([primarySet containsObject:key]) {
+                                        continue;
+                                    }
+                                    
+                                    [primarySet addObject:key];
+                                    [uniqueValues addObject:item];
+                                }
                             }
                             
+                            NSMutableArray *deletedObjs = [NSMutableArray array];
+                            for (id item in objs) {
+                                if ([primarySet containsObject:[item valueForKey:primaryKey]]) {
+                                    continue;
+                                }
+                                
+                                [deletedObjs addObject:item];
+                            }
+                            [[self.class ar_defaultRealm] deleteObjects:deletedObjs];
+                            primarySet = nil;
+                            
                             [objs removeAllObjects];
-                            for (id item in uniques) {
-                                if ([item isKindOfClass:NSDictionary.class]) {
-                                    id primaryValue = [[clazz alloc] propertyForKey:primaryKey fromDatas:item];
-                                    id primaryExist = [clazz ar_objectForPrimaryKey:primaryValue];
-                                    if (primaryExist) {
-                                        [primaryExist updateDataCacheWithDataPartInTransaction:item];
-                                        [objs addObject:primaryExist];
-                                    } else {
-                                        [objs addObject:[[clazz alloc] initDataCache:item]];
-                                    }
+                            for (id item in uniqueValues) {
+                                id primaryValue = [[clazz alloc] propertyForKey:primaryKey fromDatas:item];
+                                id primaryExist = [clazz ar_objectForPrimaryKey:primaryValue];
+                                if (primaryExist) {
+                                    [primaryExist updateDataCacheWithDataPartInTransaction:item];
+                                    [objs addObject:primaryExist];
+                                } else {
+                                    [objs addObject:[[clazz alloc] initDataCache:item]];
                                 }
                             }
                         } else {

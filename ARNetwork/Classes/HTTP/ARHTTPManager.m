@@ -378,7 +378,7 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
         NSUInteger taskID = sessionTaskID.unsignedIntegerValue;
         for (NSURLSessionTask* task in self.tasks) {
             if (task.taskIdentifier == taskID) {
-                if (task.ar_shouldCancelDuplicatedTask) {
+                if (task.ar_shouldCancelDuplicatedTask && task.state != NSURLSessionTaskStateCanceling && task.state != NSURLSessionTaskStateCompleted) {
                     [task cancel];
                 }
                 break;

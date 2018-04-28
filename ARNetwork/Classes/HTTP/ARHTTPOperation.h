@@ -48,7 +48,7 @@ typedef void(^ARHTTPResponseHead)(NSURLSessionDataTask *task);
 
 - (void)responseSuccess:(ARHTTPResponseSuccess)success orFailure:(ARHTTPResponseFailure)failure withData:(id)data;
 
-- (void)responseFailure:(ARHTTPResponseFailure)failure withError:(NSError *)error;
+- (void)response:(NSHTTPURLResponse *)response onFailure:(ARHTTPResponseFailure)failure withError:(NSError *)error;
 
 @end
 

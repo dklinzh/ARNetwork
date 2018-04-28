@@ -150,7 +150,7 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         AR_TASK_TIMING_END(error);
         __strong __typeof(weakSelf)strongSelf = weakSelf;
-        [strongSelf.operation responseFailure:failure withError:error];
+        [strongSelf.operation response:(NSHTTPURLResponse *)task.response onFailure:failure withError:error];
         AR_RESPONSE_PROCESS_COMPLETED(NO);
     }];
     task.ar_shouldCancelDuplicatedTask = YES;
@@ -181,7 +181,7 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         AR_TASK_TIMING_END(error);
         __strong __typeof(weakSelf)strongSelf = weakSelf;
-        [strongSelf.operation responseFailure:failure withError:error];
+        [strongSelf.operation response:(NSHTTPURLResponse *)task.response onFailure:failure withError:error];
         AR_RESPONSE_PROCESS_COMPLETED(NO);
     }];
     task.ar_shouldCancelDuplicatedTask = YES;
@@ -230,7 +230,7 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         AR_TASK_TIMING_END(error);
         __strong __typeof(weakSelf)strongSelf = weakSelf;
-        [strongSelf.operation responseFailure:failure withError:error];
+        [strongSelf.operation response:(NSHTTPURLResponse *)task.response onFailure:failure withError:error];
         AR_RESPONSE_PROCESS_COMPLETED(NO);
     }];
     task.ar_shouldCancelDuplicatedTask = YES;
@@ -261,7 +261,7 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         AR_TASK_TIMING_END(error);
         __strong __typeof(weakSelf)strongSelf = weakSelf;
-        [strongSelf.operation responseFailure:failure withError:error];
+        [strongSelf.operation response:(NSHTTPURLResponse *)task.response onFailure:failure withError:error];
         AR_RESPONSE_PROCESS_COMPLETED(NO);
     }];
     task.ar_shouldCancelDuplicatedTask = YES;
@@ -292,7 +292,7 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         AR_TASK_TIMING_END(error);
         __strong __typeof(weakSelf)strongSelf = weakSelf;
-        [strongSelf.operation responseFailure:failure withError:error];
+        [strongSelf.operation response:(NSHTTPURLResponse *)task.response onFailure:failure withError:error];
         AR_RESPONSE_PROCESS_COMPLETED(NO);
     }];
     task.ar_shouldCancelDuplicatedTask = YES;
@@ -323,7 +323,7 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         AR_TASK_TIMING_END(error);
         __strong __typeof(weakSelf)strongSelf = weakSelf;
-        [strongSelf.operation responseFailure:failure withError:error];
+        [strongSelf.operation response:(NSHTTPURLResponse *)task.response onFailure:failure withError:error];
         AR_RESPONSE_PROCESS_COMPLETED(NO);
     }];
     task.ar_shouldCancelDuplicatedTask = YES;
@@ -355,7 +355,7 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         AR_TASK_TIMING_END(error);
         __strong __typeof(weakSelf)strongSelf = weakSelf;
-        [strongSelf.operation responseFailure:failure withError:error];
+        [strongSelf.operation response:(NSHTTPURLResponse *)task.response onFailure:failure withError:error];
         AR_RESPONSE_PROCESS_COMPLETED(NO);
     }];
     task.ar_shouldCancelDuplicatedTask = YES;

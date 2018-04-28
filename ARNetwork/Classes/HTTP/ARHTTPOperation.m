@@ -113,9 +113,9 @@
     }
 }
 
-- (void)responseFailure:(ARHTTPResponseFailure)failure withError:(NSError *)error {
-    if ([self.responseOperation respondsToSelector:@selector(responseFailure:withError:)]) {
-        [self.responseOperation responseFailure:failure withError:error];
+- (void)response:(NSHTTPURLResponse *)response onFailure:(ARHTTPResponseFailure)failure withError:(NSError *)error {
+    if ([self.responseOperation respondsToSelector:@selector(response:onFailure:withError:)]) {
+        [self.responseOperation response:(NSHTTPURLResponse *)response onFailure:failure withError:error];
         return;
     }
     

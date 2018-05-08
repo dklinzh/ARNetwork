@@ -7,7 +7,7 @@
 //
 
 #import "ARHTTPManager.h"
-#import "NSURLSessionTask+ARExtension.h"
+#import "NSURLSessionTask+ARHTTP.h"
 
 #ifdef DEBUG
 

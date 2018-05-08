@@ -1,14 +1,14 @@
 //
-//  NSURLSessionTask+ARExtension.m
+//  NSURLSessionTask+ARHTTP.m
 //  ARNetwork
 //
 //  Created by Daniel Lin on 19/03/2018.
 //  Copyright (c) 2018 Daniel Lin. All rights reserved.
 
-#import "NSURLSessionTask+ARExtension.h"
+#import "NSURLSessionTask+ARHTTP.h"
 #import "_NSObject+ARProperty.h"
 
-@implementation NSURLSessionTask (ARExtension)
+@implementation NSURLSessionTask (ARHTTP)
 
 @dynamic ar_shouldCancelDuplicatedTask, ar_taskID;
 

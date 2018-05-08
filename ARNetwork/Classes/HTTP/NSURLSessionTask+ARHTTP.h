@@ -1,5 +1,5 @@
 //
-//  NSURLSessionTask+ARExtension.h
+//  NSURLSessionTask+ARHTTP.h
 //  ARNetwork
 //
 //  Created by Daniel Lin on 19/03/2018.
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NSURLSessionTask (ARExtension)
+@interface NSURLSessionTask (ARHTTP)
 
 /**
  Determine whether the manager should cancel the `duplicated` task before the next one resume.

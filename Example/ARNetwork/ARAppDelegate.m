@@ -22,6 +22,12 @@
     [ARHTTPMock setEnabled:YES];
     #endif
     
+    [ARNetworkIndicator.sharedManager detectNetworkLoadingWithStart:^(UIView * _Nullable loadingSuperView) {
+        
+    } finish:^(UIView * _Nullable loadingSuperView, ARNetworkLoadingFinishedState loadingFinishedState) {
+        
+    }];
+    
     return YES;
 }
 

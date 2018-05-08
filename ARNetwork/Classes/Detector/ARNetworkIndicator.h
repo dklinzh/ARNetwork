@@ -6,11 +6,23 @@
 //  Copyright © 2017 Daniel. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <AFNetworking/AFNetworkActivityIndicatorManager.h>
 
-@interface ARNetworkIndicator : NSObject
+typedef NS_ENUM(NSInteger, ARNetworkLoadingFinishedState) {
+    ARNetworkLoadingFinishedStateUnknown,
+    ARNetworkLoadingFinishedStateSuccess,
+    ARNetworkLoadingFinishedStateFailure,
+};
 
-+ (instancetype)sharedInstance;
+NS_ASSUME_NONNULL_BEGIN
 
-- (void)setActive:(BOOL)active;
+typedef void(^ARNetworkLoadingStartBlock)(UIView * _Nullable loadingSuperView);
+typedef void(^ARNetworkLoadingFinishBlock)(UIView * _Nullable loadingSuperView, ARNetworkLoadingFinishedState loadingFinishedState);
+
+@interface ARNetworkIndicator : AFNetworkActivityIndicatorManager
+
+- (void)detectNetworkLoadingWithStart:(ARNetworkLoadingStartBlock)startBlock finish:(ARNetworkLoadingFinishBlock)finishBlock;
+
 @end
+
+NS_ASSUME_NONNULL_END

@@ -83,13 +83,15 @@ static NSString *const kDefaultSchemaName = @"default";
     return _defaultFileURL = [fileURL URLByAppendingPathComponent:@"data.ar.realm"];
 }
 
-- (void)allClear {
-    @autoreleasepool {
-        RLMRealm *realm = [self defaultRealm];
-        [realm beginWriteTransaction];
-        [realm deleteAllObjects];
-        [realm commitWriteTransaction];
-    }
+- (void)clearAllCaches {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        @autoreleasepool {
+            RLMRealm *realm = [self defaultRealm];
+            [realm beginWriteTransaction];
+            [realm deleteAllObjects];
+            [realm commitWriteTransaction];
+        }
+    });
 }
 
 #pragma mark -

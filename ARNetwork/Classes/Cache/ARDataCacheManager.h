@@ -56,7 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Clear all of the data cache.
  */
-- (void)allClear;
+- (void)clearAllCaches;
 
 @end
  

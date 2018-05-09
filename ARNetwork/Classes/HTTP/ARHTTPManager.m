@@ -19,7 +19,7 @@
 
 #define AR_TASK_TIMING_END(info) \
     CFTimeInterval endTime = CACurrentMediaTime(); \
-    if ([info isMemberOfClass:NSError.class]) { \
+    if ([info isKindOfClass:NSError.class]) { \
         ARLogFailure(@"Response %@:: %.f ms\n%@", key, (endTime - startTime) * 1000, info); \
     } else { \
         ARLogSuccess(@"Response %@:: %.f ms\n%@", key, (endTime - startTime) * 1000, info); \
@@ -29,7 +29,7 @@
 #define AR_RESPONSE_PROCESS_COMPLETED(result) \
     endTime = CACurrentMediaTime(); \
     CFTimeInterval duration = (endTime - startTime) * 1000; \
-    if (duration > 100) { \
+    if (duration > 150) { \
         ARLogWarn(@"%@ Process Completed %@:: %.f ms", result ? @"✅" : @"❌", key, duration); \
     } else { \
         ARLogVerbose(@"%@ Process Completed %@:: %.f ms", result ? @"✅" : @"❌", key, duration); \

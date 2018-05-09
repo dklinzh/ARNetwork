@@ -370,13 +370,19 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
     [self.requestSerializer setValue:value forHTTPHeaderField:field];
 }
 
+- (void)cancelAllSessionTasks {
+    for (NSURLSessionTask *task in self.tasks) {
+        [task cancel];
+    }
+}
+
 #pragma mark - Private
 
 - (void)cancelDuplicatedSessionTaskForKey:(NSString *)taskKey {
     NSNumber *sessionTaskID = self.sessionTaskIDs[taskKey];
     if (sessionTaskID) {
         NSUInteger taskID = sessionTaskID.unsignedIntegerValue;
-        for (NSURLSessionTask* task in self.tasks) {
+        for (NSURLSessionTask *task in self.tasks) {
             if (task.taskIdentifier == taskID) {
                 if (task.ar_shouldCancelDuplicatedTask && task.state != NSURLSessionTaskStateCanceling && task.state != NSURLSessionTaskStateCompleted) {
                     [task cancel];

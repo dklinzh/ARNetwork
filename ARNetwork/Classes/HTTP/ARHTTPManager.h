@@ -59,6 +59,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setValue:(nullable NSString *)value forHTTPHeaderField:(NSString *)field;
 
+- (void)cancelAllSessionTasks;
+
 @end
 
 @interface ARHTTPManager (Session)

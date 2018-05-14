@@ -37,7 +37,7 @@
 
 #else
 
-#define AR_TASK_TIMING_BEGIN
+#define AR_TASK_TIMING_BEGIN(method)
 #define AR_TASK_TIMING_END(info)
 #define AR_RESPONSE_PROCESS_COMPLETED(result)
 

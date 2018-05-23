@@ -43,12 +43,18 @@
 
 #endif
 
+@interface AFHTTPSessionManager ()
+@property (readwrite, nonatomic, strong) NSURL *baseURL;
+@end
+
 @interface ARHTTPManager ()
 @property (nonatomic, strong) ARHTTPOperation *operation;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, NSNumber *> *sessionTaskIDs;
 @end
 
 @implementation ARHTTPManager
+
+static NSBundle *_certificatesBundle;
 
 - (instancetype)initWithHTTPOperation:(ARHTTPOperation *)operation {
     return [self initWithBaseURL:nil sessionConfiguration:nil httpOperation:operation];
@@ -100,6 +106,8 @@
         } else {
             [self setTaskWillPerformHTTPRedirectionBlock:nil];
         }
+        
+        [self validateSSLCertificateInBundle:_certificatesBundle];
     }
     
     return self;
@@ -374,6 +382,24 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
     for (NSURLSessionTask *task in self.tasks) {
         [task cancel];
     }
+}
+
+- (void)validateSSLCertificateInBundle:(NSBundle *)bundle {
+    if (bundle) {
+        //A security policy configured with `AFSSLPinningModeCertificate/AFSSLPinningModePublicKey` can only be applied on a manager with a secure base URL (i.e. https)
+        if (!self.baseURL) {
+            self.baseURL = [NSURL URLWithString:@"https://"];
+        }
+        
+        AFSecurityPolicy *securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeCertificate withPinnedCertificates:[AFSecurityPolicy certificatesInBundle:bundle]];
+        securityPolicy.allowInvalidCertificates = NO;
+        securityPolicy.validatesDomainName = YES;
+        self.securityPolicy = securityPolicy;
+    }
+}
+
++ (void)setSSLCertificateInBundle:(NSBundle *)bundle {
+    _certificatesBundle = bundle;
 }
 
 #pragma mark - Private

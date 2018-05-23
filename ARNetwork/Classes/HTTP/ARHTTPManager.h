@@ -61,6 +61,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)cancelAllSessionTasks;
 
+- (void)validateSSLCertificateInBundle:(NSBundle *)bundle;
+
++ (void)setSSLCertificateInBundle:(NSBundle *)bundle;
+
 @end
 
 @interface ARHTTPManager (Session)

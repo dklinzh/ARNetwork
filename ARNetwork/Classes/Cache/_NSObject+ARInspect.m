@@ -91,7 +91,7 @@
             NSArray *splitEncodeType = [encodeType componentsSeparatedByString:@"\""];
             propertyType = (splitEncodeType.count > 1) ? splitEncodeType[1] : [self ar_typeNameForTypeEncoding:encodeType];
         } else {
-            ARLogError(@"Could not parse attributes for property called `%@` of <%@>å", propertyName, NSStringFromClass(self.class));
+            ARLogError(@"Could not parse attributes for property called `%@` of <%@>", propertyName, NSStringFromClass(self.class));
         }
     }
     
@@ -177,8 +177,10 @@
     class = NSClassFromString(className);
     
     // Warning.
-    //    if (class == nil)
-    //    { ARLogError(@"No class called `%@` in runtime", className); }
+    if (!class) {
+        ARLogError(@"No class called `%@` in runtime", className);
+        
+    }
     
     return class;
 }

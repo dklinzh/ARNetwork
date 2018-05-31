@@ -188,24 +188,24 @@
 - (void)resetDefaultValueForKey:(NSString *)key {
     NSDictionary *defaultPropertyValues = [self.class defaultPropertyValues];
     id defaultValue = [defaultPropertyValues valueForKey:key];
+    ARAssert(!defaultValue, @"Reset default value to the property '%@' of class '%@'", key, self.class);
     if (defaultValue) {
-        ARLogWarn(@"Reset default value to the property '%@' of class '%@'", key, self.class);
         [self setValue:defaultValue forKey:key];
     } else {
         id value = [self valueForKey:key];
         if (value) {
             if ([value isKindOfClass:NSValue.class]) {
+                ARAssert([value isEqual:@(0)], @"Reset default value to the property '%@' of class '%@'", key, self.class);
                 if (![value isEqual:@(0)]) {
-                    ARLogWarn(@"Reset default value to the property '%@' of class '%@'", key, self.class);
                     [self setValue:@(0) forKey:key];
                 }
             } else if ([value conformsToProtocol:@protocol(RLMCollection)]) {
+                ARAssert([value count] == 0, @"Reset default value to the property '%@' of class '%@'", key, self.class);
                 if ([value count] > 0) {
-                    ARLogWarn(@"Reset default value to the property '%@' of class '%@'", key, self.class);
                     [value removeAllObjects];
                 }
             } else {
-                ARLogWarn(@"Reset default value to the property '%@' of class '%@'", key, self.class);
+                ARAssert(NO, @"Reset default value to the property '%@' of class '%@'", key, self.class);
                 [self setValue:nil forKey:key];
             }
         }
@@ -255,7 +255,7 @@
             value = [NSString stringWithFormat:@"%@", value];
         }
     } else if ([class conformsToProtocol:@protocol(RLMThreadConfined)]) {
-        ARLogError(@"The type of key-value does not match! Key<%@> != Value<%@>", class, [value class]);
+        ARAssert(NO, @"The type of key-value does not match! Key<%@> != Value<%@>", class, [value class]);
         return;
     }
     

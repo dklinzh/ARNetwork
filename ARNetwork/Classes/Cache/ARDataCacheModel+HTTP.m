@@ -118,7 +118,7 @@
                 *cacheType = ARCacheTypeOnlyLoad;
             }
         } else {
-            ARLogVerbose(@"Cache<%@>: %d, %@", NSStringFromClass(self.class), ARCacheErrorNone,  @"Have no cache in local.");
+            ARLogVerbose(@"Cache<%@>: %ld, %@", NSStringFromClass(self.class), (long)ARCacheErrorNone,  @"Have no cache in local.");
             
             if (*cacheType == ARCacheTypeOnlyLoad) {
                 *cacheType |= ARCacheTypeOnlyUpdate;
@@ -133,8 +133,7 @@
         if (failure) {
             failure(ARCacheErrorSource, @"Format of data source is wrong.");
         }
-        ARLogError(@"Cache<%@>: %d, %@", NSStringFromClass(self.class), ARCacheErrorSource,  @"Type of data source is wrong.");
-        
+        ARAssert(NO, @"Cache<%@>: %ld, %@", NSStringFromClass(self.class), (long)ARCacheErrorSource,  @"Type of data source is wrong.");
         return;
     }
     

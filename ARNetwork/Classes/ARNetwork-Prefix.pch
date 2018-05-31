@@ -16,6 +16,8 @@
 
 #ifdef DEBUG
 
+#define ARAssert(condition, desc, ...)  NSAssert(condition, @"[%@] 🚫 " desc, ARNetworkDomain, ##__VA_ARGS__)
+
 #define ARLogLevel(level, frmt, ...) NSLog(@"[%@] %@ " frmt, ARNetworkDomain, level, ##__VA_ARGS__)
 
 #define ARLogVerbose(frmt, ...)     ARLogLevel(@"|VERBOSE|🌐|", frmt, ##__VA_ARGS__)
@@ -29,11 +31,16 @@
 
 #else
 
+#define ARAssert(condition, desc, ...)
+
+#define ARLogLevel(level, frmt, ...)
+
 #define ARLogVerbose(frmt, ...)
 #define ARLogDebug(frmt, ...)
 #define ARLogInfo(frmt, ...)
 #define ARLogWarn(frmt, ...)
 #define ARLogError(frmt, ...)
+
 #define ARLogSuccess(frmt, ...)
 #define ARLogFailure(frmt, ...)
 

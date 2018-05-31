@@ -51,8 +51,8 @@ static inline NSString * ar_httpMockKey(NSString *httMethod, NSURL *url) {
     }
     
     NSURL *url = [NSURL URLWithString:urlString];
+    ARAssert(url, @"Mock url: `%@` is invalid.", urlString);
     if (!url) {
-        ARLogError(@"Mock url: `%@` is invalid.", urlString);
         return;
     }
     
@@ -64,8 +64,8 @@ static inline NSString * ar_httpMockKey(NSString *httMethod, NSURL *url) {
     }
     
     NSString *filePath = OHPathForFileInBundle(fileName, [NSBundle mainBundle]);
+    ARAssert(filePath, @"Mock file: `%@` is not found.", fileName);
     if (!filePath) {
-        ARLogWarn(@"Mock file: `%@` is not found.", fileName);
         return;
     }
     

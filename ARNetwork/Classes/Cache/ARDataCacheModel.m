@@ -10,6 +10,7 @@
 #import "_NSObject+ARInspect.h"
 #import "_ARDataCacheManager_Private.h"
 #import "_ARDataCacheModel_Private.h"
+#import "RLMRealm+ARWrite.h"
 
 @implementation ARDataCacheModel
 
@@ -379,7 +380,7 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
                                 
                                 [deletedObjs addObject:item];
                             }
-                            [[self.class ar_defaultRealm] deleteObjects:deletedObjs];
+                            [[self.class ar_defaultRealm] ar_cascadeDeleteObjcets:deletedObjs];
                             primarySet = nil;
                             
                             [objs removeAllObjects];
@@ -394,7 +395,7 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
                                 }
                             }
                         } else {
-                            [[self.class ar_defaultRealm] deleteObjects:objs];
+                            [[self.class ar_defaultRealm] ar_cascadeDeleteObjcets:objs];
                             for (id item in values) {
                                 if ([item isKindOfClass:NSDictionary.class]) {
                                     [objs addObject:[[clazz alloc] initDataCache:item]];

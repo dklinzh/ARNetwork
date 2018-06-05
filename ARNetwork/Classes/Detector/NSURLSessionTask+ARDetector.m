@@ -6,7 +6,7 @@
 //  Copyright (c) 2018 Daniel Lin. All rights reserved.
 
 #import "NSURLSessionTask+ARDetector.h"
-#import "_NSObject+ARProperty.h"
+#import <objc/runtime.h>
 
 @interface UIViewController (ARPrivate)
 - (instancetype)ar_topViewController;
@@ -47,14 +47,32 @@
 
 @implementation NSURLSessionTask (ARDetector)
 
-@dynamic ar_loadingDetective, ar_loadingSuperView;
+- (BOOL)ar_loadingDetective {
+    return objc_getAssociatedObject(self, @selector(ar_loadingDetective));
+}
 
-+ (void)load {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        [self _addBasicProperty:@"ar_loadingDetective" encodingType:@encode(BOOL)];
-        [self _addObjectProperty:@"ar_loadingSuperView"];
-    });
+- (void)setAr_loadingDetective:(BOOL)ar_loadingDetective {
+    if (ar_loadingDetective != self.ar_loadingDetective) {
+        SEL keySEL = @selector(ar_loadingDetective);
+        NSString *key = NSStringFromSelector(keySEL);
+        [self willChangeValueForKey:key];
+        objc_setAssociatedObject(self, keySEL, @(ar_loadingDetective), OBJC_ASSOCIATION_ASSIGN);
+        [self didChangeValueForKey:key];
+    }
+}
+
+- (UIView *)ar_loadingSuperView {
+    return objc_getAssociatedObject(self, @selector(ar_loadingSuperView));
+}
+
+- (void)setAr_loadingSuperView:(UIView *)ar_loadingSuperView {
+    if (ar_loadingSuperView != self.ar_loadingSuperView) {
+        SEL keySEL = @selector(ar_loadingSuperView);
+        NSString *key = NSStringFromSelector(keySEL);
+        [self willChangeValueForKey:key];
+        objc_setAssociatedObject(self, keySEL, ar_loadingSuperView, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        [self didChangeValueForKey:key];
+    }
 }
 
 - (void)ar_detectLoading {

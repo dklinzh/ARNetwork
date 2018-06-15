@@ -133,7 +133,7 @@
                 *cacheType = ARCacheTypeOnlyLoad;
             }
         } else {
-            ARLogVerbose(@"Cache<%@>: %d, %@", NSStringFromClass(self.class), ARCacheErrorNone,  @"Have no cache in local.");
+            ARLogVerbose(@"Cache<%@>: %ld, %@", NSStringFromClass(self.class), (long)ARCacheErrorNone,  @"Have no cache in local.");
             
             if (*cacheType == ARCacheTypeOnlyLoad) {
                 *cacheType |= ARCacheTypeOnlyUpdate;

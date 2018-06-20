@@ -48,7 +48,7 @@
 @implementation NSURLSessionTask (ARDetector)
 
 - (BOOL)ar_loadingDetective {
-    return objc_getAssociatedObject(self, @selector(ar_loadingDetective));
+    return [(NSNumber *)objc_getAssociatedObject(self, @selector(ar_loadingDetective)) boolValue];
 }
 
 - (void)setAr_loadingDetective:(BOOL)ar_loadingDetective {
@@ -56,7 +56,7 @@
         SEL keySEL = @selector(ar_loadingDetective);
         NSString *key = NSStringFromSelector(keySEL);
         [self willChangeValueForKey:key];
-        objc_setAssociatedObject(self, keySEL, @(ar_loadingDetective), OBJC_ASSOCIATION_ASSIGN);
+        objc_setAssociatedObject(self, keySEL, @(ar_loadingDetective), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         [self didChangeValueForKey:key];
     }
 }

@@ -11,7 +11,7 @@
 @implementation NSURLSessionTask (ARHTTP)
 
 - (BOOL)ar_shouldCancelDuplicatedTask {
-    return objc_getAssociatedObject(self, @selector(ar_shouldCancelDuplicatedTask));
+    return [(NSNumber *)objc_getAssociatedObject(self, @selector(ar_shouldCancelDuplicatedTask)) boolValue];
 }
 
 - (void)setAr_shouldCancelDuplicatedTask:(BOOL)ar_shouldCancelDuplicatedTask {
@@ -19,7 +19,7 @@
         SEL keySEL = @selector(ar_shouldCancelDuplicatedTask);
         NSString *key = NSStringFromSelector(keySEL);
         [self willChangeValueForKey:key];
-        objc_setAssociatedObject(self, keySEL, @(ar_shouldCancelDuplicatedTask), OBJC_ASSOCIATION_ASSIGN);
+        objc_setAssociatedObject(self, keySEL, @(ar_shouldCancelDuplicatedTask), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         [self didChangeValueForKey:key];
     }
 }

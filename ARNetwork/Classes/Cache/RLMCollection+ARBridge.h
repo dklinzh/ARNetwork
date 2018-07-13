@@ -10,16 +10,20 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RLMArray<RLMObjectType> (ARBridge)
+@protocol ARCollectionBridge <NSFastEnumeration>
 
-- (NSArray<RLMObjectType> *)ar_primitiveArray;
+- (NSArray *)ar_primitiveArray;
+
+- (void)ar_setValue:(nullable id)value forKeyPath:(NSString *)keyPath;
 
 @end
 
-@interface RLMResults<RLMObjectType> (ARBridge)
-
+@interface RLMArray<RLMObjectType> (ARBridge) <ARCollectionBridge>
 - (NSArray<RLMObjectType> *)ar_primitiveArray;
+@end
 
+@interface RLMResults<RLMObjectType> (ARBridge) <ARCollectionBridge>
+- (NSArray<RLMObjectType> *)ar_primitiveArray;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -18,6 +18,16 @@
     return [array copy];
 }
 
+- (void)ar_setValue:(id)value forKeyPath:(NSString *)keyPath {
+    if (self.count == 0 || self.invalidated || self.type != RLMPropertyTypeObject) {
+        return;
+    }
+    
+    [self.realm beginWriteTransaction];
+    [self setValue:value forKeyPath:keyPath];
+    [self.realm commitWriteTransaction];
+}
+
 @end
 
 @implementation RLMResults (ARBridge)
@@ -28,6 +38,16 @@
         [array addObject:item];
     }
     return [array copy];
+}
+
+- (void)ar_setValue:(id)value forKeyPath:(NSString *)keyPath {
+    if (self.count == 0 || self.invalidated || self.type != RLMPropertyTypeObject) {
+        return;
+    }
+    
+    [self.realm beginWriteTransaction];
+    [self setValue:value forKeyPath:keyPath];
+    [self.realm commitWriteTransaction];
 }
 
 @end

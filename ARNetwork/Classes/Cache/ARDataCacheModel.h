@@ -146,7 +146,7 @@ RLM_ARRAY_TYPE(ARDataCacheModel)
 
 + (instancetype)ar_resolveThreadSafeReference:(RLMThreadSafeReference *)reference;
 
-- (instancetype)ar_resolveMainThreadSafeReference;
+- (instancetype)ar_resolveMainThreadSafeReference __attribute__ ((deprecated));;
 
 @end
 

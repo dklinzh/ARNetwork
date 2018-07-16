@@ -72,7 +72,7 @@
 		7932155579FA8FA8751DDB06 /* Pods_ARNetwork_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ARNetwork_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		84FF111489CAE4D2F33364B7 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
-		B12EBA07FD66F85C1995F59C /* ARNetwork.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = ARNetwork.podspec; path = ../ARNetwork.podspec; sourceTree = "<group>"; };
+		B12EBA07FD66F85C1995F59C /* ARNetwork.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = ARNetwork.podspec; path = ../ARNetwork.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		C2C0343C1DFFE63200EE2AEA /* ARNetwork-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "ARNetwork-Prefix.pch"; path = "../ARNetwork/Classes/ARNetwork-Prefix.pch"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 

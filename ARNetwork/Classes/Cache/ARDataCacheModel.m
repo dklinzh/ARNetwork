@@ -270,7 +270,7 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
     static NSMutableDictionary<NSString *, NSMutableDictionary *> *ar_primaryExistsTemp;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        ar_primaryExistsTemp = [NSMutableDictionary dictionary];
+        ar_primaryExistsTemp = [[NSMutableDictionary alloc] init];
     });
     return ar_primaryExistsTemp;
 }

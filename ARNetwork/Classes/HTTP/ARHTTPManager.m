@@ -426,7 +426,7 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
         return _sessionTaskIDs;
     }
     
-    return _sessionTaskIDs = [NSMutableDictionary dictionary];
+    return _sessionTaskIDs = [[NSMutableDictionary alloc] init];
 }
 
 @end

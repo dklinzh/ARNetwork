@@ -126,7 +126,7 @@
             return _superViewLoadingCounts;
         }
         
-        return _superViewLoadingCounts = [NSMutableDictionary dictionary];
+        return _superViewLoadingCounts = [[NSMutableDictionary alloc] init];
     }
 }
 

@@ -36,7 +36,7 @@ static NSMutableDictionary<NSString *, id<OHHTTPStubsDescriptor>> * ar_httpMocks
     static NSMutableDictionary<NSString *, id<OHHTTPStubsDescriptor>> *ar_httpMocks;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        ar_httpMocks = [NSMutableDictionary dictionary];
+        ar_httpMocks = [[NSMutableDictionary alloc] init];
     });
     return ar_httpMocks;
 }

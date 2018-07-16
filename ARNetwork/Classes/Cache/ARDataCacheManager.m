@@ -137,14 +137,13 @@ static NSMutableDictionary<NSString *, ARDataCacheManager *> * ar_schemaManagers
     static NSMutableDictionary<NSString *, ARDataCacheManager *> *arSchemaManagers;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        arSchemaManagers = [NSMutableDictionary dictionary];
+        arSchemaManagers = [[NSMutableDictionary alloc] init];
     });
     return arSchemaManagers;
 }
 
 - (void)registerDataCacheModels:(NSArray<Class> *)classes {
-    NSMutableArray *objectClasses = [NSMutableArray arrayWithArray:classes];
-    self.defaultConfig.objectClasses = objectClasses;
+    self.defaultConfig.objectClasses = [[NSMutableArray alloc] initWithArray:classes];
     
     for (Class clazz in classes) {
         if ([clazz isSubclassOfClass:ARDataCacheModel.class]) {

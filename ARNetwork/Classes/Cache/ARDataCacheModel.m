@@ -178,8 +178,8 @@
             }
         }
         
-        if ([self respondsToSelector:@selector(ar_setValueForExtraProperties)]) {
-            [self ar_setValueForExtraProperties];
+        if ([self respondsToSelector:@selector(ar_transactionForPropertyValues:)]) {
+            [self ar_transactionForPropertyValues:data];
         }
     }
     return self;
@@ -285,13 +285,19 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
         if (inWriteTransaction) {
             [realm beginWriteTransaction];
         }
+        if ([self respondsToSelector:@selector(ar_transactionDidBeginWrite)]) {
+            [self ar_transactionDidBeginWrite];
+        }
         
         if ([self.class primaryKey]) {
             [realm addOrUpdateObject:self];
         } else {
-            [realm addObject:self]; // FIXME: properties with primary key
+            [realm addObject:self];
         }
         
+        if ([self respondsToSelector:@selector(ar_transactionWillCommitWrite)]) {
+            [self ar_transactionWillCommitWrite];
+        }
         if (inWriteTransaction) {
             [realm commitWriteTransaction];
         }
@@ -307,11 +313,17 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
         if (inWriteTransaction) {
             [realm beginWriteTransaction];
         }
+        if ([self respondsToSelector:@selector(ar_transactionDidBeginWrite)]) {
+            [self ar_transactionDidBeginWrite];
+        }
         
         [self updateDataCacheWithDataPartInTransaction:data];
         self._AR_DATE_MODIFIED = [NSDate date];
         self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[self.class expiredInterval] sinceDate:self._AR_DATE_MODIFIED];
         
+        if ([self respondsToSelector:@selector(ar_transactionWillCommitWrite)]) {
+            [self ar_transactionWillCommitWrite];
+        }
         if (inWriteTransaction) {
             [realm commitWriteTransaction];
         }
@@ -421,8 +433,8 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
         }
     }
     
-    if ([self respondsToSelector:@selector(ar_setValueForExtraProperties)]) {
-        [self ar_setValueForExtraProperties];
+    if ([self respondsToSelector:@selector(ar_transactionForPropertyValues:)]) {
+        [self ar_transactionForPropertyValues:data];
     }
 }
 

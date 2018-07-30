@@ -13,8 +13,9 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol ARDataCacheModelTransaction <NSObject>
 
 @optional
-- (void)ar_setValueForExtraProperties;
-
+- (void)ar_transactionForPropertyValues:(NSDictionary *)data;
+- (void)ar_transactionDidBeginWrite;
+- (void)ar_transactionWillCommitWrite;
 @end
 
 /**

@@ -275,9 +275,10 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
     return ar_primaryExistsTemp;
 }
 
-- (void)_addDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params {
+- (void)_addDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params dataCache:(NSDictionary *)data {
     if (!self.realm) {
         self._AR_CACHE_KEY = ar_cacheKey(urlStr, params);
+        self._AR_CACHE_CODE = ar_cacheCode(data);
         self._AR_DATE_MODIFIED = [NSDate date];
         self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[self.class expiredInterval] sinceDate:self._AR_DATE_MODIFIED];
         RLMRealm *realm = [self.class ar_defaultRealm];
@@ -308,6 +309,7 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
 
 - (void)updateDataCache:(NSDictionary *)data {
     if (!self.isInvalidated) {
+        NSString *cacheCode = ar_cacheCode(data);
         RLMRealm *realm = [self.class ar_defaultRealm];
         BOOL inWriteTransaction = !realm.inWriteTransaction;
         if (inWriteTransaction) {
@@ -317,9 +319,18 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
             [self ar_transactionDidBeginWrite];
         }
         
-        [self updateDataCacheWithDataPartInTransaction:data];
-        self._AR_DATE_MODIFIED = [NSDate date];
-        self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[self.class expiredInterval] sinceDate:self._AR_DATE_MODIFIED];
+        if (self._AR_CACHE_CODE && ![cacheCode isEqualToString:self._AR_CACHE_CODE]) {
+            self._AR_CACHE_CODE = cacheCode;
+            [self updateDataCacheWithDataPartInTransaction:data];
+        } else if (!self._AR_CACHE_CODE) {
+            [self updateDataCacheWithDataPartInTransaction:data];
+        }
+        if (self._AR_DATE_MODIFIED) {
+            self._AR_DATE_MODIFIED = [NSDate date];
+        }
+        if (self._AR_DATE_EXPIRED) {
+            self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[self.class expiredInterval] sinceDate:self._AR_DATE_MODIFIED];
+        }
         
         if ([self respondsToSelector:@selector(ar_transactionWillCommitWrite)]) {
             [self ar_transactionWillCommitWrite];

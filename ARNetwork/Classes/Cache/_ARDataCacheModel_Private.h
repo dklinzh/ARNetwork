@@ -16,18 +16,23 @@
 @property NSString * _AR_CACHE_KEY;
 
 /**
+ The SHA1 code of a specific cache data with the kind of class `ARDataCacheModel`. (Read only)
+ */
+@property NSString * _AR_CACHE_CODE;
+
+/**
  The modified date of a specific cache data with the kind of class `ARDataCacheModel`. (Read only)
  */
 @property NSDate * _AR_DATE_MODIFIED;
 
 /**
- The expired date for a specific cache data with the kind of class `ARDataCacheModel`. (Read only)
+ The expired date of a specific cache data with the kind of class `ARDataCacheModel`. (Read only)
  */
 @property NSDate * _AR_DATE_EXPIRED;
 
 + (instancetype)_dataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params;
 
-- (void)_addDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params;
+- (void)_addDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params dataCache:(NSDictionary *)data;
 
 - (void)_clearPrimaryExistsTemp;
 
@@ -35,4 +40,8 @@
 
 static inline NSString * ar_cacheKey(NSString *urlStr, NSDictionary *params) {
     return ar_sessionTaskKey(urlStr, params);
+}
+
+static inline NSString * ar_cacheCode(NSDictionary *data) {
+    return data.description.ar_SHA1;
 }

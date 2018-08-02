@@ -32,7 +32,7 @@
 
 + (instancetype)_dataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params;
 
-- (void)_addDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params dataCache:(NSDictionary *)data;
+- (void)_addOrUpdateDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params dataCache:(NSDictionary *)data;
 
 - (void)_clearPrimaryExistsTemp;
 

@@ -145,7 +145,7 @@
             }
         } else {
             __kindof ARDataCacheModel *newData = [[self alloc] initDataCache:data];
-            [newData _addDataCacheWithUrl:urlStr params:params dataCache:data];
+            [newData _addOrUpdateDataCacheWithUrl:urlStr params:params dataCache:data];
             if (success) {
                 success(newData, msg, NO);
             }

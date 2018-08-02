@@ -275,36 +275,48 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
     return ar_primaryExistsTemp;
 }
 
-- (void)_addDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params dataCache:(NSDictionary *)data {
+- (void)_addOrUpdateDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params dataCache:(NSDictionary *)data {
     if (!self.realm) {
         self._AR_CACHE_KEY = ar_cacheKey(urlStr, params);
         self._AR_CACHE_CODE = ar_cacheCode(data);
         self._AR_DATE_MODIFIED = [NSDate date];
         self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[self.class expiredInterval] sinceDate:self._AR_DATE_MODIFIED];
-        RLMRealm *realm = [self.class ar_defaultRealm];
-        BOOL inWriteTransaction = !realm.inWriteTransaction;
-        if (inWriteTransaction) {
-            [realm beginWriteTransaction];
-        }
-        if ([self respondsToSelector:@selector(ar_transactionDidBeginWrite)]) {
-            [self ar_transactionDidBeginWrite];
-        }
-        
-        if ([self.class primaryKey]) {
-            [realm addOrUpdateObject:self];
-        } else {
-            [realm addObject:self];
-        }
-        
-        if ([self respondsToSelector:@selector(ar_transactionWillCommitWrite)]) {
-            [self ar_transactionWillCommitWrite];
-        }
-        if (inWriteTransaction) {
-            [realm commitWriteTransaction];
-        }
+        [self _addOrUpdateDataCache];
     }
     
     [self _clearPrimaryExistsTemp];
+}
+
+- (void)_addOrUpdateDataCache {
+    RLMRealm *realm = [self.class ar_defaultRealm];
+    BOOL inWriteTransaction = !realm.inWriteTransaction;
+    if (inWriteTransaction) {
+        [realm beginWriteTransaction];
+    }
+    if ([self respondsToSelector:@selector(ar_transactionDidBeginWrite)]) {
+        [self ar_transactionDidBeginWrite];
+    }
+    
+    if ([self.class primaryKey]) {
+        [realm addOrUpdateObject:self];
+    } else {
+        [realm addObject:self];
+    }
+    
+    if ([self respondsToSelector:@selector(ar_transactionWillCommitWrite)]) {
+        [self ar_transactionWillCommitWrite];
+    }
+    if (inWriteTransaction) {
+        [realm commitWriteTransaction];
+    }
+}
+
++ (instancetype)addOrUpdateDataCache:(NSDictionary *)data {
+    __kindof ARDataCacheModel *model = [[self alloc] initDataCache:data];
+    if (!model.realm) {
+        [model _addOrUpdateDataCache];
+    }
+    return model;
 }
 
 - (void)updateDataCache:(NSDictionary *)data {

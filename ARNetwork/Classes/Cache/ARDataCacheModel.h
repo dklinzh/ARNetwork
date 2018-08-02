@@ -134,6 +134,14 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initDataCache:(NSDictionary *)data;
 
 /**
+ Adds or updates an existing object of data cache into the default Realm database.
+
+ @param data A given dictionary to modeling.
+ @return An instance of this kind of object.
+ */
++ (instancetype)addOrUpdateDataCache:(NSDictionary *)data;
+
+/**
  Update the cache data of this object type in the default Realm database.
 
  @param data A given dictionary to update the cache data in the default Realm database.

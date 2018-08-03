@@ -127,7 +127,7 @@
         NSArray<NSString *> *propertyNames = [self propertyNames];
         for (NSString *key in propertyNames) {
             id value = [data valueForKey:key];
-            if (value) {
+            if (value && ![value isKindOfClass:NSNull.class]) {
                 if ([value isKindOfClass:NSDictionary.class]) {
                     Class clazz = [self ar_classOfPropertyNamed:key];
                     if ([clazz isSubclassOfClass:ARDataCacheModel.class]) {
@@ -373,7 +373,7 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
         }
         
         id value = [data valueForKey:key];
-        if (value) {
+        if (value && ![value isKindOfClass:NSNull.class]) {
             if ([value isKindOfClass:NSDictionary.class]) {
                 Class clazz = [self ar_classOfPropertyNamed:key];
                 if ([clazz isSubclassOfClass:ARDataCacheModel.class]) {

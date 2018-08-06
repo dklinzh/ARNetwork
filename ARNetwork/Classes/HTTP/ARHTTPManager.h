@@ -77,6 +77,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setHTTPHeaderWithAuthorization:(nullable NSString *)value;
 
+- (void)setHTTPHeaderFields:(NSDictionary<NSString *, NSString *> *)headerFields;
+
 @end
 
 NS_ASSUME_NONNULL_END

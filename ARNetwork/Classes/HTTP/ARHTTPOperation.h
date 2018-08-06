@@ -28,7 +28,7 @@ typedef NS_ENUM(NSUInteger, ARRequestEncodedType) {
 
 @property (nonatomic, copy, readonly, nullable) NSOrderedSet<Class> *protocolClasses;
 
-@property (nonatomic, copy, readonly, nullable) NSDictionary<NSString *, id> *extraHTTPHeaders;
+@property (nonatomic, copy, readonly, nullable) NSDictionary<NSString *, NSString*> *extraHTTPHeaders;
 
 - (NSString *)processedRequestURL:(NSString *)urlStr;
 

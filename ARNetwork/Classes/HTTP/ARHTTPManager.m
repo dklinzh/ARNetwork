@@ -81,11 +81,9 @@ static NSBundle *_certificatesBundle;
                 break;
         }
         
-        NSDictionary<NSString *, id> *httpHeaders = operation.extraHTTPHeaders;
+        NSDictionary<NSString *, NSString *> *httpHeaders = operation.extraHTTPHeaders;
         if (httpHeaders) {
-            [httpHeaders enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
-                [self.requestSerializer setValue:obj forHTTPHeaderField:key];
-            }];
+            [self setHTTPHeaderFields:httpHeaders];
         }
         
         self.requestSerializer.timeoutInterval = operation.timeoutInterval;
@@ -472,6 +470,12 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
 
 - (void)setHTTPHeaderWithAuthorization:(NSString *)value {
     [self setValue:value forHTTPHeaderField:@"Authorization"];
+}
+
+- (void)setHTTPHeaderFields:(NSDictionary<NSString *, NSString *> *)headerFields {
+    [headerFields enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, NSString * _Nonnull obj, BOOL * _Nonnull stop) {
+        [self.requestSerializer setValue:obj forHTTPHeaderField:key];
+    }];
 }
 
 @end

@@ -99,6 +99,8 @@
         primaryValue = [self propertyForKey:primaryKey fromDatas:data];
         if (primaryValue) {
             primaryExist = [self.class ar_objectForPrimaryKey:primaryValue];
+        } else {
+            ARAssert(NO, @"The value of primary key `%@` of Class<%@> was nil.", primaryKey, self.class);
         }
     }
     
@@ -138,9 +140,9 @@
                     if ([obj isKindOfClass:RLMArray.class]) {
                         RLMArray *objs = (RLMArray *)obj;
                         [objs removeAllObjects];
+                        NSArray *values = (NSArray *)value;
                         if (objs.type == RLMPropertyTypeObject) {
                             Class clazz = NSClassFromString(objs.objectClassName);
-                            NSArray *values = (NSArray *)value;
                             NSMutableSet *primarySet = [NSMutableSet set];
                             for (id item in values) {
                                 if ([item isKindOfClass:NSDictionary.class]) {
@@ -154,6 +156,8 @@
                                             
                                             [primarySet addObject:primaryValue];
                                             [objs addObject:[[clazz alloc] initDataCache:item]];
+                                        } else {
+                                            ARAssert(NO, @"The value of primary key `%@` of Class<%@> was nil.", primaryKey, clazz);
                                         }
                                     } else {
                                         [objs addObject:[[clazz alloc] initDataCache:item]];
@@ -167,7 +171,11 @@
                                    objs.type == RLMPropertyTypeDouble ||
                                    objs.type == RLMPropertyTypeDate ||
                                    objs.type == RLMPropertyTypeData) {
-                            [objs addObjects:value];
+                            for (id item in values) {
+                                if (![item isKindOfClass:NSNull.class]) {
+                                    [objs addObject:item];
+                                }
+                            }
                         }
                     }
                 } else {
@@ -237,7 +245,7 @@
 
 - (id)propertyForKey:(NSString *)key fromDatas:(NSDictionary *)datas {
     id value = [datas valueForKey:key];
-    if (!value) {
+    if (!value || [value isKindOfClass:NSNull.class]) {
         return nil;
     }
     
@@ -388,8 +396,8 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
                 id obj = [self valueForKey:key];
                 if ([obj isKindOfClass:RLMArray.class]) {
                     RLMArray *objs = (RLMArray *)obj;
+                    NSArray *values = (NSArray *)value;
                     if (objs.type == RLMPropertyTypeObject) {
-                        NSArray *values = (NSArray *)value;
                         Class clazz = NSClassFromString(objs.objectClassName);
                         NSString *primaryKey = [clazz primaryKey];
                         if (primaryKey) {
@@ -398,12 +406,16 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
                             for (id item in values) {
                                 if ([item isKindOfClass:NSDictionary.class]) {
                                     id key = [[clazz alloc] propertyForKey:primaryKey fromDatas:item];
-                                    if ([primarySet containsObject:key]) {
-                                        continue;
+                                    if (key) {
+                                        if ([primarySet containsObject:key]) {
+                                            continue;
+                                        }
+                                        
+                                        [primarySet addObject:key];
+                                        [uniqueValues addObject:item];
+                                    } else {
+                                        ARAssert(NO, @"The value of primary key `%@` of Class<%@> was nil.", primaryKey, clazz);
                                     }
-                                    
-                                    [primarySet addObject:key];
-                                    [uniqueValues addObject:item];
                                 }
                             }
                             
@@ -421,12 +433,16 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
                             [objs removeAllObjects];
                             for (id item in uniqueValues) {
                                 id primaryValue = [[clazz alloc] propertyForKey:primaryKey fromDatas:item];
-                                id primaryExist = [clazz ar_objectForPrimaryKey:primaryValue];
-                                if (primaryExist) {
-                                    [primaryExist updateDataCacheWithDataPartInTransaction:item];
-                                    [objs addObject:primaryExist];
+                                if (primaryValue) {
+                                    id primaryExist = [clazz ar_objectForPrimaryKey:primaryValue];
+                                    if (primaryExist) {
+                                        [primaryExist updateDataCacheWithDataPartInTransaction:item];
+                                        [objs addObject:primaryExist];
+                                    } else {
+                                        [objs addObject:[[clazz alloc] initDataCache:item]];
+                                    }
                                 } else {
-                                    [objs addObject:[[clazz alloc] initDataCache:item]];
+                                    ARAssert(NO, @"The value of primary key `%@` of Class<%@> was nil.", primaryKey, clazz);
                                 }
                             }
                         } else {
@@ -445,7 +461,11 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
                                objs.type == RLMPropertyTypeDate ||
                                objs.type == RLMPropertyTypeData) {
                         [objs removeAllObjects];
-                        [objs addObjects:value];
+                        for (id item in values) {
+                            if (![item isKindOfClass:NSNull.class]) {
+                                [objs addObject:item];
+                            }
+                        }
                     }
                 }
             } else {

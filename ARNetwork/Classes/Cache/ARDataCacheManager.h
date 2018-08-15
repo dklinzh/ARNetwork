@@ -39,17 +39,17 @@ NS_ASSUME_NONNULL_BEGIN
 // FIXME: ARResponseCacheModel
 + (instancetype)sharedInstance __attribute__ ((deprecated));
 
-- (instancetype)init NS_UNAVAILABLE;
+//- (instancetype)init NS_UNAVAILABLE;
+//
+//- (instancetype)new NS_UNAVAILABLE;
 
-- (instancetype)new NS_UNAVAILABLE;
+- (instancetype)initWithVersion:(NSUInteger)version;
 
-- (instancetype)initDefaultSchemaWithVersion:(NSUInteger)version;
+- (instancetype)initWithVersion:(NSUInteger)version encryption:(BOOL)enabled;
 
-- (instancetype)initDefaultSchemaWithVersion:(NSUInteger)version dataEncryption:(BOOL)enabled;
+- (instancetype)initWithSchema:(NSString *)schemaName version:(NSUInteger)version;
 
-- (instancetype)initSchemaWithName:(NSString *)name version:(NSUInteger)version;
-
-- (instancetype)initSchemaWithName:(NSString *)name version:(NSUInteger)version dataEncryption:(BOOL)enabled;
+- (instancetype)initWithSchema:(NSString *)schemaName version:(NSUInteger)version encryption:(BOOL)enabled;
 
 - (void)registerDataCacheModels:(NSArray<Class> *)classes;
 

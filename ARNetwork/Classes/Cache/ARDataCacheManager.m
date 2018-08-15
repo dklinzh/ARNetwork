@@ -11,7 +11,7 @@
 #import "_ARResponseCacheModel.h"
 #import "ARHTTPManager.h"
 
-static NSString *const kDefaultSchemaName = @"default";
+static NSString *const kDefaultSchemaName = @"dklinzh.arnetwork.default";
 
 @interface ARDataCacheManager ()
 @property (nonatomic, strong) RLMRealmConfiguration *defaultConfig;
@@ -22,25 +22,24 @@ static NSString *const kDefaultSchemaName = @"default";
 
 @implementation ARDataCacheManager
 
-- (instancetype)initDefaultSchemaWithVersion:(NSUInteger)version {
-    return [self initDefaultSchemaWithVersion:version dataEncryption:NO];
+- (instancetype)initWithVersion:(NSUInteger)version {
+    return [self initWithVersion:version encryption:NO];
 }
 
-- (instancetype)initDefaultSchemaWithVersion:(NSUInteger)version dataEncryption:(BOOL)enabled {
-    return [self initSchemaWithName:kDefaultSchemaName version:version dataEncryption:enabled];
+- (instancetype)initWithVersion:(NSUInteger)version encryption:(BOOL)enabled {
+    return [self initWithSchema:kDefaultSchemaName version:version encryption:enabled];
 }
 
-- (instancetype)initSchemaWithName:(NSString *)name version:(NSUInteger)version {
-    return [self initSchemaWithName:name version:version dataEncryption:NO];
+- (instancetype)initWithSchema:(NSString *)schemaName version:(NSUInteger)version {
+    return [self initWithSchema:schemaName version:version encryption:NO];
 }
 
-- (instancetype)initSchemaWithName:(NSString *)name version:(NSUInteger)version dataEncryption:(BOOL)enabled {
+- (instancetype)initWithSchema:(NSString *)schemaName version:(NSUInteger)version encryption:(BOOL)enabled {
     if (self = [super init]) {
-        self.schemaName = name;
-        self.onlyAccessibleWhenUnlocked = NO;
+        self.schemaName = schemaName;
         
-        [self configureWithSchemaVersion:version dataEncryption:enabled];
-        
+        [self _setOnlyAccessibleWhenUnlocked:NO];
+        [self setupWithSchemaVersion:version dataEncryption:enabled];
     }
     return self;
 }
@@ -84,29 +83,43 @@ static NSString *const kDefaultSchemaName = @"default";
 }
 
 - (void)clearAllCaches {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+    [self _asyncCacheExecute:^{
         @autoreleasepool {
             RLMRealm *realm = [self defaultRealm];
             [realm beginWriteTransaction];
             [realm deleteAllObjects];
             [realm commitWriteTransaction];
         }
-    });
+    }];
 }
 
 #pragma mark -
 
 - (void)setOnlyAccessibleWhenUnlocked:(BOOL)onlyAccessibleWhenUnlocked {
-    _onlyAccessibleWhenUnlocked = onlyAccessibleWhenUnlocked;
+    if (_onlyAccessibleWhenUnlocked == onlyAccessibleWhenUnlocked) {
+        return;
+    }
     
+    _onlyAccessibleWhenUnlocked = onlyAccessibleWhenUnlocked;
+    [self _setOnlyAccessibleWhenUnlocked:onlyAccessibleWhenUnlocked];
+}
+
+- (void)_setOnlyAccessibleWhenUnlocked:(BOOL)onlyAccessibleWhenUnlocked {
     NSFileProtectionType protection = onlyAccessibleWhenUnlocked ? NSFileProtectionComplete : NSFileProtectionCompleteUntilFirstUserAuthentication;
     NSString *folderPath = self.defaultConfig.fileURL.URLByDeletingLastPathComponent.path;
     [[NSFileManager defaultManager] setAttributes:@{NSFileProtectionKey: protection} ofItemAtPath:folderPath error:nil];
 }
 
 - (void)setReadOnly:(BOOL)readOnly {
-    _readOnly = readOnly;
+    if (_readOnly == readOnly) {
+        return;
+    }
     
+    _readOnly = readOnly;
+    [self _setReadOnly:readOnly];
+}
+
+- (void)_setReadOnly:(BOOL)readOnly {
     self.defaultConfig.readOnly = readOnly;
 }
 
@@ -116,6 +129,10 @@ static NSString *const kDefaultSchemaName = @"default";
     }
     
     _memoryOnly = memoryOnly;
+    [self _setMemoryOnly:memoryOnly];
+}
+
+- (void)_setMemoryOnly:(BOOL)memoryOnly {
     if (memoryOnly) {
         self.defaultConfig.inMemoryIdentifier = ar_dataCacheID(self.schemaName);
     } else {
@@ -167,7 +184,7 @@ static NSMutableDictionary<NSString *, ARDataCacheManager *> * ar_schemaManagers
     static ARDataCacheManager *sharedInstance;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        sharedInstance = [[ARDataCacheManager alloc] initSchemaWithName:@"" version:0 dataEncryption:true];
+        sharedInstance = [[ARDataCacheManager alloc] initWithSchema:@"" version:0 encryption:true];
         [sharedInstance registerDataCacheModels:@[_ARResponseCacheModel.class]];
     });
     return sharedInstance;
@@ -186,7 +203,7 @@ static NSMutableDictionary<NSString *, ARDataCacheManager *> * ar_schemaManagers
     dispatch_async(self.cacheSchemaQueue, block);
 }
 
-- (void)configureWithSchemaVersion:(uint64_t)version dataEncryption:(BOOL)enabled {
+- (void)setupWithSchemaVersion:(uint64_t)version dataEncryption:(BOOL)enabled {
     dispatch_barrier_async(self.cacheSchemaQueue, ^{
         @autoreleasepool {
             RLMRealmConfiguration *config = self.defaultConfig;

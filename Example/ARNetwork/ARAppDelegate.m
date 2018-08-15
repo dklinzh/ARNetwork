@@ -15,7 +15,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    ARDataCacheManager *manager = [[ARDataCacheManager alloc] initSchemaWithName:@"dklinzh.arnetwork" version:0 dataEncryption:YES];
+    ARDataCacheManager *manager = [[ARDataCacheManager alloc] initWithSchema:@"dklinzh.arnetwork" version:0 encryption:YES];
     [manager registerDataCacheModels:@[ARExampleResultModel.class]];
     
     #ifdef DEBUG

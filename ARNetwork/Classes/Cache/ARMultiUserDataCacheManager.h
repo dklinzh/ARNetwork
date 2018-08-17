@@ -12,7 +12,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ARMultiUserDataCacheManager : ARDataCacheManager
 
-- (void)switchUserDataWithAccount:(NSString *)account;
+- (void)switchUserDataWithAccount:(NSString *)account completion:(nullable void(^)(void))completion;
+
+- (void)clearUserDataCacheWithAccount:(NSString *)account;
+
+- (void)clearUserDataCache;
 @end
 
 NS_ASSUME_NONNULL_END

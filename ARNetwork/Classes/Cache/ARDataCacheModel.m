@@ -51,17 +51,6 @@
 }
 
 #pragma mark -
-+ (NSTimeInterval)expiredInterval {
-    return [ARDataCacheManager _managerWithModelClass:self.class].expiredInterval;
-}
-
-+ (NSArray<NSString *> *)ar_equalValueSkippedProperties {
-    return nil;
-}
-
-+ (NSArray<NSString *> *)ar_reservedProperties {
-    return nil;
-}
 
 + (instancetype)dataCache {
     return [self dataCache:0];
@@ -288,7 +277,7 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
         self._AR_CACHE_KEY = ar_cacheKey(urlStr, params);
         self._AR_CACHE_CODE = ar_cacheCode(data);
         self._AR_DATE_MODIFIED = [NSDate date];
-        self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[self.class expiredInterval] sinceDate:self._AR_DATE_MODIFIED];
+        self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[self.class ar_expiredInterval] sinceDate:self._AR_DATE_MODIFIED];
         [self _addOrUpdateDataCache];
     }
     
@@ -339,7 +328,7 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
             [self ar_transactionDidBeginWrite];
         }
         
-        if (self._AR_CACHE_CODE && ![cacheCode isEqualToString:self._AR_CACHE_CODE]) {
+        if ([self.class ar_shouldForceUpdateWithoutCompare] || (self._AR_CACHE_CODE && ![cacheCode isEqualToString:self._AR_CACHE_CODE])) {
             self._AR_CACHE_CODE = cacheCode;
             [self updateDataCacheWithDataPartInTransaction:data];
         } else if (!self._AR_CACHE_CODE) {
@@ -349,7 +338,7 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
             self._AR_DATE_MODIFIED = [NSDate date];
         }
         if (self._AR_DATE_EXPIRED) {
-            self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[self.class expiredInterval] sinceDate:self._AR_DATE_MODIFIED];
+            self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[self.class ar_expiredInterval] sinceDate:self._AR_DATE_MODIFIED];
         }
         
         if ([self respondsToSelector:@selector(ar_transactionWillCommitWrite)]) {
@@ -479,6 +468,26 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
     if ([self respondsToSelector:@selector(ar_transactionForPropertyValues:)]) {
         [self ar_transactionForPropertyValues:data];
     }
+}
+
+@end
+
+@implementation ARDataCacheModel (Property)
+
++ (NSTimeInterval)ar_expiredInterval {
+    return [ARDataCacheManager _managerWithModelClass:self.class].expiredInterval;
+}
+
++ (NSArray<NSString *> *)ar_equalValueSkippedProperties {
+    return nil;
+}
+
++ (NSArray<NSString *> *)ar_reservedProperties {
+    return nil;
+}
+
++ (BOOL)ar_shouldForceUpdateWithoutCompare {
+    return NO;
 }
 
 @end

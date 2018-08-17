@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)ar_transactionForPropertyValues:(NSDictionary *)data;
 - (void)ar_transactionDidBeginWrite;
 - (void)ar_transactionWillCommitWrite;
+
 @end
 
 /**
@@ -105,27 +106,6 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSUInteger)dataCacheCount;
 
 /**
- Override this method to specify the name of properties that its value will not be updated if the value is equal to the original one.
-
- @return An array of property names.
- */
-+ (nullable NSArray<NSString *> *)ar_equalValueSkippedProperties;
-
-/**
- Override this method to specify the name of properties that should be reserved outside the data source
-
- @return An array of property names.
- */
-+ (nullable NSArray<NSString *> *)ar_reservedProperties;
-
-/**
- Override this method to specify the time interval of expired cache data to this kind of object. Defaults to 0 s.
-
- @return A time interval, in seconds.
- */
-+ (NSTimeInterval)expiredInterval;
-
-/**
  Create an instance of this kind of object with the given dictionary.
 
  @param data A given dictionary to modeling.
@@ -150,6 +130,38 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 RLM_ARRAY_TYPE(ARDataCacheModel)
+
+@interface ARDataCacheModel (Property)
+
+/**
+ Override this method to specify the name of properties that its value will not be updated if the value is equal to the original one.
+ 
+ @return An array of property names.
+ */
++ (nullable NSArray<NSString *> *)ar_equalValueSkippedProperties;
+
+/**
+ Override this method to specify the name of properties that should be reserved outside the data source
+ 
+ @return An array of property names.
+ */
++ (nullable NSArray<NSString *> *)ar_reservedProperties;
+
+/**
+ Override this method to specify the time interval of expired cache data to this kind of object. Defaults to 0 s.
+ 
+ @return A time interval, in seconds.
+ */
++ (NSTimeInterval)ar_expiredInterval;
+
+/**
+ Override this method to determine whether or not the data cache should be updated forcely without hash code comparation.
+
+ @return Defaults to false
+ */
++ (BOOL)ar_shouldForceUpdateWithoutCompare;
+
+@end
 
 @interface ARDataCacheModel (ThreadSafe)
 

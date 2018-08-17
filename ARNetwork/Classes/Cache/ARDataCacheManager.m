@@ -16,11 +16,21 @@ static NSString *const kDefaultSchemaName = @"dklinzh.arnetwork.default";
 @interface ARDataCacheManager ()
 @property (nonatomic, strong) RLMRealmConfiguration *defaultConfig;
 @property (nonatomic, copy) NSString *schemaName;
+@property (nonatomic, assign) NSUInteger schemaVersion;
+@property (nonatomic, assign) BOOL dataEncryption;
 @property (nonatomic, strong) NSURL *defaultFileURL;
 @property (nonatomic, strong) dispatch_queue_t cacheSchemaQueue;
+@property (nonatomic, copy) NSArray<Class> *modelClasses;
 @end
 
 @implementation ARDataCacheManager
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
+- (instancetype)init {
+    return [self initWithVersion:0];
+}
+#pragma clang diagnostic pop
 
 - (instancetype)initWithVersion:(NSUInteger)version {
     return [self initWithVersion:version encryption:NO];
@@ -36,10 +46,11 @@ static NSString *const kDefaultSchemaName = @"dklinzh.arnetwork.default";
 
 - (instancetype)initWithSchema:(NSString *)schemaName version:(NSUInteger)version encryption:(BOOL)enabled {
     if (self = [super init]) {
-        self.schemaName = schemaName;
+        _schemaName = schemaName;
+        _schemaVersion = version;
+        _dataEncryption = enabled;
         
         [self _setOnlyAccessibleWhenUnlocked:NO];
-        [self setupWithSchemaVersion:version dataEncryption:enabled];
     }
     return self;
 }
@@ -78,11 +89,11 @@ static NSString *const kDefaultSchemaName = @"dklinzh.arnetwork.default";
     NSURL *fileURL = [[RLMRealmConfiguration defaultConfiguration].fileURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:[ARNetworkDomain stringByAppendingPathComponent:[NSString stringWithFormat:@"DataCache/%@.schema", self.schemaName]]];
     NSError *error = nil;
     [[NSFileManager defaultManager] createDirectoryAtURL:fileURL withIntermediateDirectories:YES attributes:nil error:&error];
-    NSAssert(!error, @"[ARNetwork] ⚠️ Failed to create default directory of data cache\n%@", error);
+    ARAssert(!error, @"Failed to create default directory of data cache\n%@", error);
     return _defaultFileURL = [fileURL URLByAppendingPathComponent:@"data.ar.realm"];
 }
 
-- (void)clearAllCaches {
+- (void)clearAllDataCaches {
     [self _asyncCacheExecute:^{
         @autoreleasepool {
             RLMRealm *realm = [self defaultRealm];
@@ -159,9 +170,16 @@ static NSMutableDictionary<NSString *, ARDataCacheManager *> * ar_schemaManagers
     return arSchemaManagers;
 }
 
-- (void)registerDataCacheModels:(NSArray<Class> *)classes {
-    self.defaultConfig.objectClasses = [[NSMutableArray alloc] initWithArray:classes];
+- (void)registerModels:(NSArray<Class> *)classes {
+    self.modelClasses = classes;
+    [self setupSchemaConfiguration:^{
+        
+    }];
     
+    [self _registerModels:classes];
+}
+
+- (void)_registerModels:(NSArray<Class> *)classes {
     for (Class clazz in classes) {
         if ([clazz isSubclassOfClass:ARDataCacheModel.class]) {
             [ar_schemaManagers() setValue:self forKey:NSStringFromClass(clazz)];
@@ -172,7 +190,7 @@ static NSMutableDictionary<NSString *, ARDataCacheManager *> * ar_schemaManagers
 + (instancetype)_managerWithModelClass:(Class)clazz {
     NSArray *keys = [NSStringFromClass(clazz) componentsSeparatedByString:@" "];
     ARDataCacheManager *manager = [ar_schemaManagers() valueForKey:keys.lastObject];
-    NSAssert(manager, @"[ARNetwork] ⚠️ Class `%@` has not been registered in a schema.", NSStringFromClass(clazz));
+    ARAssert(manager, @"Class<%@> has not been registered in a schema.", NSStringFromClass(clazz));
     return manager;
 }
 
@@ -185,7 +203,7 @@ static NSMutableDictionary<NSString *, ARDataCacheManager *> * ar_schemaManagers
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         sharedInstance = [[ARDataCacheManager alloc] initWithSchema:@"" version:0 encryption:true];
-        [sharedInstance registerDataCacheModels:@[_ARResponseCacheModel.class]];
+        [sharedInstance registerModels:@[_ARResponseCacheModel.class]];
     });
     return sharedInstance;
 }
@@ -203,16 +221,20 @@ static NSMutableDictionary<NSString *, ARDataCacheManager *> * ar_schemaManagers
     dispatch_async(self.cacheSchemaQueue, block);
 }
 
-- (void)setupWithSchemaVersion:(uint64_t)version dataEncryption:(BOOL)enabled {
+- (void)setupSchemaConfiguration:(void(^)(void))completion {
     dispatch_barrier_async(self.cacheSchemaQueue, ^{
         @autoreleasepool {
             RLMRealmConfiguration *config = self.defaultConfig;
+            config.objectClasses = self.modelClasses;
+            
+            uint64_t version = self.schemaVersion;
             config.schemaVersion = version;
             config.migrationBlock = ^(RLMMigration *migration, uint64_t oldSchemaVersion) {
                 if (oldSchemaVersion < version) {
                     // Migrations
                 }
             };
+            
             config.shouldCompactOnLaunch = ^BOOL(NSUInteger totalBytes, NSUInteger bytesUsed) {
                 NSUInteger compatingSize = 100 * 1024 * 1024;
                 double usedPercent = (double)bytesUsed / totalBytes;
@@ -228,7 +250,7 @@ static NSMutableDictionary<NSString *, ARDataCacheManager *> * ar_schemaManagers
             };
             
             // Encryption Switch
-            if (enabled) {
+            if (self.dataEncryption) {
                 NSData *key = [self searchEncryptionKey];
                 if (key) {
                     config.encryptionKey = key;
@@ -273,6 +295,11 @@ static NSMutableDictionary<NSString *, ARDataCacheManager *> * ar_schemaManagers
             }
             
             ARLogInfo(@"Realm: %@", [self defaultRealm].configuration.fileURL);
+            if (completion) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    completion();
+                });
+            }
         }
     });
 }
@@ -297,7 +324,7 @@ static NSMutableDictionary<NSString *, ARDataCacheManager *> * ar_schemaManagers
 - (NSData *)addEncryptionKey {
     uint8_t buffer[64];
     OSStatus status = SecRandomCopyBytes(kSecRandomDefault, 64, buffer);
-    NSAssert(status == errSecSuccess, @"[ARNetwork] ⚠️ Failed to generate random bytes for key");
+    ARAssert(status == errSecSuccess, @"Failed to generate random bytes for key");
     NSData *keyData = [[NSData alloc] initWithBytes:buffer length:sizeof(buffer)];
     NSData *tag = [ar_dataCacheID(self.schemaName) dataUsingEncoding:NSUTF8StringEncoding];
     NSDictionary *query = @{(__bridge id)kSecClass: (__bridge id)kSecClassKey,
@@ -306,7 +333,7 @@ static NSMutableDictionary<NSString *, ARDataCacheManager *> * ar_schemaManagers
                             (__bridge id)kSecValueData: keyData,
                             (__bridge id)kSecAttrAccessible: (__bridge id)kSecAttrAccessibleWhenUnlocked};
     status = SecItemAdd((__bridge CFDictionaryRef)query, NULL);
-    NSAssert(status == errSecSuccess, @"[ARNetwork] ⚠️ Failed to insert new key in the keychain");
+    ARAssert(status == errSecSuccess, @"Failed to insert new key in the keychain");
     return keyData;
 }
 
@@ -315,15 +342,19 @@ static NSMutableDictionary<NSString *, ARDataCacheManager *> * ar_schemaManagers
     NSDictionary *query = @{(__bridge id)kSecClass: (__bridge id)kSecClassKey,
                             (__bridge id)kSecAttrApplicationTag: tag};
     OSStatus status = SecItemDelete((__bridge CFDictionaryRef)query);
-    NSAssert(status == errSecSuccess, @"[ARNetwork] ⚠️ Failed to delete the invalid key in the keychain");
+    ARAssert(status == errSecSuccess, @"Failed to delete the invalid key in the keychain");
 }
 
 static inline NSString *ar_dataCacheID(NSString *key) {
-    return [NSString stringWithFormat:@"%@.ar.datacache.%@", [[NSBundle mainBundle] bundleIdentifier], key];
+    return [NSString stringWithFormat:@"%@.arnetwork.%@", [[NSBundle mainBundle] bundleIdentifier], key];
 }
 
 static inline NSURL * ar_realmTempFileURL(NSURL *fileURL) {
     return [fileURL.URLByDeletingPathExtension URLByAppendingPathExtension:@".temp.realm"];
 }
+
+@end
+
+@implementation ARDataCacheManager (Unavailable)
 
 @end

@@ -61,9 +61,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)cancelAllSessionTasks;
 
-- (void)validateSSLCertificateInBundle:(NSBundle *)bundle;
-
-+ (void)setSSLCertificateInBundle:(NSBundle *)bundle;
+- (void)validateSSLCertificatesInBundle:(NSBundle *)bundle;
 
 @end
 

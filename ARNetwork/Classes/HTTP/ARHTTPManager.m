@@ -54,8 +54,6 @@
 
 @implementation ARHTTPManager
 
-static NSBundle *_certificatesBundle;
-
 - (instancetype)initWithHTTPOperation:(ARHTTPOperation *)operation {
     return [self initWithBaseURL:nil sessionConfiguration:nil httpOperation:operation];
 }
@@ -105,7 +103,7 @@ static NSBundle *_certificatesBundle;
             [self setTaskWillPerformHTTPRedirectionBlock:nil];
         }
         
-        [self validateSSLCertificateInBundle:_certificatesBundle];
+        [self validateSSLCertificatesInBundle:operation.certificatesBundle];
     }
     
     return self;
@@ -382,7 +380,7 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
     }
 }
 
-- (void)validateSSLCertificateInBundle:(NSBundle *)bundle {
+- (void)validateSSLCertificatesInBundle:(NSBundle *)bundle {
     if (bundle) {
         //A security policy configured with `AFSSLPinningModeCertificate/AFSSLPinningModePublicKey` can only be applied on a manager with a secure base URL (i.e. https)
         if (!self.baseURL) {
@@ -394,10 +392,6 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
         securityPolicy.validatesDomainName = YES;
         self.securityPolicy = securityPolicy;
     }
-}
-
-+ (void)setSSLCertificateInBundle:(NSBundle *)bundle {
-    _certificatesBundle = bundle;
 }
 
 #pragma mark - Private

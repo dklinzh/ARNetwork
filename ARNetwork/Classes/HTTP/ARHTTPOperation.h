@@ -30,6 +30,8 @@ typedef NS_ENUM(NSUInteger, ARRequestEncodedType) {
 
 @property (nonatomic, copy, readonly, nullable) NSDictionary<NSString *, NSString*> *extraHTTPHeaders;
 
+@property (nonatomic, strong, readonly, nullable) NSBundle *certificatesBundle;
+
 - (NSString *)processedRequestURL:(NSString *)urlStr;
 
 - (NSString *)taskKeyForRequestURL:(NSString *)urlStr params:(nullable NSDictionary *)params;

@@ -68,6 +68,14 @@
     return nil;
 }
 
+- (NSBundle *)certificatesBundle {
+    if ([self.requestOperation respondsToSelector:@selector(certificatesBundle)]) {
+        return self.requestOperation.certificatesBundle;
+    }
+    
+    return nil;
+}
+
 - (NSString *)processedRequestURL:(NSString *)urlStr {
     if ([self.requestOperation respondsToSelector:@selector(processedRequestURL:)]) {
         return [self.requestOperation processedRequestURL:urlStr];

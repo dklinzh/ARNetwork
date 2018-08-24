@@ -50,6 +50,7 @@
 @interface ARHTTPManager ()
 @property (nonatomic, strong) ARHTTPOperation *operation;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, NSNumber *> *sessionTaskIDs;
+@property (nonatomic, strong) NSMutableSet<NSString *> *customHeaderFields;
 @end
 
 @implementation ARHTTPManager
@@ -370,14 +371,12 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
     return task;
 }
 
-- (void)setValue:(NSString *)value forHTTPHeaderField:(NSString *)field {
-    [self.requestSerializer setValue:value forHTTPHeaderField:field];
-}
-
 - (void)cancelAllSessionTasks {
     for (NSURLSessionTask *task in self.tasks) {
         [task cancel];
     }
+    
+    [self.sessionTaskIDs removeAllObjects];
 }
 
 - (void)validateSSLCertificatesInBundle:(NSBundle *)bundle {
@@ -392,6 +391,30 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
         securityPolicy.validatesDomainName = YES;
         self.securityPolicy = securityPolicy;
     }
+}
+
+- (void)setValue:(NSString *)value forHTTPHeaderField:(NSString *)field {
+    if (value) {
+        [self.customHeaderFields addObject:field];
+    } else {
+        [self.customHeaderFields removeObject:field];
+    }
+    
+    [self.requestSerializer setValue:value forHTTPHeaderField:field];
+}
+
+- (void)setHTTPHeaderFields:(NSDictionary<NSString *, NSString *> *)headerFields {
+    [headerFields enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, NSString * _Nonnull obj, BOOL * _Nonnull stop) {
+        [self setValue:obj forHTTPHeaderField:key];
+    }];
+}
+
+- (void)removeAllCustomHeaderFields {
+    for (NSString *field in self.customHeaderFields) {
+        [self.requestSerializer setValue:nil forHTTPHeaderField:field];
+    }
+    
+    [self.customHeaderFields removeAllObjects];
 }
 
 #pragma mark - Private
@@ -419,6 +442,14 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
     }
     
     return _sessionTaskIDs = [[NSMutableDictionary alloc] init];
+}
+
+- (NSMutableSet<NSString *> *)customHeaderFields {
+    if (_customHeaderFields) {
+        return _customHeaderFields;
+    }
+    
+    return _customHeaderFields = [[NSMutableSet alloc] init];
 }
 
 @end
@@ -464,12 +495,6 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
 
 - (void)setHTTPHeaderWithAuthorization:(NSString *)value {
     [self setValue:value forHTTPHeaderField:@"Authorization"];
-}
-
-- (void)setHTTPHeaderFields:(NSDictionary<NSString *, NSString *> *)headerFields {
-    [headerFields enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, NSString * _Nonnull obj, BOOL * _Nonnull stop) {
-        [self.requestSerializer setValue:obj forHTTPHeaderField:key];
-    }];
 }
 
 @end

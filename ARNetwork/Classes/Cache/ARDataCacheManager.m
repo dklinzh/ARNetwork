@@ -49,8 +49,6 @@ static NSString *const kDefaultSchemaName = @"dklinzh.arnetwork.default";
         _schemaName = schemaName;
         _schemaVersion = version;
         _dataEncryption = enabled;
-        
-        [self _setOnlyAccessibleWhenUnlocked:NO];
     }
     return self;
 }
@@ -224,6 +222,8 @@ static NSMutableDictionary<NSString *, ARDataCacheManager *> * ar_schemaManagers
 - (void)setupSchemaConfiguration:(void(^)(void))completion {
     dispatch_barrier_async(self.cacheSchemaQueue, ^{
         @autoreleasepool {
+            [self _setOnlyAccessibleWhenUnlocked:self.onlyAccessibleWhenUnlocked];
+            
             RLMRealmConfiguration *config = self.defaultConfig;
             config.objectClasses = self.modelClasses;
             

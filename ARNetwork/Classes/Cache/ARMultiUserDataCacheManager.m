@@ -9,7 +9,6 @@
 #import "ARMultiUserDataCacheManager.h"
 #import <Realm/Realm.h>
 #import "_NSString+ARSHA1.h"
-#import "ARHTTPManager.h"
 
 @interface ARDataCacheManager ()
 @property (nonatomic, strong) RLMRealmConfiguration *defaultConfig;
@@ -52,8 +51,6 @@
 }
 
 - (void)switchUserDataWithAccount:(NSString *)account completion:(void(^)(void))completion {
-    self.httpManager = [ARHTTPManager manager];
-    
     NSString *userAccount = account.ar_SHA1;
     if ([self.userAccount isEqualToString:userAccount]) {
         if (completion) {

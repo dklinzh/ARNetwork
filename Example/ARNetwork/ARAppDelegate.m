@@ -16,7 +16,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     ARDataCacheManager *manager = [[ARDataCacheManager alloc] initWithSchema:@"dklinzh.arnetwork" version:0 encryption:YES];
-    [manager registerDataCacheModels:@[ARExampleResultModel.class]];
+    [manager registerModels:@[ARExampleResultModel.class]];
     
     #ifdef DEBUG
     [ARHTTPMock setEnabled:YES];

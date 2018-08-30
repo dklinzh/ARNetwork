@@ -14,20 +14,20 @@ PODS:
   - AFNetworking/Serialization (3.2.1)
   - AFNetworking/UIKit (3.2.1):
     - AFNetworking/NSURLSession
-  - ARNetwork/Cache/Core (0.7.0):
+  - ARNetwork/Cache/Core (0.7.1):
     - ARNetwork/HTTP
     - Realm (= 3.7.6)
-  - ARNetwork/Cache/Swift (0.7.0):
+  - ARNetwork/Cache/Swift (0.7.1):
     - ARNetwork/Cache/Core
-  - ARNetwork/Default (0.7.0):
+  - ARNetwork/Default (0.7.1):
     - ARNetwork/Cache/Core
     - ARNetwork/Detector
     - ARNetwork/HTTP
-  - ARNetwork/Detector (0.7.0):
+  - ARNetwork/Detector (0.7.1):
     - AFNetworking/UIKit (~> 3.2)
-  - ARNetwork/HTTP (0.7.0):
+  - ARNetwork/HTTP (0.7.1):
     - AFNetworking (~> 3.2)
-  - ARNetwork/Mock (0.7.0):
+  - ARNetwork/Mock (0.7.1):
     - OHHTTPStubs (~> 6.1)
   - Expecta (1.0.6)
   - OHHTTPStubs (6.1.0):
@@ -69,7 +69,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
-  ARNetwork: 6d2ad92ac9836b0fded99932f9375c8d78a5c96c
+  ARNetwork: 858ff3d689bc5645f97b15ecf341c1b50ed0aff9
   Expecta: 3b6bd90a64b9a1dcb0b70aa0e10a7f8f631667d5
   OHHTTPStubs: 1e21c7d2c084b8153fc53d48400d8919d2d432d0
   Realm: 9eaecad54712d6246d08ba34c10f354e4715d7d3

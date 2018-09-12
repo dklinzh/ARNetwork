@@ -8,6 +8,7 @@
 
 #import "ARHTTPManager.h"
 #import "NSURLSessionTask+ARHTTP.h"
+#import "_NSString+ARSHA1.h"
 
 #ifdef DEBUG
 
@@ -456,13 +457,77 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
 
 @implementation ARHTTPManager (Session)
 
+#pragma mark - Cookies
+static NSString *const ARNetworkCookiesDomainName = @"dklinzh.arnetwork.cookies";
+
+static inline NSUserDefaults * ar_cookieStorage() {
+    return [[NSUserDefaults alloc] initWithSuiteName:ARNetworkCookiesDomainName];
+}
+
+static inline NSString * ar_cookieKey(NSURL *url) {
+    return [NSString stringWithFormat:@"cookie.%@", url.host].ar_SHA1;
+}
+
++ (void)storeCookiesForURL:(NSString *)url {
+    NSURL *URL = [NSURL URLWithString:url];
+    if (!URL) {
+        return;
+    }
+    
+    NSArray<NSHTTPCookie *> *cookies = [NSHTTPCookieStorage.sharedHTTPCookieStorage cookiesForURL:URL];
+    NSMutableArray *propertyList = [NSMutableArray array];
+    for (NSHTTPCookie *cookie in cookies) {
+        [propertyList addObject:cookie.properties];
+    }
+    if (propertyList.count > 0) {
+        NSUserDefaults *userDefaults = ar_cookieStorage();
+        [userDefaults setObject:propertyList forKey:ar_cookieKey(URL)];
+        [userDefaults synchronize];
+    }
+}
+
++ (void)restoreCookiesForURL:(NSString *)url {
+    NSURL *URL = [NSURL URLWithString:url];
+    if (!URL) {
+        return;
+    }
+    
+    NSUserDefaults *userDefaults = ar_cookieStorage();
+    NSArray *propertyList = [userDefaults arrayForKey:ar_cookieKey(URL)];
+    for (NSDictionary *properties in propertyList) {
+        NSHTTPCookie *cookie = [NSHTTPCookie cookieWithProperties:properties];
+        [NSHTTPCookieStorage.sharedHTTPCookieStorage setCookie:cookie];
+    }
+}
+
++ (void)clearCookiesForURL:(NSString *)url {
+    NSURL *URL = [NSURL URLWithString:url];
+    if (!URL) {
+        return;
+    }
+    
+    NSArray<NSHTTPCookie *> *cookies = [NSHTTPCookieStorage.sharedHTTPCookieStorage cookiesForURL:URL];
+    for (NSHTTPCookie *cookie in cookies) {
+        [NSHTTPCookieStorage.sharedHTTPCookieStorage deleteCookie:cookie];
+    }
+    
+    NSUserDefaults *userDefaults = ar_cookieStorage();
+    [userDefaults removeObjectForKey:ar_cookieKey(URL)];
+    [userDefaults synchronize];
+}
+
 + (void)clearAllCookies {
     NSArray *cookies = NSHTTPCookieStorage.sharedHTTPCookieStorage.cookies;
     for (NSHTTPCookie *cookie in cookies) {
         [NSHTTPCookieStorage.sharedHTTPCookieStorage deleteCookie:cookie];
     }
+    
+    NSUserDefaults *userDefaults = ar_cookieStorage();
+    [userDefaults removePersistentDomainForName:ARNetworkCookiesDomainName];
+    [userDefaults synchronize];
 }
 
+#pragma mark - JSESSIONID
 - (NSString *)JSESSIONIDForURL:(NSString *)urlString {
     ARLogInfo(@"cookies: %@", NSHTTPCookieStorage.sharedHTTPCookieStorage.cookies);
     
@@ -493,6 +558,7 @@ static inline NSURLSessionConfiguration * ar_urlSessionConfigurationWithProtocol
     ARLogInfo(@"cookies: %@", NSHTTPCookieStorage.sharedHTTPCookieStorage.cookies);
 }
 
+#pragma mark -
 - (void)setHTTPHeaderWithAuthorization:(NSString *)value {
     [self setValue:value forHTTPHeaderField:@"Authorization"];
 }

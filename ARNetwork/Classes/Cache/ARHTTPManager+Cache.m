@@ -126,11 +126,11 @@
         if (oldData) {
             ARLogDebug(@"Cache<%@>: %@", NSStringFromClass(self.class), oldData.responseObject);
             
-            if ((*cacheType & ARCacheTypeOnlyLoad) && success) {
-                success(oldData.responseObject, nil, YES);
-            }
             if ((*cacheType & ARCacheTypeUpdateIfNeeded) && (oldData._AR_DATE_MODIFIED.timeIntervalSinceNow <= 0) && (oldData._AR_DATE_EXPIRED.timeIntervalSinceNow > 0)) {
                 *cacheType = ARCacheTypeOnlyLoad;
+            }
+            if ((*cacheType & ARCacheTypeOnlyLoad) && success) {
+                success(oldData.responseObject, nil, YES);
             }
         } else {
             ARLogVerbose(@"Cache<%@>: %ld, %@", NSStringFromClass(self.class), (long)ARCacheErrorNone,  @"Have no cache in local.");

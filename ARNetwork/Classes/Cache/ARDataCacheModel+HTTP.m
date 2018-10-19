@@ -106,16 +106,16 @@
 
 + (__kindof ARDataCacheModel *)oldDataCache:(ARCacheType *)cacheType url:(NSString *)urlStr params:(NSDictionary *)params success:(ARDataCacheSuccess)success failure:(ARDataCacheFailure)failure {
     __kindof ARDataCacheModel *oldData;
-    if (*cacheType != ARCacheTypeNone) {
+    if (*cacheType & (ARCacheTypeOnlyLoad | ARCacheTypeUpdateIfNeeded)) {
         oldData = [self _dataCacheWithUrl:urlStr params:params];
         if (oldData) {
             ARLogDebug(@"Cache<%@>: %@", NSStringFromClass(self.class), oldData);
             
-            if ((*cacheType & ARCacheTypeOnlyLoad) && success) {
-                success(oldData, nil, YES);
-            }
             if ((*cacheType & ARCacheTypeUpdateIfNeeded) && (oldData._AR_DATE_MODIFIED.timeIntervalSinceNow <= 0) && (oldData._AR_DATE_EXPIRED.timeIntervalSinceNow > 0)) {
                 *cacheType = ARCacheTypeOnlyLoad;
+            }
+            if ((*cacheType & ARCacheTypeOnlyLoad) && success) {
+                success(oldData, nil, YES);
             }
         } else {
             ARLogVerbose(@"Cache<%@>: %ld, %@", NSStringFromClass(self.class), (long)ARCacheErrorNone,  @"Have no cache in local.");

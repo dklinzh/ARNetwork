@@ -57,16 +57,17 @@
 }
 
 + (instancetype)dataCache:(NSUInteger)index {
-    RLMResults<__kindof ARDataCacheModel *> *results = [self ar_allObjects];
-    if (index + 1 > results.count) {
+    RLMResults *results = [self ar_allObjects];
+    if (index >= results.count) {
         return nil;
     }
+    
+    results = [results sortedResultsUsingKeyPath:@"_AR_DATE_MODIFIED" ascending:NO];
     return results[index];
 }
 
 + (NSUInteger)dataCacheCount {
-    RLMResults<__kindof ARDataCacheModel *> *results = [self ar_allObjects];
-    return results.count;
+    return [self ar_allObjects].count;
 }
 
 + (instancetype)_dataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params {
@@ -76,7 +77,7 @@
     
     NSString *arPrimaryKey = ar_cacheKey(urlStr, params);
     NSPredicate *pred = [NSPredicate predicateWithFormat:@"_AR_CACHE_KEY = %@", arPrimaryKey];
-    RLMResults<__kindof ARDataCacheModel *> *caches = [self ar_objectsWithPredicate:pred];
+    RLMResults *caches = [self ar_objectsWithPredicate:pred];
     return caches.count > 0 ? caches.lastObject : nil;
 }
 

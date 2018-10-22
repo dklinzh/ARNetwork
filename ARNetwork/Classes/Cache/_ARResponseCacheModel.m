@@ -12,10 +12,10 @@
 
 @implementation _ARResponseCacheModel
 
-- (instancetype)initAndAddDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params responseObject:(id)responseObject {
+- (instancetype)initAndAddDataCache:(id)responseObject forKey:(NSString *)cacheKey {
     if (self = [self init]) {
         if (!self.isInvalidated && responseObject) {
-            self._AR_CACHE_KEY = ar_cacheKey(urlStr, params);
+            self._AR_CACHE_KEY = cacheKey;
             self._AR_RESPONSE_DATA = [NSJSONSerialization dataWithJSONObject:responseObject options:NSJSONWritingPrettyPrinted error:nil];
             self._AR_DATE_MODIFIED = [NSDate date];
             self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[ARDataCacheManager _managerWithModelClass:self.class].expiredInterval sinceDate:self._AR_DATE_MODIFIED];

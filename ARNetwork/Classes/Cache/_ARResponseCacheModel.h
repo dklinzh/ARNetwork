@@ -11,7 +11,7 @@
 @interface _ARResponseCacheModel : ARDataCacheModel
 @property NSData *_AR_RESPONSE_DATA;
 
-- (instancetype)initAndAddDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params responseObject:(id)responseObject;
+- (instancetype)initAndAddDataCache:(id)responseObject forKey:(NSString *)cacheKey;
 
 - (void)updateDataCacheWithResponseObject:(id)responseObject;
 

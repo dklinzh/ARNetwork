@@ -30,17 +30,13 @@
  */
 @property NSDate * _AR_DATE_EXPIRED;
 
-+ (instancetype)_dataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params;
++ (instancetype)_dataCacheForKey:(NSString *)cacheKey;
 
-- (void)_addOrUpdateDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params dataCache:(NSDictionary *)data;
+- (void)_addOrUpdateDataCache:(NSDictionary *)data forKey:(NSString *)cacheKey;
 
 - (void)_clearPrimaryExistsTemp;
 
 @end
-
-static inline NSString * ar_cacheKey(NSString *urlStr, NSDictionary *params) {
-    return ar_sessionTaskKey(urlStr, params);
-}
 
 static inline NSString * ar_cacheCode(NSDictionary *data) {
     return data.description.ar_SHA1;

@@ -53,7 +53,7 @@
 #pragma mark -
 
 static inline RLMResults * ar_sortedResults(RLMResults * results) {
-    return [results sortedResultsUsingKeyPath:@"_AR_DATE_MODIFIED" ascending:NO];
+    return results.count > 1 ? [results sortedResultsUsingKeyPath:@"_AR_DATE_MODIFIED" ascending:NO] : results;
 }
 
 + (instancetype)oldestDataCache {
@@ -84,15 +84,11 @@ static inline RLMResults * ar_sortedResults(RLMResults * results) {
     return [self ar_allObjects].count;
 }
 
-+ (instancetype)_dataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params {
-    if (!urlStr) {
-        return nil;
-    }
-    
-    NSString *arPrimaryKey = ar_cacheKey(urlStr, params);
-    NSPredicate *pred = [NSPredicate predicateWithFormat:@"_AR_CACHE_KEY = %@", arPrimaryKey];
-    RLMResults *caches = [self ar_objectsWithPredicate:pred];
-    return caches.count > 0 ? caches.lastObject : nil;
++ (instancetype)_dataCacheForKey:(NSString *)cacheKey {
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@"_AR_CACHE_KEY = %@", cacheKey];
+    RLMResults *results = [self ar_objectsWithPredicate:pred];
+    results = ar_sortedResults(results);
+    return results.firstObject;
 }
 
 - (instancetype)initDataCache:(NSDictionary *)data {
@@ -287,9 +283,9 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
     return ar_primaryExistsTemp;
 }
 
-- (void)_addOrUpdateDataCacheWithUrl:(NSString *)urlStr params:(NSDictionary *)params dataCache:(NSDictionary *)data {
+- (void)_addOrUpdateDataCache:(NSDictionary *)data forKey:(NSString *)cacheKey {
     if (!self.realm) {
-        self._AR_CACHE_KEY = ar_cacheKey(urlStr, params);
+        self._AR_CACHE_KEY = cacheKey;
         self._AR_CACHE_CODE = ar_cacheCode(data);
         self._AR_DATE_MODIFIED = [NSDate date];
         self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[self.class ar_expiredInterval] sinceDate:self._AR_DATE_MODIFIED];

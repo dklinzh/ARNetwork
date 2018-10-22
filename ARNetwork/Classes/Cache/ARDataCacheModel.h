@@ -84,14 +84,28 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable instancetype)ar_objectForPrimaryKey:(id)primaryKey;
 
 /**
+ Returns the oldest cache data of this object type from the default Realm database.
+ 
+ @return An instance of this kind of object
+ */
++ (nullable instancetype)oldestDataCache;
+
+/**
+ Returns the latest cache data of this object type from the default Realm database.
+ 
+ @return An instance of this kind of object
+ */
++ (nullable instancetype)latestDataCache;
+
+/**
  Returns the latest cache data of this object type from the default Realm database.
 
  @return An instance of this kind of object
  */
-+ (nullable instancetype)dataCache;
++ (nullable instancetype)dataCache DEPRECATED_MSG_ATTRIBUTE(" Use +latestDataCache instead.");
 
 /**
- Returns the cache data of this object type with the given index from the default Realm database.
+ Returns the cache data of this object type with the given query index from the default Realm database.
 
  @param index An index of the object in the `RLMResults` contains all objects of this type.
  @return An instance of this kind of object.

@@ -52,8 +52,22 @@
 
 #pragma mark -
 
+static inline RLMResults * ar_sortedResults(RLMResults * results) {
+    return [results sortedResultsUsingKeyPath:@"_AR_DATE_MODIFIED" ascending:NO];
+}
+
++ (instancetype)oldestDataCache {
+    RLMResults *results = ar_sortedResults([self ar_allObjects]);
+    return results.lastObject;
+}
+
++ (instancetype)latestDataCache {
+    RLMResults *results = ar_sortedResults([self ar_allObjects]);
+    return results.firstObject;
+}
+
 + (instancetype)dataCache {
-    return [self dataCache:0];
+    return [self latestDataCache];
 }
 
 + (instancetype)dataCache:(NSUInteger)index {
@@ -62,7 +76,7 @@
         return nil;
     }
     
-    results = [results sortedResultsUsingKeyPath:@"_AR_DATE_MODIFIED" ascending:NO];
+    results = ar_sortedResults(results);
     return results[index];
 }
 

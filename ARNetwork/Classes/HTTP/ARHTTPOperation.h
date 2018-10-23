@@ -74,4 +74,6 @@ typedef void(^ARHTTPResponseHead)(NSURLSessionDataTask *task);
 
 @end
 
+NSString * ARSessionTaskKey(NSString *urlStr, NSDictionary *params);
+
 NS_ASSUME_NONNULL_END

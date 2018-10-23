@@ -15,9 +15,4 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSString *)ar_SHA1;
 @end
 
-static inline NSString * ar_sessionTaskKey(NSString *urlStr, NSDictionary *params) {
-    NSURL *url = [NSURL URLWithString:urlStr];
-    return [[NSString stringWithFormat:@"%@|%@|%@", url.host, url.path, params.description] ar_SHA1];
-}
-
 NS_ASSUME_NONNULL_END

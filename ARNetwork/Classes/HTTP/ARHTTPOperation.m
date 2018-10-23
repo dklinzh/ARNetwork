@@ -9,6 +9,11 @@
 #import "ARHTTPOperation.h"
 #import "_NSString+ARSHA1.h"
 
+NSString * ARSessionTaskKey(NSString *urlStr, NSDictionary *params) {
+    NSURL *url = [NSURL URLWithString:urlStr];
+    return [[NSString stringWithFormat:@"%@|%@|%@", url.host, url.path, params.description] ar_SHA1];
+}
+
 @implementation ARHTTPOperation
 
 + (instancetype)sharedInstance {
@@ -89,7 +94,7 @@
         return [self.requestOperation taskKeyForRequestURL:urlStr params:params];
     }
     
-    return ar_sessionTaskKey(urlStr, params);
+    return ARSessionTaskKey(urlStr, params);
 }
 
 @end

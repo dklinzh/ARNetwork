@@ -148,6 +148,9 @@
     }
     
     if (cacheType & (ARCacheTypeOnlyUpdate | ARCacheTypeUpdateIfNeeded)) {
+        if (!oldData) {
+            oldData = [self _dataCacheForKey:cacheKey];
+        }
         if (oldData) {
             [oldData updateDataCache:data];
             if (success) {

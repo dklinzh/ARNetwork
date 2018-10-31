@@ -150,6 +150,9 @@
 
 - (void)newDataCache:(ARCacheType)cacheType forKey:(NSString *)cacheKey oldData:(_ARResponseCacheModel *)oldData dataSource:(id)data msg:(NSString *)msg success:(ARResponseCacheSuccess)success failure:(ARResponseCacheFailure)failure {
     if (cacheType & (ARCacheTypeOnlyUpdate | ARCacheTypeUpdateIfNeeded)) {
+        if (!oldData) {
+            oldData = [_ARResponseCacheModel _dataCacheForKey:cacheKey];
+        }
         if (oldData) {
             [oldData updateDataCacheWithResponseObject:data];
             if (success) {

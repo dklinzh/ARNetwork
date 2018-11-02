@@ -24,7 +24,21 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface ARDataCacheModel : RLMObject <ARDataCacheModelTransaction>
 
+/**
+ Obtains an instance of the default Realm for this Class.
+
+ @return The default `RLMRealm` instance for
+ */
 + (RLMRealm *)ar_defaultRealm;
+
+/**
+ Performs actions contained within the given block inside a write transaction on the default Realm for this Class.
+
+ @param block The block containing actions to perform.
+ @param error If an error occurs, upon return contains an `NSError` object that describes the problem. If you are not interested in possible errors, pass in `NULL`.
+ @return Whether the transaction succeeded.
+ */
++ (BOOL)ar_transactionWithBlock:(__attribute__((noescape)) void(^)(RLMRealm *realm))block error:(NSError **)error;
 
 /**
  Creates an instance of the `ARDataCacheModel` object with a given value, and adds it to the default Realm database.

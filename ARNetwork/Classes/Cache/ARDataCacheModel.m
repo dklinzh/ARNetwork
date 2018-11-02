@@ -18,6 +18,15 @@
     return [ARDataCacheManager _realmWithModelClass:self.class];
 }
 
++ (BOOL)ar_transactionWithBlock:(__attribute__((noescape)) void(^)(RLMRealm *realm))block error:(NSError **)error {
+    RLMRealm *realm = [self ar_defaultRealm];
+    return [realm transactionWithBlock:^{
+        if (block) {
+            block(realm);
+        }
+    } error:error];
+}
+
 + (instancetype)ar_createInDefaultRealmWithValue:(id)value {
     return [self createInRealm:[self ar_defaultRealm] withValue:value];
 }
@@ -53,7 +62,11 @@
 #pragma mark -
 
 static inline RLMResults * ar_sortedResults(RLMResults * results) {
-    return results.count > 1 ? [results sortedResultsUsingKeyPath:@"_AR_DATE_MODIFIED" ascending:NO] : results;
+    if (results.count > 1) {
+        results = [results sortedResultsUsingKeyPath:@"_AR_DATE_MODIFIED" ascending:NO];
+        ARLogWarn(@"Data caches of <%@> are more than one.", results.objectClassName);
+    }
+    return results;
 }
 
 + (instancetype)oldestDataCache {

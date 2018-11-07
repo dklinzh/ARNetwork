@@ -18,7 +18,7 @@
     
     NSMutableString* result = [NSMutableString stringWithCapacity:CC_SHA1_DIGEST_LENGTH * 2];
     for(int i = 0; i < CC_SHA1_DIGEST_LENGTH; i++) {
-        [result appendFormat:@"%02x", digest[i]];
+        [result appendFormat:@"%02hhx", digest[i]];
     }
     return result;
 }

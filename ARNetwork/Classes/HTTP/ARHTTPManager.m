@@ -482,7 +482,6 @@ static inline NSString * ar_cookieKey(NSURL *url) {
     if (propertyList.count > 0) {
         NSUserDefaults *userDefaults = ar_cookieStorage();
         [userDefaults setObject:propertyList forKey:ar_cookieKey(URL)];
-        [userDefaults synchronize];
     }
 }
 
@@ -513,7 +512,6 @@ static inline NSString * ar_cookieKey(NSURL *url) {
     
     NSUserDefaults *userDefaults = ar_cookieStorage();
     [userDefaults removeObjectForKey:ar_cookieKey(URL)];
-    [userDefaults synchronize];
 }
 
 + (void)clearAllCookies {
@@ -524,7 +522,6 @@ static inline NSString * ar_cookieKey(NSURL *url) {
     
     NSUserDefaults *userDefaults = ar_cookieStorage();
     [userDefaults removePersistentDomainForName:ARNetworkCookiesDomainName];
-    [userDefaults synchronize];
 }
 
 #pragma mark - JSESSIONID

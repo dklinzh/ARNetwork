@@ -70,7 +70,7 @@ Pod::Spec.new do |s|
 
     cache.subspec 'Core' do |core|
       core.dependency 'ARNetwork/HTTP'
-      core.dependency 'Realm', '3.11.1'
+      core.dependency 'Realm', '3.13.0'
 
       core.private_header_files = 'ARNetwork/Classes/Cache/_*.h'
       core.source_files = 'ARNetwork/Classes/Cache/*.{h,m}'

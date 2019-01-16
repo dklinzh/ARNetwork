@@ -299,9 +299,12 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
 - (void)_addOrUpdateDataCache:(NSDictionary *)data forKey:(NSString *)cacheKey {
     if (!self.realm) {
         self._AR_CACHE_KEY = cacheKey;
-        self._AR_CACHE_CODE = ar_cacheCode(data);
-        self._AR_DATE_MODIFIED = [NSDate date];
-        self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[self.class ar_expiredInterval] sinceDate:self._AR_DATE_MODIFIED];
+        if (![self.class ar_shouldForceUpdateWithoutCompare]) {
+            self._AR_CACHE_CODE = ar_cacheCode(data);
+        }
+        NSDate *date = [NSDate date];
+        self._AR_DATE_MODIFIED = date;
+        self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[self.class ar_expiredInterval] sinceDate:date];
         [self _addOrUpdateDataCache];
     }
     
@@ -342,7 +345,6 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
 
 - (void)updateDataCache:(NSDictionary *)data {
     if (!self.isInvalidated) {
-        NSString *cacheCode = ar_cacheCode(data);
         RLMRealm *realm = [self.class ar_defaultRealm];
         BOOL inWriteTransaction = !realm.inWriteTransaction;
         if (inWriteTransaction) {
@@ -351,18 +353,27 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
         if ([self respondsToSelector:@selector(ar_transactionDidBeginWrite)]) {
             [self ar_transactionDidBeginWrite];
         }
-        
-        if ([self.class ar_shouldForceUpdateWithoutCompare] || (self._AR_CACHE_CODE && ![cacheCode isEqualToString:self._AR_CACHE_CODE])) {
-            self._AR_CACHE_CODE = cacheCode;
+        NSDate *date = [NSDate date];
+        if ([self.class ar_shouldForceUpdateWithoutCompare]) {
+            if (self._AR_CACHE_CODE) {
+                self._AR_CACHE_CODE = nil;
+            }
+            if (self._AR_DATE_MODIFIED) {
+                self._AR_DATE_MODIFIED = date;
+            }
             [self updateDataCacheWithDataPartInTransaction:data];
-        } else if (!self._AR_CACHE_CODE) {
-            [self updateDataCacheWithDataPartInTransaction:data];
-        }
-        if (self._AR_DATE_MODIFIED) {
-            self._AR_DATE_MODIFIED = [NSDate date];
+        } else {
+            NSString *cacheCode = ar_cacheCode(data);
+            if (![cacheCode isEqualToString:self._AR_CACHE_CODE]) {
+                self._AR_CACHE_CODE = cacheCode;
+                if (self._AR_DATE_MODIFIED) {
+                    self._AR_DATE_MODIFIED = date;
+                }
+                [self updateDataCacheWithDataPartInTransaction:data];
+            }
         }
         if (self._AR_DATE_EXPIRED) {
-            self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[self.class ar_expiredInterval] sinceDate:self._AR_DATE_MODIFIED];
+            self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[self.class ar_expiredInterval] sinceDate:date];
         }
         
         if ([self respondsToSelector:@selector(ar_transactionWillCommitWrite)]) {
@@ -511,7 +522,7 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
 }
 
 + (BOOL)ar_shouldForceUpdateWithoutCompare {
-    return NO;
+    return YES;
 }
 
 @end

@@ -116,7 +116,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @return An instance of this kind of object
  */
-+ (nullable instancetype)dataCache DEPRECATED_MSG_ATTRIBUTE(" Use +latestDataCache instead.");
++ (nullable instancetype)dataCache DEPRECATED_MSG_ATTRIBUTE("Use +latestDataCache instead.");
 
 /**
  Returns the cache data of this object type with the given query index from the default Realm database.
@@ -185,7 +185,7 @@ RLM_ARRAY_TYPE(ARDataCacheModel)
 /**
  Override this method to determine whether or not the data cache should be updated forcely without hash code comparation.
 
- @return Defaults to false
+ @return Defaults to true.
  */
 + (BOOL)ar_shouldForceUpdateWithoutCompare;
 

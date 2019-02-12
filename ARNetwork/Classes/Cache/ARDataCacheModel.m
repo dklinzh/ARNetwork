@@ -12,6 +12,135 @@
 #import "_ARDataCacheModel_Private.h"
 #import "RLMRealm+ARWrite.h"
 
+static inline bool numberIsInteger(__unsafe_unretained NSNumber *const obj) {
+    char data_type = [obj objCType][0];
+    return data_type == *@encode(bool) ||
+    data_type == *@encode(char) ||
+    data_type == *@encode(short) ||
+    data_type == *@encode(int) ||
+    data_type == *@encode(long) ||
+    data_type == *@encode(long long) ||
+    data_type == *@encode(unsigned short) ||
+    data_type == *@encode(unsigned int) ||
+    data_type == *@encode(unsigned long) ||
+    data_type == *@encode(unsigned long long);
+}
+
+static inline bool numberIsBool(__unsafe_unretained NSNumber *const obj) {
+    // @encode(BOOL) is 'B' on iOS 64 and 'c'
+    // objcType is always 'c'. Therefore compare to "c".
+    if ([obj objCType][0] == 'c') {
+        return true;
+    }
+    
+    if (numberIsInteger(obj)) {
+        int value = [obj intValue];
+        return value == 0 || value == 1;
+    }
+    
+    return false;
+}
+
+static inline bool numberIsFloat(__unsafe_unretained NSNumber *const obj) {
+    char data_type = [obj objCType][0];
+    return data_type == *@encode(float) ||
+    data_type == *@encode(short) ||
+    data_type == *@encode(int) ||
+    data_type == *@encode(long) ||
+    data_type == *@encode(long long) ||
+    data_type == *@encode(unsigned short) ||
+    data_type == *@encode(unsigned int) ||
+    data_type == *@encode(unsigned long) ||
+    data_type == *@encode(unsigned long long) ||
+    // A double is like float if it fits within float bounds or is NaN.
+    (data_type == *@encode(double) && (ABS([obj doubleValue]) <= FLT_MAX || isnan([obj doubleValue])));
+}
+
+static inline bool numberIsDouble(__unsafe_unretained NSNumber *const obj) {
+    char data_type = [obj objCType][0];
+    return data_type == *@encode(double) ||
+    data_type == *@encode(float) ||
+    data_type == *@encode(short) ||
+    data_type == *@encode(int) ||
+    data_type == *@encode(long) ||
+    data_type == *@encode(long long) ||
+    data_type == *@encode(unsigned short) ||
+    data_type == *@encode(unsigned int) ||
+    data_type == *@encode(unsigned long) ||
+    data_type == *@encode(unsigned long long);
+}
+
+static inline void addValidPrimitiveValues(NSArray *values, RLMArray *array, RLMPropertyType type) {
+    switch (type) {
+        case RLMPropertyTypeBool:
+            for (id value in values) {
+                if ([value isKindOfClass:NSNumber.class] && numberIsBool(value)) {
+                    [array addObject:value];
+                } else {
+                    NSCAssert(NO, @"RLMPropertyType<%@> of the RLMArray is not matched with value: %@", @(type), value);
+                }
+            }
+            break;
+        case RLMPropertyTypeInt:
+            for (id value in values) {
+                if ([value isKindOfClass:NSNumber.class] && numberIsInteger(value)) {
+                    [array addObject:value];
+                } else {
+                    NSCAssert(NO, @"RLMPropertyType<%@> of the RLMArray is not matched with value: %@", @(type), value);
+                }
+            }
+            break;
+        case RLMPropertyTypeFloat:
+            for (id value in values) {
+                if ([value isKindOfClass:NSNumber.class] && numberIsFloat(value)) {
+                    [array addObject:value];
+                } else {
+                    NSCAssert(NO, @"RLMPropertyType<%@> of the RLMArray is not matched with value: %@", @(type), value);
+                }
+            }
+            break;
+        case RLMPropertyTypeDouble:
+            for (id value in values) {
+                if ([value isKindOfClass:NSNumber.class] && numberIsDouble(value)) {
+                    [array addObject:value];
+                } else {
+                    NSCAssert(NO, @"RLMPropertyType<%@> of the RLMArray is not matched with value: %@", @(type), value);
+                }
+            }
+            break;
+        case RLMPropertyTypeString:
+            for (id value in values) {
+                if ([value isKindOfClass:NSString.class]) {
+                    [array addObject:value];
+                } else {
+                    NSCAssert(NO, @"RLMPropertyType<%@> of the RLMArray is not matched with value: %@", @(type), value);
+                }
+            }
+            break;
+        case RLMPropertyTypeDate:
+            for (id value in values) {
+                if ([value isKindOfClass:NSDate.class]) {
+                    [array addObject:value];
+                } else {
+                    NSCAssert(NO, @"RLMPropertyType<%@> of the RLMArray is not matched with value: %@", @(type), value);
+                }
+            }
+            break;
+        case RLMPropertyTypeData:
+            for (id value in values) {
+                if ([value isKindOfClass:NSData.class]) {
+                    [array addObject:value];
+                } else {
+                    NSCAssert(NO, @"RLMPropertyType<%@> of the RLMArray is not matched with value: %@", @(type), value);
+                }
+            }
+            break;
+        default:
+            NSCAssert(NO, @"RLMPropertyType<%@> of the RLMArray is not primitive", @(type));
+            break;
+    }
+}
+
 @implementation ARDataCacheModel
 
 + (RLMRealm *)ar_defaultRealm {
@@ -154,7 +283,8 @@ static inline RLMResults * ar_sortedResults(RLMResults * results) {
                         RLMArray *objs = (RLMArray *)obj;
                         [objs removeAllObjects];
                         NSArray *values = (NSArray *)value;
-                        if (objs.type == RLMPropertyTypeObject) {
+                        RLMPropertyType type = objs.type;
+                        if (type == RLMPropertyTypeObject) {
                             Class clazz = NSClassFromString(objs.objectClassName);
                             NSMutableSet *primarySet = [NSMutableSet set];
                             for (id item in values) {
@@ -177,18 +307,8 @@ static inline RLMResults * ar_sortedResults(RLMResults * results) {
                                     }
                                 }
                             }
-                        } else if (objs.type == RLMPropertyTypeString ||
-                                   objs.type == RLMPropertyTypeBool ||
-                                   objs.type == RLMPropertyTypeInt ||
-                                   objs.type == RLMPropertyTypeFloat ||
-                                   objs.type == RLMPropertyTypeDouble ||
-                                   objs.type == RLMPropertyTypeDate ||
-                                   objs.type == RLMPropertyTypeData) {
-                            for (id item in values) {
-                                if (![item isKindOfClass:NSNull.class]) {
-                                    [objs addObject:item];
-                                }
-                            }
+                        } else {
+                            addValidPrimitiveValues(values, objs, type);
                         }
                     }
                 } else {
@@ -421,7 +541,8 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
                 if ([obj isKindOfClass:RLMArray.class]) {
                     RLMArray *objs = (RLMArray *)obj;
                     NSArray *values = (NSArray *)value;
-                    if (objs.type == RLMPropertyTypeObject) {
+                    RLMPropertyType type = objs.type;
+                    if (type == RLMPropertyTypeObject) {
                         Class clazz = NSClassFromString(objs.objectClassName);
                         NSString *primaryKey = [clazz primaryKey];
                         if (primaryKey) {
@@ -477,19 +598,9 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
                                 }
                             }
                         }
-                    } else if (objs.type == RLMPropertyTypeString ||
-                               objs.type == RLMPropertyTypeBool ||
-                               objs.type == RLMPropertyTypeInt ||
-                               objs.type == RLMPropertyTypeFloat ||
-                               objs.type == RLMPropertyTypeDouble ||
-                               objs.type == RLMPropertyTypeDate ||
-                               objs.type == RLMPropertyTypeData) {
+                    } else {
                         [objs removeAllObjects];
-                        for (id item in values) {
-                            if (![item isKindOfClass:NSNull.class]) {
-                                [objs addObject:item];
-                            }
-                        }
+                        addValidPrimitiveValues(values, objs, type);
                     }
                 }
             } else {

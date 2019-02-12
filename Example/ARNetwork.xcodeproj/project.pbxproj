@@ -316,7 +316,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-ARNetwork_Tests/Pods-ARNetwork_Tests-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-ARNetwork_Tests/Pods-ARNetwork_Tests-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Expecta/Expecta.framework",
 				"${BUILT_PRODUCTS_DIR}/Specta/Specta.framework",
 			);
@@ -327,7 +327,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ARNetwork_Tests/Pods-ARNetwork_Tests-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ARNetwork_Tests/Pods-ARNetwork_Tests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		7E468C6E837B02623B9F41DF /* [CP] Embed Pods Frameworks */ = {
@@ -336,7 +336,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-ARNetwork_Example/Pods-ARNetwork_Example-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-ARNetwork_Example/Pods-ARNetwork_Example-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/AFNetworking/AFNetworking.framework",
 				"${BUILT_PRODUCTS_DIR}/ARNetwork/ARNetwork.framework",
 				"${BUILT_PRODUCTS_DIR}/OHHTTPStubs/OHHTTPStubs.framework",
@@ -351,7 +351,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ARNetwork_Example/Pods-ARNetwork_Example-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ARNetwork_Example/Pods-ARNetwork_Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		B29454F15204EA20B5E400A6 /* [CP] Check Pods Manifest.lock */ = {

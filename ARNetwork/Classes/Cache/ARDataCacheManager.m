@@ -7,7 +7,6 @@
 //
 
 #import "ARDataCacheManager.h"
-#import "ARDataCacheModel.h"
 #import "_ARResponseCacheModel.h"
 #import "ARHTTPManager.h"
 
@@ -21,6 +20,7 @@ static NSString *const kDefaultSchemaName = @"dklinzh.arnetwork.default";
 @property (nonatomic, strong) NSURL *defaultFileURL;
 @property (nonatomic, strong) dispatch_queue_t cacheSchemaQueue;
 @property (nonatomic, copy) NSArray<Class> *modelClasses;
+@property (nonatomic, copy) ARDataCacheMigrationBlock migrationBlock;
 @end
 
 @implementation ARDataCacheManager
@@ -103,6 +103,10 @@ static NSString *const kDefaultSchemaName = @"dklinzh.arnetwork.default";
 }
 
 #pragma mark -
+
+- (void)setDataCacheMigration:(ARDataCacheMigrationBlock)block {
+    self.migrationBlock = block;
+}
 
 - (void)setOnlyAccessibleWhenUnlocked:(BOOL)onlyAccessibleWhenUnlocked {
     if (_onlyAccessibleWhenUnlocked == onlyAccessibleWhenUnlocked) {
@@ -229,9 +233,11 @@ static NSMutableDictionary<NSString *, ARDataCacheManager *> * ar_schemaManagers
             
             uint64_t version = self.schemaVersion;
             config.schemaVersion = version;
+            __weak __typeof(self)weakSelf = self;
             config.migrationBlock = ^(RLMMigration *migration, uint64_t oldSchemaVersion) {
-                if (oldSchemaVersion < version) {
-                    // Migrations
+                __strong __typeof(weakSelf)strongSelf = weakSelf;
+                if (strongSelf.migrationBlock) {
+                    strongSelf.migrationBlock(migration, oldSchemaVersion, version);
                 }
             };
             

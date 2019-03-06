@@ -7,10 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "ARDataCacheModel.h"
 
 @class ARHTTPManager;
 
 NS_ASSUME_NONNULL_BEGIN
+
+typedef void(^ARDataCacheMigrationBlock)(RLMMigration *migration, NSUInteger oldVersion, NSUInteger currentVersion);
 
 /**
  An manager for maintaining the cache data in local database.
@@ -46,6 +49,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithSchema:(NSString *)schemaName version:(NSUInteger)version;
 
 - (instancetype)initWithSchema:(NSString *)schemaName version:(NSUInteger)version encryption:(BOOL)enabled NS_DESIGNATED_INITIALIZER;
+
+/**
+ Set the block which migrates the data caches to the current version. Should be invoked before invoking -[ARDataCacheManager registerModels:].
+
+ @param block The block which migrates the data caches to the current version
+ */
+- (void)setDataCacheMigration:(ARDataCacheMigrationBlock)block;
 
 - (void)registerModels:(nullable NSArray<Class> *)classes;
 

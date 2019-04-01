@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'ARNetwork'
-  s.version          = '0.8.0'
+  s.version          = '0.8.1'
   s.summary          = 'An iOS network framework in combination with HTTP/HTTPS task and data cache. (AFNetworking+Realm)'
   s.description      = <<-DESC
                         An iOS network framework in combination with HTTP/HTTPS task and data cache. (AFNetworking+Realm)
@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
 
   s.requires_arc = true
   s.ios.deployment_target = '8.0'
-  s.swift_version = '4.2'
+  s.swift_version = '5.0'
 
   s.prefix_header_file = 'ARNetwork/Classes/ARNetwork-Prefix.pch'
   s.default_subspecs = 'Default'
@@ -70,7 +70,7 @@ Pod::Spec.new do |s|
 
     cache.subspec 'Core' do |core|
       core.dependency 'ARNetwork/HTTP'
-      core.dependency 'Realm', '3.13.1'
+      core.dependency 'Realm', '3.14.0'
 
       core.private_header_files = 'ARNetwork/Classes/Cache/_*.h'
       core.source_files = 'ARNetwork/Classes/Cache/*.{h,m}'

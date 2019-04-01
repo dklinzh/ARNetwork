@@ -14,38 +14,38 @@ PODS:
   - AFNetworking/Serialization (3.2.1)
   - AFNetworking/UIKit (3.2.1):
     - AFNetworking/NSURLSession
-  - ARNetwork/Cache/Core (0.8.0):
+  - ARNetwork/Cache/Core (0.8.1):
     - ARNetwork/HTTP
-    - Realm (= 3.13.1)
-  - ARNetwork/Cache/Swift (0.8.0):
+    - Realm (= 3.14.0)
+  - ARNetwork/Cache/Swift (0.8.1):
     - ARNetwork/Cache/Core
-  - ARNetwork/Default (0.8.0):
+  - ARNetwork/Default (0.8.1):
     - ARNetwork/Cache/Core
     - ARNetwork/Detector
     - ARNetwork/HTTP
-  - ARNetwork/Detector (0.8.0):
+  - ARNetwork/Detector (0.8.1):
     - AFNetworking/UIKit (~> 3.2)
-  - ARNetwork/HTTP (0.8.0):
+  - ARNetwork/HTTP (0.8.1):
     - AFNetworking (~> 3.2)
-  - ARNetwork/Mock (0.8.0):
+  - ARNetwork/Mock (0.8.1):
     - OHHTTPStubs (~> 6.1)
   - Expecta (1.0.6)
-  - OHHTTPStubs (6.1.0):
-    - OHHTTPStubs/Default (= 6.1.0)
-  - OHHTTPStubs/Core (6.1.0)
-  - OHHTTPStubs/Default (6.1.0):
+  - OHHTTPStubs (6.2.0):
+    - OHHTTPStubs/Default (= 6.2.0)
+  - OHHTTPStubs/Core (6.2.0)
+  - OHHTTPStubs/Default (6.2.0):
     - OHHTTPStubs/Core
     - OHHTTPStubs/JSON
     - OHHTTPStubs/NSURLSession
     - OHHTTPStubs/OHPathHelpers
-  - OHHTTPStubs/JSON (6.1.0):
+  - OHHTTPStubs/JSON (6.2.0):
     - OHHTTPStubs/Core
-  - OHHTTPStubs/NSURLSession (6.1.0):
+  - OHHTTPStubs/NSURLSession (6.2.0):
     - OHHTTPStubs/Core
-  - OHHTTPStubs/OHPathHelpers (6.1.0)
-  - Realm (3.13.1):
-    - Realm/Headers (= 3.13.1)
-  - Realm/Headers (3.13.1)
+  - OHHTTPStubs/OHPathHelpers (6.2.0)
+  - Realm (3.14.0):
+    - Realm/Headers (= 3.14.0)
+  - Realm/Headers (3.14.0)
   - Specta (1.0.7)
 
 DEPENDENCIES:
@@ -69,10 +69,10 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
-  ARNetwork: 8f534189487e97fa6a6ca0d0bb1fd202efd6ec4a
+  ARNetwork: bdfe751546dc7d4f598810cb0bdd6c76b30fca22
   Expecta: 3b6bd90a64b9a1dcb0b70aa0e10a7f8f631667d5
-  OHHTTPStubs: 1e21c7d2c084b8153fc53d48400d8919d2d432d0
-  Realm: 50071da38fe079e0735e47c9f2eae738c68c5996
+  OHHTTPStubs: 9cde8b5c0b8cc5c0f393b5e20c8efb6e05915c63
+  Realm: 221b25919bb5a010a3c597d707f8df3492dcd93a
   Specta: 3e1bd89c3517421982dc4d1c992503e48bd5fe66
 
 PODFILE CHECKSUM: 08ff387ced2808c7bb5ce99cff07480baecc6d3a

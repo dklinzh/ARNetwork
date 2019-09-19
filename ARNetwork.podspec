@@ -57,7 +57,6 @@ Pod::Spec.new do |s|
     # mock.dependency 'ARNetwork/HTTP'
     mock.dependency 'OHHTTPStubs', '~> 8.0'
 
-    mock.private_header_files = 'ARNetwork/Classes/Mock/_*.h'
     mock.source_files = 'ARNetwork/Classes/Mock/*.{h,m}'
 
     mock.xcconfig = {

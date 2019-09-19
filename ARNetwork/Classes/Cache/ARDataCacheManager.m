@@ -347,8 +347,12 @@ static NSMutableDictionary<NSString *, ARDataCacheManager *> * ar_schemaManagers
     NSData *tag = [ar_dataCacheID(self.schemaName) dataUsingEncoding:NSUTF8StringEncoding];
     NSDictionary *query = @{(__bridge id)kSecClass: (__bridge id)kSecClassKey,
                             (__bridge id)kSecAttrApplicationTag: tag};
+#ifdef DEBUG
     OSStatus status = SecItemDelete((__bridge CFDictionaryRef)query);
     ARAssert(status == errSecSuccess, @"Failed to delete the invalid key in the keychain");
+#else
+    SecItemDelete((__bridge CFDictionaryRef)query);
+#endif
 }
 
 static inline NSString *ar_dataCacheID(NSString *key) {

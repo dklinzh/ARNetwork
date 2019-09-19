@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'ARNetwork'
-  s.version          = '0.8.1'
+  s.version          = '0.8.2'
   s.summary          = 'An iOS network framework in combination with HTTP/HTTPS task and data cache. (AFNetworking+Realm)'
   s.description      = <<-DESC
                         An iOS network framework in combination with HTTP/HTTPS task and data cache. (AFNetworking+Realm)
@@ -55,7 +55,7 @@ Pod::Spec.new do |s|
 
   s.subspec 'Mock' do |mock|
     # mock.dependency 'ARNetwork/HTTP'
-    mock.dependency 'OHHTTPStubs', '~> 6.1'
+    mock.dependency 'OHHTTPStubs', '~> 8.0'
 
     mock.private_header_files = 'ARNetwork/Classes/Mock/_*.h'
     mock.source_files = 'ARNetwork/Classes/Mock/*.{h,m}'
@@ -70,7 +70,7 @@ Pod::Spec.new do |s|
 
     cache.subspec 'Core' do |core|
       core.dependency 'ARNetwork/HTTP'
-      core.dependency 'Realm', '3.14.0'
+      core.dependency 'Realm', '3.18.0'
 
       core.private_header_files = 'ARNetwork/Classes/Cache/_*.h'
       core.source_files = 'ARNetwork/Classes/Cache/*.{h,m}'

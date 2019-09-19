@@ -13,7 +13,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef void(^ARDataCacheMigrationBlock)(RLMMigration *migration, NSUInteger oldVersion, NSUInteger currentVersion);
+typedef void(^ARDataCacheMigrationBlock)(RLMMigration *migration, uint64_t oldVersion, uint64_t currentVersion);
 
 /**
  An manager for maintaining the cache data in local database.
@@ -42,13 +42,13 @@ typedef void(^ARDataCacheMigrationBlock)(RLMMigration *migration, NSUInteger old
 // FIXME: ARResponseCacheModel
 + (instancetype)sharedInstance __attribute__ ((deprecated));
 
-- (instancetype)initWithVersion:(NSUInteger)version;
+- (instancetype)initWithVersion:(uint64_t)version;
 
-- (instancetype)initWithVersion:(NSUInteger)version encryption:(BOOL)enabled;
+- (instancetype)initWithVersion:(uint64_t)version encryption:(BOOL)enabled;
 
-- (instancetype)initWithSchema:(NSString *)schemaName version:(NSUInteger)version;
+- (instancetype)initWithSchema:(NSString *)schemaName version:(uint64_t)version;
 
-- (instancetype)initWithSchema:(NSString *)schemaName version:(NSUInteger)version encryption:(BOOL)enabled NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithSchema:(NSString *)schemaName version:(uint64_t)version encryption:(BOOL)enabled NS_DESIGNATED_INITIALIZER;
 
 /**
  Set the block which migrates the data caches to the current version. Should be invoked before invoking -[ARDataCacheManager registerModels:].

@@ -15,7 +15,7 @@ static NSString *const kDefaultSchemaName = @"dklinzh.arnetwork.default";
 @interface ARDataCacheManager ()
 @property (nonatomic, strong) RLMRealmConfiguration *defaultConfig;
 @property (nonatomic, copy) NSString *schemaName;
-@property (nonatomic, assign) NSUInteger schemaVersion;
+@property (nonatomic, assign) uint64_t schemaVersion;
 @property (nonatomic, assign) BOOL dataEncryption;
 @property (nonatomic, strong) NSURL *defaultFileURL;
 @property (nonatomic, strong) dispatch_queue_t cacheSchemaQueue;
@@ -32,19 +32,19 @@ static NSString *const kDefaultSchemaName = @"dklinzh.arnetwork.default";
 }
 #pragma clang diagnostic pop
 
-- (instancetype)initWithVersion:(NSUInteger)version {
+- (instancetype)initWithVersion:(uint64_t)version {
     return [self initWithVersion:version encryption:NO];
 }
 
-- (instancetype)initWithVersion:(NSUInteger)version encryption:(BOOL)enabled {
+- (instancetype)initWithVersion:(uint64_t)version encryption:(BOOL)enabled {
     return [self initWithSchema:kDefaultSchemaName version:version encryption:enabled];
 }
 
-- (instancetype)initWithSchema:(NSString *)schemaName version:(NSUInteger)version {
+- (instancetype)initWithSchema:(NSString *)schemaName version:(uint64_t)version {
     return [self initWithSchema:schemaName version:version encryption:NO];
 }
 
-- (instancetype)initWithSchema:(NSString *)schemaName version:(NSUInteger)version encryption:(BOOL)enabled {
+- (instancetype)initWithSchema:(NSString *)schemaName version:(uint64_t)version encryption:(BOOL)enabled {
     if (self = [super init]) {
         _schemaName = schemaName;
         _schemaVersion = version;

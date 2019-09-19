@@ -33,7 +33,7 @@
 
 @implementation ARMultiUserDataCacheManager
 
-- (instancetype)initWithSchema:(NSString *)schemaName version:(NSUInteger)version encryption:(BOOL)enabled {
+- (instancetype)initWithSchema:(NSString *)schemaName version:(uint64_t)version encryption:(BOOL)enabled {
     if (self = [super initWithSchema:schemaName version:version encryption:enabled]) {
         __schemaName = schemaName;
     }

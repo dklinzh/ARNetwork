@@ -25,6 +25,7 @@ PODS:
     - ARNetwork/HTTP
   - ARNetwork/Detector (0.8.2):
     - AFNetworking/UIKit (~> 3.2)
+    - ARNetwork/HTTP
   - ARNetwork/HTTP (0.8.2):
     - AFNetworking (~> 3.2)
   - ARNetwork/Mock (0.8.2):
@@ -69,7 +70,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
-  ARNetwork: 47a8068cf3e6907538415ac36ef6c2320dc41bd4
+  ARNetwork: d3dfd2620b01c8d13d0373f38c0f9b88c616966b
   Expecta: 3b6bd90a64b9a1dcb0b70aa0e10a7f8f631667d5
   OHHTTPStubs: 9cbce6364bec557cc3439aa6bb7514670d780881
   Realm: 7b3d04740facf45e958a514b466a32b04f1113d6

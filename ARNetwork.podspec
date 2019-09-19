@@ -85,6 +85,7 @@ Pod::Spec.new do |s|
 
   s.subspec 'Detector' do |detector|
     detector.dependency 'AFNetworking/UIKit', '~> 3.2'
+    detector.dependency 'ARNetwork/HTTP'
 
     detector.source_files = 'ARNetwork/Classes/Detector/*.{h,m}'
   end

@@ -41,6 +41,7 @@ xcuserdata/
 build/
 DerivedData/
 Index/
+
 *.moved-aside
 *.pbxuser
 !default.pbxuser
@@ -50,18 +51,19 @@ Index/
 !default.mode2v3
 *.perspectivev3
 !default.perspectivev3
-xcuserdata/
+
+## Gcc Patch
+/*.gcno
 
 ## Other
-*.moved-aside
-*.xccheckout
-*.xcscmblueprint
 *.log
 cert/
 export/
 
 ## Obj-C/Swift specific
 *.hmap
+
+## App packaging
 *.ipa
 *.dSYM.zip
 *.dSYM
@@ -76,6 +78,12 @@ playground.xcworkspace
 # Packages/
 # Package.pins
 # Package.resolved
+# *.xcodeproj
+#
+# Xcode automatically generates this directory with a .xcworkspacedata file and xcuserdata
+# hence it is not needed unless you have added a package configuration file to your project
+# .swiftpm
+
 .build/
 
 # CocoaPods
@@ -83,9 +91,8 @@ playground.xcworkspace
 # We recommend against adding the Pods directory to your .gitignore. However
 # you should judge for yourself, the pros and cons are mentioned at:
 # https://guides.cocoapods.org/using/using-cocoapods.html#should-i-check-the-pods-directory-into-source-control
-#
 Pods/
-#
+
 # Add this line if you want to avoid checking in source code from the Xcode workspace
 # *.xcworkspace
 
@@ -93,16 +100,18 @@ Pods/
 #
 # Add this line if you want to avoid checking in source code from Carthage dependencies.
 # Carthage/Checkouts
+Carthage/Build/
 
-Carthage/Build
+# Accio dependency management
+Dependencies/
+.accio/
 
 # fastlane
 #
-# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
-# screenshots whenever they are needed.
+# It is recommended to not store the screenshots in the git repo.
+# Instead, use fastlane to re-generate the screenshots whenever they are needed.
 # For more information about the recommended setup visit:
 # https://docs.fastlane.tools/best-practices/source-control/#source-control
-
 fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
@@ -112,5 +121,7 @@ fastlane/test_output
 #
 # After new code Injection tools there's a generated folder /iOSInjectionProject
 # https://github.com/johnno1962/injectionforxcode
-
 iOSInjectionProject/
+
+# R.swift
+*.generated.swift

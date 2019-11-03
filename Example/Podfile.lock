@@ -14,21 +14,21 @@ PODS:
   - AFNetworking/Serialization (3.2.1)
   - AFNetworking/UIKit (3.2.1):
     - AFNetworking/NSURLSession
-  - ARNetwork/Cache/Core (0.8.2):
+  - ARNetwork/Cache/Core (0.8.3):
     - ARNetwork/HTTP
-    - Realm (= 3.18.0)
-  - ARNetwork/Cache/Swift (0.8.2):
+    - Realm (= 3.20.0)
+  - ARNetwork/Cache/Swift (0.8.3):
     - ARNetwork/Cache/Core
-  - ARNetwork/Default (0.8.2):
+  - ARNetwork/Default (0.8.3):
     - ARNetwork/Cache/Core
     - ARNetwork/Detector
     - ARNetwork/HTTP
-  - ARNetwork/Detector (0.8.2):
+  - ARNetwork/Detector (0.8.3):
     - AFNetworking/UIKit (~> 3.2)
     - ARNetwork/HTTP
-  - ARNetwork/HTTP (0.8.2):
+  - ARNetwork/HTTP (0.8.3):
     - AFNetworking (~> 3.2)
-  - ARNetwork/Mock (0.8.2):
+  - ARNetwork/Mock (0.8.3):
     - OHHTTPStubs (~> 8.0)
   - Expecta (1.0.6)
   - OHHTTPStubs (8.0.0):
@@ -44,9 +44,9 @@ PODS:
   - OHHTTPStubs/NSURLSession (8.0.0):
     - OHHTTPStubs/Core
   - OHHTTPStubs/OHPathHelpers (8.0.0)
-  - Realm (3.18.0):
-    - Realm/Headers (= 3.18.0)
-  - Realm/Headers (3.18.0)
+  - Realm (3.20.0):
+    - Realm/Headers (= 3.20.0)
+  - Realm/Headers (3.20.0)
   - Specta (1.0.7)
 
 DEPENDENCIES:
@@ -57,7 +57,7 @@ DEPENDENCIES:
   - Specta
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  https://github.com/CocoaPods/Specs.git:
     - AFNetworking
     - Expecta
     - OHHTTPStubs
@@ -70,12 +70,12 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
-  ARNetwork: fe7e5eb2da999d5f6d929acbc2459f52a38c58f0
+  ARNetwork: 72a03d027cf00a93255c5e1d3d71a9e7209e8615
   Expecta: 3b6bd90a64b9a1dcb0b70aa0e10a7f8f631667d5
   OHHTTPStubs: 9cbce6364bec557cc3439aa6bb7514670d780881
-  Realm: 7b3d04740facf45e958a514b466a32b04f1113d6
+  Realm: 8b2ca5bc6479a91f379b6b42b5922e396cd5ba5a
   Specta: 3e1bd89c3517421982dc4d1c992503e48bd5fe66
 
 PODFILE CHECKSUM: 08ff387ced2808c7bb5ce99cff07480baecc6d3a
 
-COCOAPODS: 1.7.5
+COCOAPODS: 1.8.4

@@ -10,6 +10,10 @@
 
 @implementation RLMArray (ARBridge)
 
+- (BOOL)isEmpty {
+    return self.count == 0;
+}
+
 - (NSArray *)ar_primitiveArray {
     NSMutableArray *array = [NSMutableArray array];
     for (RLMObject *item in self) {
@@ -31,6 +35,10 @@
 @end
 
 @implementation RLMResults (ARBridge)
+
+- (BOOL)isEmpty {
+    return self.count == 0;
+}
 
 - (NSArray *)ar_primitiveArray {
     NSMutableArray *array = [NSMutableArray array];

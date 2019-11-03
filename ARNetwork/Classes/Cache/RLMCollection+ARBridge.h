@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol ARCollectionBridge <NSFastEnumeration>
 
+@property (nonatomic, assign, readonly) BOOL isEmpty;
+
 - (NSArray *)ar_primitiveArray;
 
 - (void)ar_setValue:(nullable id)value forKeyPath:(NSString *)keyPath;

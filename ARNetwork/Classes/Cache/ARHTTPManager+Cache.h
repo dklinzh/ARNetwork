@@ -8,11 +8,12 @@
 
 #import "ARHTTPManager.h"
 #import "ARDataCache.h"
+#import "ARHTTPOperation.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 typedef void(^ARResponseCacheSuccess)(id data, NSString * _Nullable msg, BOOL isCached);
-typedef void(^ARResponseCacheFailure)(NSInteger code, NSString * _Nullable msg);
+typedef ARHTTPResponseFailure ARResponseCacheFailure;
 
 @interface ARHTTPManager (Cache)
 + (nullable NSURLSessionDataTask *)getURL:(NSString *)urlStr params:(nullable NSDictionary *)params dataCache:(ARCacheType)cacheType success:(nullable ARResponseCacheSuccess)success failure:(nullable ARResponseCacheFailure)failure;

@@ -48,9 +48,9 @@ typedef void(^ARHTTPResponseHead)(NSURLSessionDataTask *task);
 
 @property (nonatomic, copy, readonly, nullable) NSSet<NSString *> *extraContentTypes;
 
-- (void)responseSuccess:(ARHTTPResponseSuccess)success orFailure:(ARHTTPResponseFailure)failure withData:(id)data;
+- (void)responseSuccess:(nullable ARHTTPResponseSuccess)success orFailure:(nullable ARHTTPResponseFailure)failure withData:(nullable id)data;
 
-- (void)response:(NSHTTPURLResponse *)response onFailure:(ARHTTPResponseFailure)failure withError:(NSError *)error;
+- (void)response:(nullable NSHTTPURLResponse *)response onFailure:(nullable ARHTTPResponseFailure)failure withError:(NSError *)error;
 
 @end
 

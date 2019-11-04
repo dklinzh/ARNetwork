@@ -7,10 +7,20 @@
 
 #import <Realm/Realm.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface RLMRealm (ARWrite)
 
 - (void)ar_cascadeDeleteObjcet:(RLMObject *)object;
 
 - (void)ar_cascadeDeleteObjcets:(id<NSFastEnumeration>)objects;
 
+- (void)ar_cascadeDeleteObjcet:(RLMObject *)object
+           isPrimaryKeySkipped:(BOOL)isPrimaryKeySkipped;
+
+- (void)ar_cascadeDeleteObjcets:(id<NSFastEnumeration>)objects
+            isPrimaryKeySkipped:(BOOL)isPrimaryKeySkipped;
+
 @end
+
+NS_ASSUME_NONNULL_END

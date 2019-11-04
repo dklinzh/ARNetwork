@@ -10,14 +10,24 @@
 @implementation RLMRealm (ARWrite)
 
 - (void)ar_cascadeDeleteObjcets:(id<NSFastEnumeration>)objects {
+    [self ar_cascadeDeleteObjcets:objects isPrimaryKeySkipped:NO];
+}
+
+- (void)ar_cascadeDeleteObjcet:(RLMObject *)object {
+    [self ar_cascadeDeleteObjcet:object isPrimaryKeySkipped:NO];
+}
+
+- (void)ar_cascadeDeleteObjcets:(id<NSFastEnumeration>)objects
+            isPrimaryKeySkipped:(BOOL)isPrimaryKeySkipped {
     for (id object in objects) {
         if ([object isKindOfClass:RLMObject.class]) {
-            [self ar_cascadeDeleteObjcet:object];
+            [self ar_cascadeDeleteObjcet:object isPrimaryKeySkipped:isPrimaryKeySkipped];
         }
     }
 }
 
-- (void)ar_cascadeDeleteObjcet:(RLMObject *)object {
+- (void)ar_cascadeDeleteObjcet:(RLMObject *)object
+           isPrimaryKeySkipped:(BOOL)isPrimaryKeySkipped {
     NSMutableOrderedSet<RLMObject *> *deletedObjects = [NSMutableOrderedSet orderedSet];
     [deletedObjects addObject:object];
     while (deletedObjects.count > 0) {
@@ -25,12 +35,19 @@
         [deletedObjects removeObjectAtIndex:0];
         
         if (!element.isInvalidated) {
-            ARDeletedObjectsResolve(self, element, deletedObjects);
+            ARDeletedObjectsResolve(self, element, deletedObjects, isPrimaryKeySkipped);
         }
     }
 }
 
-static inline void ARDeletedObjectsResolve(RLMRealm *realm, RLMObject *element, NSMutableOrderedSet<RLMObject *> *deletedObjects) {
+static inline void ARDeletedObjectsResolve(RLMRealm *realm,
+                                           RLMObject *element,
+                                           NSMutableOrderedSet<RLMObject *> *deletedObjects,
+                                           BOOL isPrimaryKeySkipped) {
+    if (isPrimaryKeySkipped && [element.class primaryKey]) {
+        return;
+    }
+    
     NSArray<RLMProperty *> *properties = element.objectSchema.properties;
     for (RLMProperty *property in properties) {
         id value = [element valueForKey:property.name];
@@ -39,10 +56,20 @@ static inline void ARDeletedObjectsResolve(RLMRealm *realm, RLMObject *element, 
         }
         
         if ([value isKindOfClass:RLMObject.class]) {
+            if (isPrimaryKeySkipped && [[value class] primaryKey]) {
+                [element setValue:nil forKey:property.name];
+                continue;
+            }
+            
             [deletedObjects addObject:value];
         } else if ([value isKindOfClass:RLMArray.class]) {
             RLMArray *rlmArray = (RLMArray *)value;
             if (rlmArray.type == RLMPropertyTypeObject) {
+                if (isPrimaryKeySkipped && [NSClassFromString(rlmArray.objectClassName) primaryKey]) {
+                    [rlmArray removeAllObjects];
+                    continue;
+                }
+                
                 for (id object in rlmArray) {
                     [deletedObjects addObject:object];
                 }

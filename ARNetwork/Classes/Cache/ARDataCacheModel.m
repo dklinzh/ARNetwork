@@ -251,7 +251,7 @@ static inline RLMResults * ar_sortedResults(RLMResults * results) {
         [self updateDataCache:data];
     } else {
         if (primaryKey && primaryValue) {
-            NSString *className = NSStringFromClass(self.class);
+            NSString *className = [self.class className];
             NSMutableDictionary<id, ARDataCacheModel *> *tempModels = [ar_primaryExistsTemp() valueForKey:className];
             if (!tempModels) {
                 tempModels = [NSMutableDictionary dictionary];

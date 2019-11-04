@@ -189,6 +189,8 @@ RLM_ARRAY_TYPE(ARDataCacheModel)
  */
 + (BOOL)ar_shouldForceUpdateWithoutCompare;
 
++ (BOOL)ar_primaryKeyRetain;
+
 @end
 
 @interface ARDataCacheModel (ThreadSafe)

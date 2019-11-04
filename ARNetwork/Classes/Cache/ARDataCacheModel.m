@@ -236,13 +236,14 @@ static inline RLMResults * ar_sortedResults(RLMResults * results) {
 - (instancetype)initDataCache:(NSDictionary *)data {
     id primaryExist;
     id primaryValue;
-    NSString *primaryKey = [self.class primaryKey];
+    Class selfClass = [self class];
+    NSString *primaryKey = [selfClass primaryKey];
     if (primaryKey) {
         primaryValue = [self propertyForKey:primaryKey fromDatas:data];
         if (primaryValue) {
-            primaryExist = [self.class ar_objectForPrimaryKey:primaryValue];
+            primaryExist = [selfClass ar_objectForPrimaryKey:primaryValue];
         } else {
-            ARAssert(NO, @"The value of primary key `%@` of Class<%@> was nil.", primaryKey, self.class);
+            ARAssert(NO, @"The value of primary key `%@` of Class<%@> was nil.", primaryKey, selfClass);
         }
     }
     
@@ -251,7 +252,7 @@ static inline RLMResults * ar_sortedResults(RLMResults * results) {
         [self updateDataCache:data];
     } else {
         if (primaryKey && primaryValue) {
-            NSString *className = [self.class className];
+            NSString *className = [selfClass className];
             NSMutableDictionary<id, ARDataCacheModel *> *tempModels = [ar_primaryExistsTemp() valueForKey:className];
             if (!tempModels) {
                 tempModels = [NSMutableDictionary dictionary];
@@ -327,26 +328,27 @@ static inline RLMResults * ar_sortedResults(RLMResults * results) {
 }
 
 - (void)resetDefaultValueForKey:(NSString *)key {
-    NSDictionary *defaultPropertyValues = [self.class defaultPropertyValues];
+    Class selfClass = [self class];
+    NSDictionary *defaultPropertyValues = [selfClass defaultPropertyValues];
     id defaultValue = [defaultPropertyValues valueForKey:key];
     if (defaultValue) {
-        ARLogWarn(@"Reset default value to the property '%@' of class '%@'", key, self.class);
+        ARLogWarn(@"Reset default value to the property '%@' of class '%@'", key, selfClass);
         [self setValue:defaultValue forKey:key];
     } else {
         id value = [self valueForKey:key];
         if (value) {
             if ([value isKindOfClass:NSValue.class]) {
                 if (![value isEqual:@(0)]) {
-                    ARLogWarn(@"Reset default value to the property '%@' of class '%@'", key, self.class);
+                    ARLogWarn(@"Reset default value to the property '%@' of class '%@'", key, selfClass);
                     [self setValue:@(0) forKey:key];
                 }
             } else if ([value conformsToProtocol:@protocol(RLMCollection)]) {
                 if ([value count] > 0) {
-                    ARLogWarn(@"Reset default value to the property '%@' of class '%@'", key, self.class);
+                    ARLogWarn(@"Reset default value to the property '%@' of class '%@'", key, selfClass);
                     [value removeAllObjects];
                 }
             } else {
-                ARLogWarn(@"Reset default value to the property '%@' of class '%@'", key, self.class);
+                ARLogWarn(@"Reset default value to the property '%@' of class '%@'", key, selfClass);
                 [self setValue:nil forKey:key];
             }
         }
@@ -419,12 +421,13 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
 - (void)_addOrUpdateDataCache:(NSDictionary *)data forKey:(NSString *)cacheKey {
     if (!self.realm) {
         self._AR_CACHE_KEY = cacheKey;
-        if (![self.class ar_shouldForceUpdateWithoutCompare]) {
+        Class selfClass = [self class];
+        if (![selfClass ar_shouldForceUpdateWithoutCompare]) {
             self._AR_CACHE_CODE = ar_cacheCode(data);
         }
         NSDate *date = [NSDate date];
         self._AR_DATE_MODIFIED = date;
-        self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[self.class ar_expiredInterval] sinceDate:date];
+        self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[selfClass ar_expiredInterval] sinceDate:date];
         [self _addOrUpdateDataCache];
     }
     
@@ -432,7 +435,8 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
 }
 
 - (void)_addOrUpdateDataCache {
-    RLMRealm *realm = [self.class ar_defaultRealm];
+    Class selfClass = [self class];
+    RLMRealm *realm = [selfClass ar_defaultRealm];
     BOOL inWriteTransaction = !realm.inWriteTransaction;
     if (inWriteTransaction) {
         [realm beginWriteTransaction];
@@ -441,7 +445,7 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
         [self ar_transactionDidBeginWrite];
     }
     
-    if ([self.class primaryKey]) {
+    if ([selfClass primaryKey]) {
         [realm addOrUpdateObject:self];
     } else {
         [realm addObject:self];
@@ -465,7 +469,8 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
 
 - (void)updateDataCache:(NSDictionary *)data {
     if (!self.isInvalidated) {
-        RLMRealm *realm = [self.class ar_defaultRealm];
+        Class selfClass = [self class];
+        RLMRealm *realm = [selfClass ar_defaultRealm];
         BOOL inWriteTransaction = !realm.inWriteTransaction;
         if (inWriteTransaction) {
             [realm beginWriteTransaction];
@@ -474,7 +479,7 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
             [self ar_transactionDidBeginWrite];
         }
         NSDate *date = [NSDate date];
-        if ([self.class ar_shouldForceUpdateWithoutCompare]) {
+        if ([selfClass ar_shouldForceUpdateWithoutCompare]) {
             if (self._AR_CACHE_CODE) {
                 self._AR_CACHE_CODE = nil;
             }
@@ -493,7 +498,7 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
             }
         }
         if (self._AR_DATE_EXPIRED) {
-            self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[self.class ar_expiredInterval] sinceDate:date];
+            self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[selfClass ar_expiredInterval] sinceDate:date];
         }
         
         if ([self respondsToSelector:@selector(ar_transactionWillCommitWrite)]) {
@@ -508,8 +513,9 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
 }
 
 - (void)updateDataCacheWithDataPartInTransaction:(NSDictionary *)data {
-    NSArray *equalValueSkippedProperties = [self.class ar_equalValueSkippedProperties];
-    NSString *primaryKey = [self.class primaryKey];
+    Class selfClass = [self class];
+    NSArray *equalValueSkippedProperties = [selfClass ar_equalValueSkippedProperties];
+    NSString *primaryKey = [selfClass primaryKey];
     
     NSArray<NSString *> *propertyNames = [self propertyNames];
     for (NSString *key in propertyNames) {
@@ -572,7 +578,8 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
                                 
                                 [deletedObjs addObject:item];
                             }
-                            [[self.class ar_defaultRealm] ar_cascadeDeleteObjcets:deletedObjs];
+                            [[selfClass ar_defaultRealm] ar_cascadeDeleteObjcets:deletedObjs
+                                                             isPrimaryKeySkipped:[selfClass ar_primaryKeyRetain]];
                             primarySet = nil;
                             
                             [objs removeAllObjects];
@@ -591,7 +598,8 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
                                 }
                             }
                         } else {
-                            [[self.class ar_defaultRealm] ar_cascadeDeleteObjcets:objs];
+                            [[selfClass ar_defaultRealm] ar_cascadeDeleteObjcets:objs
+                                                             isPrimaryKeySkipped:[selfClass ar_primaryKeyRetain]];
                             for (id item in values) {
                                 if ([item isKindOfClass:NSDictionary.class]) {
                                     [objs addObject:[[clazz alloc] initDataCache:item]];
@@ -633,6 +641,10 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
 }
 
 + (BOOL)ar_shouldForceUpdateWithoutCompare {
+    return YES;
+}
+
++ (BOOL)ar_primaryKeyRetain {
     return YES;
 }
 

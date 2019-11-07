@@ -258,12 +258,12 @@ static inline RLMResults * ar_sortedResults(RLMResults * results) {
                 tempModels = [NSMutableDictionary dictionary];
                 [ar_primaryExistsTemp() setValue:tempModels forKey:className];
             }
-            id tempModel = [tempModels valueForKey:primaryValue];
+            id tempModel = [tempModels objectForKey:primaryValue];
             if (tempModel) {
                 self = tempModel;
             } else {
                 self = [super init];
-                [tempModels setValue:self forKey:primaryValue];
+                [tempModels setObject:self forKey:primaryValue];
             }
         } else {
             self = [super init];

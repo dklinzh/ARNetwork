@@ -16,7 +16,7 @@ PODS:
     - AFNetworking/NSURLSession
   - ARNetwork/Cache/Core (0.8.3):
     - ARNetwork/HTTP
-    - Realm (= 3.20.0)
+    - Realm (= 3.21.0)
   - ARNetwork/Cache/Swift (0.8.3):
     - ARNetwork/Cache/Core
   - ARNetwork/Default (0.8.3):
@@ -44,9 +44,9 @@ PODS:
   - OHHTTPStubs/NSURLSession (8.0.0):
     - OHHTTPStubs/Core
   - OHHTTPStubs/OHPathHelpers (8.0.0)
-  - Realm (3.20.0):
-    - Realm/Headers (= 3.20.0)
-  - Realm/Headers (3.20.0)
+  - Realm (3.21.0):
+    - Realm/Headers (= 3.21.0)
+  - Realm/Headers (3.21.0)
   - Specta (1.0.7)
 
 DEPENDENCIES:
@@ -70,10 +70,10 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
-  ARNetwork: 72a03d027cf00a93255c5e1d3d71a9e7209e8615
+  ARNetwork: 3f97713df991b83e0839f5e0187630f46e18743a
   Expecta: 3b6bd90a64b9a1dcb0b70aa0e10a7f8f631667d5
   OHHTTPStubs: 9cbce6364bec557cc3439aa6bb7514670d780881
-  Realm: 8b2ca5bc6479a91f379b6b42b5922e396cd5ba5a
+  Realm: 38e9dcb19104b58407167d99f70d4995f7c16023
   Specta: 3e1bd89c3517421982dc4d1c992503e48bd5fe66
 
 PODFILE CHECKSUM: 08ff387ced2808c7bb5ce99cff07480baecc6d3a

@@ -120,10 +120,10 @@ extension RLMSyncUser {
 
     public func configuration(realmURL: URL? = nil, fullSynchronization: Bool = false,
                               enableSSLValidation: Bool = true, urlPrefix: String? = nil) -> RLMRealmConfiguration {
-        return __configuration(with: realmURL,
-                               fullSynchronization: fullSynchronization,
-                               enableSSLValidation: enableSSLValidation,
-                               urlPrefix: urlPrefix)
+        return self.__configuration(with: realmURL,
+                                    fullSynchronization: fullSynchronization,
+                                    enableSSLValidation: enableSSLValidation,
+                                    urlPrefix: urlPrefix)
     }
 }
 

@@ -10,7 +10,7 @@
 @implementation RLMRealm (ARWrite)
 
 - (void)ar_cascadeDeleteObjcets:(NSObject<NSFastEnumeration> *)objects {
-    [self ar_cascadeDeleteObjcets:objects isPrimaryKeySkipped:NO];
+    [self ar_cascadeDeleteObjcets:objects isPrimaryKeyObjectSkipped:NO];
 }
 
 - (void)ar_cascadeDeleteObjcet:(RLMObject *)object {
@@ -18,8 +18,8 @@
 }
 
 - (void)ar_cascadeDeleteObjcets:(NSObject<NSFastEnumeration> *)objects
-            isPrimaryKeySkipped:(BOOL)isPrimaryKeySkipped {
-    if (isPrimaryKeySkipped && [objects isKindOfClass:RLMArray.class]) {
+      isPrimaryKeyObjectSkipped:(BOOL)isPrimaryKeyObjectSkipped {
+    if (isPrimaryKeyObjectSkipped && [objects isKindOfClass:RLMArray.class]) {
         RLMArray *rlmArray = (RLMArray *)objects;
         if (rlmArray.type == RLMPropertyTypeObject && [NSClassFromString(rlmArray.objectClassName) primaryKey]) {
             [rlmArray removeAllObjects];
@@ -29,7 +29,7 @@
     
     for (id object in objects) {
         if ([object isKindOfClass:RLMObject.class]) {
-            [self ar_cascadeDeleteObjcet:object isPrimaryKeySkipped:isPrimaryKeySkipped];
+            [self ar_cascadeDeleteObjcet:object isPrimaryKeySkipped:isPrimaryKeyObjectSkipped];
         }
     }
 }

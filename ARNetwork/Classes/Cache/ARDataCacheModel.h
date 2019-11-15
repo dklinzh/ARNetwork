@@ -189,7 +189,8 @@ RLM_ARRAY_TYPE(ARDataCacheModel)
  */
 + (BOOL)ar_shouldForceUpdateWithoutCompare;
 
-+ (BOOL)ar_primaryKeyRetain;
+/// Override this method to determine whether the object should be retained independently if it has a primary key. Defaults to true.
++ (BOOL)ar_shouldRetainObjectForPrimaryKey;
 
 @end
 

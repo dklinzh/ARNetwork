@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
            isPrimaryKeySkipped:(BOOL)isPrimaryKeySkipped;
 
 - (void)ar_cascadeDeleteObjcets:(NSObject<NSFastEnumeration> *)objects
-            isPrimaryKeySkipped:(BOOL)isPrimaryKeySkipped;
+      isPrimaryKeyObjectSkipped:(BOOL)isPrimaryKeyObjectSkipped;
 
 @end
 

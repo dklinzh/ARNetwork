@@ -579,7 +579,7 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
                                 [deletedObjs addObject:item];
                             }
                             [[selfClass ar_defaultRealm] ar_cascadeDeleteObjcets:deletedObjs
-                                                             isPrimaryKeySkipped:[selfClass ar_primaryKeyRetain]];
+                                                       isPrimaryKeyObjectSkipped:[selfClass ar_shouldRetainObjectForPrimaryKey]];
                             primarySet = nil;
                             
                             [objs removeAllObjects];
@@ -599,7 +599,7 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
                             }
                         } else {
                             [[selfClass ar_defaultRealm] ar_cascadeDeleteObjcets:objs
-                                                             isPrimaryKeySkipped:[selfClass ar_primaryKeyRetain]];
+                                                       isPrimaryKeyObjectSkipped:[selfClass ar_shouldRetainObjectForPrimaryKey]];
                             for (id item in values) {
                                 if ([item isKindOfClass:NSDictionary.class]) {
                                     [objs addObject:[[clazz alloc] initDataCache:item]];
@@ -644,7 +644,7 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
     return YES;
 }
 
-+ (BOOL)ar_primaryKeyRetain {
++ (BOOL)ar_shouldRetainObjectForPrimaryKey {
     return YES;
 }
 

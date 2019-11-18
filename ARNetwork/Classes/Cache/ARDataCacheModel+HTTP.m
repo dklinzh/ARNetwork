@@ -157,7 +157,7 @@
                 success(oldData, msg, NO);
             }
         } else {
-            __kindof ARDataCacheModel *newData = [[self alloc] initDataCache:data];
+            __kindof ARDataCacheModel *newData = [[self alloc] _initDataCache:data forKey:cacheKey];
             [newData _addOrUpdateDataCache:data forKey:cacheKey];
             if (success) {
                 success(newData, msg, NO);

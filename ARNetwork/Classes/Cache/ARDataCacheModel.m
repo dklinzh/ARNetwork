@@ -234,6 +234,10 @@ static inline RLMResults * ar_sortedResults(RLMResults * results) {
 }
 
 - (instancetype)initDataCache:(NSDictionary *)data {
+    return [self _initDataCache:data forKey:nil];
+}
+
+- (instancetype)_initDataCache:(NSDictionary *)data forKey:(NSString *)cacheKey {
     id primaryExist;
     id primaryValue;
     Class selfClass = [self class];
@@ -241,6 +245,9 @@ static inline RLMResults * ar_sortedResults(RLMResults * results) {
     if (primaryKey) {
         primaryValue = [self propertyForKey:primaryKey fromDatas:data];
         if (primaryValue) {
+            primaryExist = [selfClass ar_objectForPrimaryKey:primaryValue];
+        } else if ([selfClass ar_useCacheKeyAsPrimaryKey] && cacheKey) {
+            primaryValue = cacheKey;
             primaryExist = [selfClass ar_objectForPrimaryKey:primaryValue];
         } else {
             ARAssert(NO, @"The value of primary key `%@` of Class<%@> was nil.", primaryKey, selfClass);
@@ -646,6 +653,19 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
 
 + (BOOL)ar_shouldRetainObjectForPrimaryKey {
     return YES;
+}
+
++ (BOOL)ar_useCacheKeyAsPrimaryKey {
+    return NO;
+}
+
+#pragma mark -
++ (NSString *)primaryKey {
+    if ([self ar_useCacheKeyAsPrimaryKey]) {
+        return @"_AR_CACHE_KEY";
+    } else {
+        return nil;
+    }
 }
 
 @end

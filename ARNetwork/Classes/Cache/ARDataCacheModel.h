@@ -176,7 +176,7 @@ RLM_ARRAY_TYPE(ARDataCacheModel)
 + (nullable NSArray<NSString *> *)ar_reservedProperties;
 
 /**
- Override this method to specify the time interval of expired cache data to this kind of object. Defaults to 0 s.
+ Override this method to specify the time interval of expired cache data to this kind of object. Defaults to 0 second.
  
  @return A time interval, in seconds.
  */
@@ -185,12 +185,15 @@ RLM_ARRAY_TYPE(ARDataCacheModel)
 /**
  Override this method to determine whether or not the data cache should be updated forcely without hash code comparation.
 
- @return Defaults to true.
+ @return Defaults to TRUE.
  */
 + (BOOL)ar_shouldForceUpdateWithoutCompare;
 
-/// Override this method to determine whether the object should be retained independently if it has a primary key. Defaults to true.
+/// Override this method to determine whether the object should be retained independently if it has a primary key. Defaults to TRUE.
 + (BOOL)ar_shouldRetainObjectForPrimaryKey;
+
+/// Override this method to determine whether it could use `_AR_CACHE_KEY` as the primary key of the cache object. This would be ignored if the object has declared its own primary key. Defaults to FALSE.
++ (BOOL)ar_useCacheKeyAsPrimaryKey;
 
 @end
 

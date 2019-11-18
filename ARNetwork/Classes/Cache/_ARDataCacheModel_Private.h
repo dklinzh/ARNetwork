@@ -32,6 +32,8 @@
 
 + (instancetype)_dataCacheForKey:(NSString *)cacheKey;
 
+- (instancetype)_initDataCache:(NSDictionary *)data forKey:(NSString *)cacheKey;
+
 - (void)_addOrUpdateDataCache:(NSDictionary *)data forKey:(NSString *)cacheKey;
 
 - (void)_clearPrimaryExistsTemp;

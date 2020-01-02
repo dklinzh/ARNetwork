@@ -249,7 +249,7 @@ static inline RLMResults * ar_sortedResults(RLMResults * results) {
         } else if ([selfClass ar_useCacheKeyAsPrimaryKey] && cacheKey) {
             primaryValue = cacheKey;
             primaryExist = [selfClass ar_objectForPrimaryKey:primaryValue];
-        } else {
+        } else if (![selfClass ar_useCacheKeyAsPrimaryKey]) {
             ARAssert(NO, @"The value of primary key `%@` of Class<%@> was nil.", primaryKey, selfClass);
         }
     }

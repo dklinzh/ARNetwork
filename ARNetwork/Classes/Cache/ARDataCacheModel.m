@@ -426,17 +426,19 @@ static NSMutableDictionary<NSString *, NSMutableDictionary *> * ar_primaryExists
 }
 
 - (void)_addOrUpdateDataCache:(NSDictionary *)data forKey:(NSString *)cacheKey {
-    if (!self.realm) {
-        self._AR_CACHE_KEY = cacheKey;
-        Class selfClass = [self class];
-        if (![selfClass ar_shouldForceUpdateWithoutCompare]) {
-            self._AR_CACHE_CODE = ar_cacheCode(data);
-        }
-        NSDate *date = [NSDate date];
-        self._AR_DATE_MODIFIED = date;
-        self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[selfClass ar_expiredInterval] sinceDate:date];
-        [self _addOrUpdateDataCache];
+    [self.realm beginWriteTransaction];
+    
+    self._AR_CACHE_KEY = cacheKey;
+    Class selfClass = [self class];
+    if (![selfClass ar_shouldForceUpdateWithoutCompare]) {
+        self._AR_CACHE_CODE = ar_cacheCode(data);
     }
+    NSDate *date = [NSDate date];
+    self._AR_DATE_MODIFIED = date;
+    self._AR_DATE_EXPIRED = [NSDate dateWithTimeInterval:[selfClass ar_expiredInterval] sinceDate:date];
+    [self _addOrUpdateDataCache];
+    
+    [self.realm commitWriteTransaction];
     
     [self _clearPrimaryExistsTemp];
 }
